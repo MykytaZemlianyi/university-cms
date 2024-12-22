@@ -1,33 +1,63 @@
-HELP.md
+## Java
+.mtj.tmp/
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+replay_pid*
+
+# Log file
+*.log
+logs/
+
+### Maven ###
 target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+pom.xml.tag
+pom.xml.bak
+pom.xml.next
+release.properties
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+buildNumber.properties
+.mvn/timing.properties
+dependency-reduced-pom.xml
+.mvn/wrapper/maven-wrapper.jar
 
-### STS ###
-.apt_generated
+
+## Eclipse
+bin/
+tmp/
+*.bak
+*.tmp
+*.swp
+*~.nib
+.metadata
 .classpath
-.factorypath
+.settings/
 .project
-.settings
-.springBeans
-.sts4-cache
+.loadpath
+.factorypath
+.recommenders
+local.properties
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
+## Git
+*.orig
+*.BACKUP.*
+*.BASE.*
+*.LOCAL.*
+*.REMOTE.*
+*_BACKUP_*.txt
+*_BASE_*.txt
+*_LOCAL_*.txt
+*_REMOTE_*.txt
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.rar
+*.tar.gz
