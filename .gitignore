@@ -16,8 +16,9 @@ logs/
 
 ### Maven ###
 target/
-mvnv.cmd
-mvnv
+mvnw
+mvnw.cmd
+.mvn/
 pom.xml.tag
 pom.xml.bak
 pom.xml.next
