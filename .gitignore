@@ -16,6 +16,8 @@ logs/
 
 ### Maven ###
 target/
+mvnv.cmd
+mvnv
 pom.xml.tag
 pom.xml.bak
 pom.xml.next
@@ -45,6 +47,7 @@ tmp/
 local.properties
 
 ## Git
+.gitattributes
 *.orig
 *.BACKUP.*
 *.BASE.*
