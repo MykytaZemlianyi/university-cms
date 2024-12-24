@@ -1,30 +1,22 @@
 package ua.foxminded.mykyta.zemlianyi.university.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.MappedSuperclass;
 
-@Entity
+@MappedSuperclass
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 25)
     private String name;
-
-    @Column(nullable = false, length = 25)
     private String surname;
-
-    @Column(nullable = false, unique = true, length = 320)
     private String email;
-
-    @Column(nullable = false, length = 25)
     private String password;
 
     // Getters
