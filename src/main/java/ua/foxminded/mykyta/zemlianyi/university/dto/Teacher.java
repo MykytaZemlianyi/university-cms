@@ -11,7 +11,7 @@ import jakarta.persistence.Table;
 @Table(name = "teachers", schema = "university")
 public class Teacher extends User {
 
-    @OneToMany(mappedBy = "teachers", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
     private Set<Course> courses;
 
     public Set<Course> getCourses() {

@@ -22,7 +22,7 @@ public class Group {
 
     private String name;
 
-    @OneToMany(mappedBy = "groups", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
     private Set<Student> students;
 
     @ManyToMany
