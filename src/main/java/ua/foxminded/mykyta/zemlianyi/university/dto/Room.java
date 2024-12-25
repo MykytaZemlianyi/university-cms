@@ -49,8 +49,7 @@ public class Room implements Verifiable {
 
     @Override
     public boolean verify() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.number != null;
     }
 
 }
