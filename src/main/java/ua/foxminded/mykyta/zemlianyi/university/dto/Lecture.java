@@ -11,7 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Lecture implements Verifiable{
+public class Lecture implements Verifiable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -83,8 +83,31 @@ public class Lecture implements Verifiable{
 
     @Override
     public boolean verify() {
-        // TODO Auto-generated method stub
-        return false;
+        return verifyType() && verifyCourse() && verifyTime();
+    }
+
+    public boolean verifyType() {
+        return this.lectureType != null;
+    }
+
+    public boolean verifyCourse() {
+        return this.course != null;
+    }
+
+    public boolean verifyTime() {
+        if (verifyTimeStart() && verifyTimeEnd()) {
+            return this.timeStart.isBefore(timeEnd);
+        } else {
+            return false;
+        }
+    }
+
+    public boolean verifyTimeStart() {
+        return this.timeStart != null;
+    }
+
+    public boolean verifyTimeEnd() {
+        return this.timeEnd != null;
     }
 
 }
