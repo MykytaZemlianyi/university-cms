@@ -7,9 +7,15 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "students", schema = "university")
-public class Student extends User {
+public class Student extends User implements Verifiable {
 
     @ManyToOne
     @JoinColumn(name = "group_id", referencedColumnName = "group_id")
     private Group group;
+
+    @Override
+    public boolean verify() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

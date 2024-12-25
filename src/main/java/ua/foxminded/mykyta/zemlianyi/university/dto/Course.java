@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "courses", schema = "university")
-public class Course {
+public class Course implements Verifiable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -57,6 +57,12 @@ public class Course {
 
     public void setGroups(Set<Group> groups) {
         this.groups = groups;
+    }
+
+    @Override
+    public boolean verify() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

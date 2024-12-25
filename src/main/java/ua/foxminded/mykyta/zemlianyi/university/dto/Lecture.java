@@ -11,7 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class Lecture {
+public class Lecture implements Verifiable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,4 +32,59 @@ public class Lecture {
     @ManyToOne
     @JoinColumn(name = "room_id", referencedColumnName = "room_id")
     private Room room;
+
+    public Long getId() {
+        return id;
+    }
+
+    public LectureType getLectureType() {
+        return lectureType;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public LocalDateTime getTimeStart() {
+        return timeStart;
+    }
+
+    public LocalDateTime getTimeEnd() {
+        return timeEnd;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setLectureType(LectureType lectureType) {
+        this.lectureType = lectureType;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public void setTimeStart(LocalDateTime timeStart) {
+        this.timeStart = timeStart;
+    }
+
+    public void setTimeEnd(LocalDateTime timeEnd) {
+        this.timeEnd = timeEnd;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    @Override
+    public boolean verify() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
