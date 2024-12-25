@@ -1,5 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.dto;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -15,7 +16,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "groups", schema = "university")
-public class Group implements Verifiable{
+public class Group implements Verifiable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,11 +24,11 @@ public class Group implements Verifiable{
     private String name;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
-    private Set<Student> students;
+    private Set<Student> students = new HashSet<>();
 
     @ManyToMany
     @JoinTable(schema = "university", name = "groups_courses", joinColumns = @JoinColumn(name = "group_id"), inverseJoinColumns = @JoinColumn(name = "course_id"))
-    private Set<Course> courses;
+    private Set<Course> courses = new HashSet<>();
 
     // Getters
 

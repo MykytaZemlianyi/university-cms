@@ -1,5 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.dto;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.Entity;
@@ -25,7 +26,7 @@ public class Course implements Verifiable {
     private Teacher teacher;
 
     @ManyToMany(mappedBy = "courses")
-    private Set<Group> groups;
+    private Set<Group> groups = new HashSet<>();
 
     public Long getId() {
         return id;

@@ -1,5 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.dto;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -12,7 +13,7 @@ import jakarta.persistence.Table;
 public class Teacher extends User implements Verifiable {
 
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
-    private Set<Course> courses;
+    private Set<Course> courses = new HashSet<>();
 
     public Set<Course> getCourses() {
         return courses;
