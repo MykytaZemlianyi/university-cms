@@ -62,8 +62,10 @@ public class Course implements Verifiable {
 
     @Override
     public boolean verify() {
-        // TODO Auto-generated method stub
-        return false;
+        boolean verifyName = this.name != null && !this.name.isEmpty() && !this.name.isBlank();
+        boolean verifyTeacher = this.teacher != null;
+        boolean verifyGroups = !this.groups.isEmpty();
+        return verifyName && verifyTeacher && verifyGroups;
     }
 
 }
