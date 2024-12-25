@@ -8,6 +8,7 @@ body {
     height: 100vh;
     background: linear-gradient(135deg, #f8e1f4, #d1e8f5, #e4f8e1);
     background-size: cover;
+    text-align: center;
 }
 
 .welcome-container {
