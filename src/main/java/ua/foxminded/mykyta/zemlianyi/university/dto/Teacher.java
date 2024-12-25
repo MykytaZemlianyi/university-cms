@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "teachers", schema = "university")
-public class Teacher extends User implements Verifiable {
+public class Teacher extends User {
 
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
     private Set<Course> courses = new HashSet<>();
@@ -21,12 +21,6 @@ public class Teacher extends User implements Verifiable {
 
     public void setCourses(Set<Course> courses) {
         this.courses = courses;
-    }
-
-    @Override
-    public boolean verify() {
-        // TODO Auto-generated method stub
-        return false;
     }
 
 }

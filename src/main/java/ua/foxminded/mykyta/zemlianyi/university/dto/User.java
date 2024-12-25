@@ -5,9 +5,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import ua.foxminded.mykyta.zemlianyi.university.Constants;
 
 @MappedSuperclass
-public abstract class User {
+public abstract class User implements Verifiable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -66,6 +67,20 @@ public abstract class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public boolean verify() {
+        return verifyString(name) && verifyString(surname) && verifyString(email) && isEmail(email)
+                && verifyString(password);
+    }
+
+    private boolean verifyString(String str) {
+        return str != null && !str.isEmpty() && !str.isBlank();
+    }
+
+    public boolean isEmail(String email) {
+        return email.matches(Constants.EMAIL_PATTERN_REGEX);
     }
 
 }
