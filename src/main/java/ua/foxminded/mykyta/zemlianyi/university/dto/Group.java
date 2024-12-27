@@ -62,14 +62,29 @@ public class Group implements Verifiable {
         this.students = students;
     }
 
+    public void addStudent(Student student) {
+        this.students.add(student);
+    }
+
+    public void removeStudent(Student student) {
+        this.students.remove(student);
+    }
+
     public void setCourses(Set<Course> courses) {
         this.courses = courses;
     }
 
+    public void addCourse(Course course) {
+        this.courses.add(course);
+    }
+
+    public void removeCourse(Course course) {
+        this.courses.remove(course);
+    }
+
     @Override
     public boolean verify() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.name != null && !this.name.isEmpty() && !this.name.isBlank();
     }
 
 }
