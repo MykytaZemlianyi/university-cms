@@ -47,6 +47,14 @@ public class Room implements Verifiable {
         this.lectures = lectures;
     }
 
+    public void addLecture(Lecture lecture) {
+        this.lectures.add(lecture);
+    }
+
+    public void removeLecture(Lecture lecture) {
+        this.lectures.remove(lecture);
+    }
+
     @Override
     public boolean verify() {
         return this.number != null;
