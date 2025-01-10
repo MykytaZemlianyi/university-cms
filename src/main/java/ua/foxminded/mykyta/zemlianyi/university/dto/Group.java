@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,9 +19,11 @@ import jakarta.persistence.Table;
 @Table(name = "groups", schema = "university")
 public class Group implements Verifiable {
     @Id
+    @Column(name = "group_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "group_name")
     private String name;
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)

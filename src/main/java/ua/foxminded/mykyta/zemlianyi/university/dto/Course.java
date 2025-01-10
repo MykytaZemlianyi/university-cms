@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 @Table(name = "courses", schema = "university")
 public class Course implements Verifiable {
     @Id
+    @Column(name = "course_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

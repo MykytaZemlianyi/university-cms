@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,9 +15,11 @@ import jakarta.persistence.ManyToOne;
 @Entity
 public class Lecture implements Verifiable {
     @Id
+    @Column(name = "lecture_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "lecture_type")
     private LectureType lectureType;
 
