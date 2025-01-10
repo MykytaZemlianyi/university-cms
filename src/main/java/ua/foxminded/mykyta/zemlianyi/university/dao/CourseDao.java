@@ -14,7 +14,10 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 @Repository
 public interface CourseDao extends JpaRepository<Course, Long> {
     @Query(Constants.FIND_COURSES_BY_TEACHER)
-    List<Course> findCoursesByTeacher(@Param("teacherId") Teacher teacher);
+    List<Course> findCoursesByTeacher(@Param("teacherId") Long teacherId);
 
     List<Course> findByTeacher(Teacher teacher);
+
+    @Query(Constants.FIND_COURSES_BY_GROUP)
+    List<Course> findByGroup(@Param("groupId") Long groupId);
 }

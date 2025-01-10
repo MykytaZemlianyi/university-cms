@@ -39,13 +39,13 @@ class CourseDaoTest {
     void findCourseByTeacher_shouldReturnCourses_whenInputCorrectTeacher() {
         Teacher teacher = new Teacher();
         teacher.setId(1L);
-        Course expectedCourse = new Course();
 
+        Course expectedCourse = new Course();
         expectedCourse.setId(1L);
         expectedCourse.setName("Computer Science");
         expectedCourse.setTeacher(teacher);
 
-        List<Course> courses = courseDao.findCoursesByTeacher(teacher);
+        List<Course> courses = courseDao.findCoursesByTeacher(1L);
         assertFalse(courses.isEmpty());
     }
 
