@@ -50,23 +50,43 @@ public abstract class User implements Verifiable {
     // Setters
 
     public void setId(Long id) {
-        this.id = id;
+        if (id != null && id >= 0) {
+            this.id = id;
+        } else {
+            throw new IllegalArgumentException("invalid ID");
+        }
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (verifyString(name)) {
+            this.name = name;
+        } else {
+            throw new IllegalArgumentException("Invalid name");
+        }
     }
 
     public void setSurname(String surname) {
-        this.surname = surname;
+        if (verifyString(surname)) {
+            this.surname = surname;
+        } else {
+            throw new IllegalArgumentException("Invalid surname");
+        }
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        if (isEmail(email)) {
+            this.email = email;
+        } else {
+            throw new IllegalArgumentException("Invalid email");
+        }
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        if (verifyString(password)) {
+            this.password = password;
+        } else {
+            throw new IllegalArgumentException("Invalid password");
+        }
     }
 
     @Override

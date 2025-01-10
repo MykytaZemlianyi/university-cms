@@ -3,6 +3,7 @@ package ua.foxminded.mykyta.zemlianyi.university.dto;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +20,7 @@ public class Course implements Verifiable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "course_name")
     private String name;
 
     @ManyToOne
@@ -45,15 +47,27 @@ public class Course implements Verifiable {
     }
 
     public void setId(Long id) {
-        this.id = id;
+        if (id != null && id >= 0) {
+            this.id = id;
+        } else {
+            throw new IllegalArgumentException("Invalid ID");
+        }
     }
 
     public void setName(String name) {
-        this.name = name;
+        if (verifyName(name)) {
+            this.name = name;
+        } else {
+            throw new IllegalArgumentException("Invalid name");
+        }
     }
 
     public void setTeacher(Teacher teacher) {
-        this.teacher = teacher;
+        if (teacher != null) {
+            this.teacher = teacher;
+        } else {
+            throw new IllegalArgumentException("Teacher is null");
+        }
     }
 
     public void setGroups(Set<Group> groups) {
@@ -62,10 +76,11 @@ public class Course implements Verifiable {
 
     @Override
     public boolean verify() {
-        boolean verifyName = this.name != null && !this.name.isEmpty() && !this.name.isBlank();
-        boolean verifyTeacher = this.teacher != null;
-        boolean verifyGroups = !this.groups.isEmpty();
-        return verifyName && verifyTeacher && verifyGroups;
+        return verifyName(this.name);
+    }
+
+    public boolean verifyName(String name) {
+        return name != null && !name.isEmpty() && !name.isBlank();
     }
 
 }
