@@ -5,9 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@EnableJpaRepositories(basePackages = "ua.foxminded.zemlianyi.mykyta.university.dao")
-@SpringBootApplication(scanBasePackages = "ua.foxminded.zemlianyi.mykyta.university")
-@EntityScan(basePackages = "ua.foxminded.zemlianyi.mykyta.university.dto")
+@SpringBootApplication
+@EnableJpaRepositories(basePackages = "ua.foxminded.mykyta.zemlianyi.university.dao")
+@EntityScan(basePackages = "ua.foxminded.mykyta.zemlianyi.university.dto")
 public class UniversityApplication {
 
     public static void main(String[] args) {
