@@ -68,10 +68,12 @@ public class Group implements Verifiable {
 
     public void addStudent(Student student) {
         this.students.add(student);
+        student.setGroup(this);
     }
 
     public void removeStudent(Student student) {
         this.students.remove(student);
+        student.setGroup(null);
     }
 
     public void setCourses(Set<Course> courses) {

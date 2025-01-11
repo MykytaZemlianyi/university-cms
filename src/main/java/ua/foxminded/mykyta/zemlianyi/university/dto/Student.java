@@ -13,4 +13,12 @@ public class Student extends User {
     @JoinColumn(name = "group_id", referencedColumnName = "group_id")
     private Group group;
 
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
 }

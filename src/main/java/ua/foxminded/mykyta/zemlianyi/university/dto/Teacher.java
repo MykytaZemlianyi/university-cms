@@ -25,10 +25,12 @@ public class Teacher extends User {
 
     public void addCourse(Course course) {
         this.courses.add(course);
+        course.setTeacher(this);
     }
 
     public void removeCourse(Course course) {
         this.courses.remove(course);
+        course.setTeacher(null);
     }
 
 }

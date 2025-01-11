@@ -51,10 +51,12 @@ public class Room implements Verifiable {
 
     public void addLecture(Lecture lecture) {
         this.lectures.add(lecture);
+        lecture.setRoom(this);
     }
 
     public void removeLecture(Lecture lecture) {
         this.lectures.remove(lecture);
+        lecture.setRoom(null);
     }
 
     @Override

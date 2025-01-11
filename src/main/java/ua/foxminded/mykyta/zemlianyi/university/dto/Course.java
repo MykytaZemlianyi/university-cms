@@ -70,15 +70,21 @@ public class Course implements Verifiable {
     }
 
     public void setTeacher(Teacher teacher) {
-        if (teacher != null) {
-            this.teacher = teacher;
-        } else {
-            throw new IllegalArgumentException("Teacher is null");
-        }
+        this.teacher = teacher;
     }
 
     public void setGroups(Set<Group> groups) {
         this.groups = groups;
+    }
+
+    public void addGroup(Group group) {
+        this.groups.add(group);
+        group.addCourse(this);
+    }
+
+    public void removeGroup(Group group) {
+        this.groups.remove(group);
+        group.removeCourse(this);
     }
 
     @Override
