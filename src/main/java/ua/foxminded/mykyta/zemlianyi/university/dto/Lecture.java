@@ -24,7 +24,8 @@ public class Lecture implements Verifiable {
     private LectureType lectureType;
 
     // TODO Not sure about this relation
-    @Column(name = "course_id")
+    @ManyToOne
+    @JoinColumn(name = "course_id", referencedColumnName = "course_id")
     private Course course;
 
     @Column(name = "lecture_time_start")
