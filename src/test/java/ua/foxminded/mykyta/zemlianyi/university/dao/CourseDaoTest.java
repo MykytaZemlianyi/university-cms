@@ -1,9 +1,10 @@
 package ua.foxminded.mykyta.zemlianyi.university.dao;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -31,22 +32,48 @@ class CourseDaoTest {
     @Autowired
     CourseDao courseDao;
 
+    Teacher teacher1;
+
     @Container
     @ServiceConnection
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0");
 
+    @BeforeEach
+    void setUp() {
+        teacher1 = new Teacher();
+        teacher1.setId(1L);
+        teacher1.setName("Marek");
+        teacher1.setSurname("Szepski");
+        teacher1.setEmail("mszepski@gmail.com");
+        teacher1.setPassword("szepski99");
+    }
+
     @Test
     void findCourseByTeacher_shouldReturnCourses_whenInputCorrectTeacher() {
-        Teacher teacher = new Teacher();
-        teacher.setId(1L);
-
         Course expectedCourse = new Course();
         expectedCourse.setId(1L);
         expectedCourse.setName("Computer Science");
-        expectedCourse.setTeacher(teacher);
+        expectedCourse.setTeacher(teacher1);
 
         List<Course> courses = courseDao.findCoursesByTeacher(1L);
-        assertFalse(courses.isEmpty());
+
+        Course actualCourse = courses.get(0);
+
+        assertEquals(expectedCourse, actualCourse);
+    }
+
+    @Test
+    void findByTeacher_shouldReturnCourses_whenInputCorrectTeacher() {
+        Course expectedCourse = new Course();
+        expectedCourse.setId(1L);
+        expectedCourse.setName("Computer Science");
+        expectedCourse.setTeacher(teacher1);
+
+        List<Course> courses = courseDao.findByTeacher(teacher1);
+
+        Course actualCourse = courses.get(0);
+
+        assertEquals(expectedCourse, actualCourse);
     }
 
 }
