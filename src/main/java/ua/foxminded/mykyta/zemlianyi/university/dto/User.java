@@ -1,5 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.dto;
 
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -101,6 +103,24 @@ public abstract class User implements Verifiable {
 
     public boolean isEmail(String email) {
         return email.matches(Constants.EMAIL_PATTERN_REGEX);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, surname);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        return Objects.equals(id, other.id) && Objects.equals(name, other.name)
+                && Objects.equals(surname, other.surname);
     }
 
 }

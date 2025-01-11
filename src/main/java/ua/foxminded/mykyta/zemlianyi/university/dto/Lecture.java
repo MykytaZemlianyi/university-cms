@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.dto;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -113,6 +114,24 @@ public class Lecture implements Verifiable {
 
     public boolean verifyTimeEnd() {
         return this.timeEnd != null;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, lectureType, timeEnd, timeStart);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Lecture other = (Lecture) obj;
+        return Objects.equals(id, other.id) && lectureType == other.lectureType
+                && Objects.equals(timeEnd, other.timeEnd) && Objects.equals(timeStart, other.timeStart);
     }
 
 }

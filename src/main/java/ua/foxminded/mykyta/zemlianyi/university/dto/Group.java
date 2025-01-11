@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.dto;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
@@ -88,6 +89,23 @@ public class Group implements Verifiable {
     @Override
     public boolean verify() {
         return this.name != null && !this.name.isEmpty() && !this.name.isBlank();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Group other = (Group) obj;
+        return Objects.equals(id, other.id) && Objects.equals(name, other.name);
     }
 
 }
