@@ -49,20 +49,6 @@ class CourseDaoTest {
     }
 
     @Test
-    void findCourseByTeacher_shouldReturnCourses_whenInputCorrectTeacher() {
-        Course expectedCourse = new Course();
-        expectedCourse.setId(1L);
-        expectedCourse.setName("Computer Science");
-        expectedCourse.setTeacher(teacher1);
-
-        List<Course> courses = courseDao.findCoursesByTeacher(1L);
-
-        Course actualCourse = courses.get(0);
-
-        assertEquals(expectedCourse, actualCourse);
-    }
-
-    @Test
     void findByTeacher_shouldReturnCourses_whenInputCorrectTeacher() {
         Course expectedCourse = new Course();
         expectedCourse.setId(1L);
@@ -74,6 +60,11 @@ class CourseDaoTest {
         Course actualCourse = courses.get(0);
 
         assertEquals(expectedCourse, actualCourse);
+    }
+
+    @Test
+    void findByGroups_shouldReturnCourses_whenInputAssociatedGroup() {
+        // TODO complete this test
     }
 
 }
