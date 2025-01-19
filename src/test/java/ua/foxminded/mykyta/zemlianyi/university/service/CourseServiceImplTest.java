@@ -12,6 +12,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.CourseDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 
 @SpringBootTest(classes = { CourseServiceImpl.class })
 class CourseServiceImplTest {
@@ -20,11 +23,6 @@ class CourseServiceImplTest {
 
     @Autowired
     CourseService courseService;
-
-    @BeforeEach
-    void setUp() throws Exception {
-
-    }
 
     @Test
     void addNew_shouldThrowIllegalArumentException_whenCourseIsNull() {
@@ -90,5 +88,63 @@ class CourseServiceImplTest {
         courseService.update(trackedCourse);
 
         verify(courseDao).save(trackedCourse);
+    }
+
+    @Test
+    void findForTeacher_shouldThrowIllegalArgumentException_whenTeacherIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.findForTeacher(null);
+        });
+    }
+
+    @Test
+    void findForTeacher_shouldThrowIllegalArgumentException_whenTeacherIdIsNull() {
+        Teacher teacherWithoutId = new Teacher();
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.findForTeacher(teacherWithoutId);
+        });
+    }
+
+    @Test
+    void findForTeacher_shouldReturnCoursesForTeacher_whenTeacherIsCorrect() {
+        Teacher teacher = new Teacher();
+        teacher.setId(1L);
+        courseService.findForTeacher(teacher);
+        verify(courseDao).findByTeacher(teacher);
+    }
+
+    @Test
+    void findForStudent_shouldThrowIllegalArgumentException_whenStudentIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.findForStduent(null);
+        });
+    }
+
+    @Test
+    void findForStudent_shouldThrowIllegalArgumentException_whenStudentIdIsNull() {
+        Student studentWithoutId = new Student();
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.findForStduent(studentWithoutId);
+        });
+    }
+
+    @Test
+    void findForStudent_shouldThrowIllegalArgumentException_whenStudentDoesNotHaveGroup() {
+        Student studentWithoutGroup = new Student();
+        studentWithoutGroup.setId(1L);
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.findForStduent(studentWithoutGroup);
+        });
+    }
+
+    @Test
+    void findForStudent_shouldReturnCourses_whenStudendIsCorrectAndHaveGroup() {
+        Group group = new Group();
+        Student student = new Student();
+        student.setId(1L);
+        student.setGroup(group);
+
+        courseService.findForStduent(student);
+        verify(courseDao).findByGroups(group);
     }
 }
