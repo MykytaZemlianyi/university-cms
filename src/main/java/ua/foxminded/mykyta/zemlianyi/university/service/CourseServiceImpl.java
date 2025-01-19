@@ -51,13 +51,19 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<Course> findForTeacher(Teacher teacher) {
-        // TODO Auto-generated method stub
-        return null;
+        if (teacher == null) {
+            throw new IllegalArgumentException(Constants.TEACHER_INVALID);
+        }
+        return courseDao.findByTeacher(teacher);
     }
 
     @Override
     public List<Course> findForStduent(Student student) {
-        // TODO Auto-generated method stub
-        return null;
+        if (student == null) {
+            throw new IllegalArgumentException(Constants.STUDENT_INVALID);
+        }else if(student.getGroup()==null) {            
+            throw new IllegalArgumentException(Constants.STUDENT_DOES_NOT_HAVE_GROUP);
+        }
+        return courseDao.findByGroups(student.getGroup());
     }
 }
