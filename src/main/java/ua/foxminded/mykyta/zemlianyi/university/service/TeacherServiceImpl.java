@@ -31,7 +31,7 @@ public class TeacherServiceImpl implements TeacherService {
             logger.info("Updating teacher - {}", teacher);
             return teacherDao.save(teacher);
         } else {
-            throw new IllegalArgumentException(Constants.FAIL_UPDATE_TEACHER_DOES_NOT_EXIST);
+            throw new IllegalArgumentException(Constants.TEACHER_UPDATE_FAIL_DOES_NOT_EXIST);
         }
     }
 
