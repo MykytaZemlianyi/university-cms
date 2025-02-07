@@ -20,8 +20,9 @@ public class Constants {
     public static final String STUDENT_UPDATE_FAIL_DOES_NOT_EXIST = "Error during student update - student was not saved in the database earlier";
     public static final String STUDENT_PASSWORD_CHANGE_ERROR = "Unable to change password - student doesn'admin exists in database";
 
-    public static final String ADMIN_INVALID = "Admin is invalid";
-    public static final String ADMIN_UPDATE_FAIL_DOES_NOT_EXIST = "Error during admin update - admin was not saved in the database earlier";
-    public static final String ADMIN_PASSWORD_CHANGE_ERROR = "Unable to change password - admin doesn'admin exists in database";
+    public static final String USER_NULL = "Object is null";
+    public static final String USER_INVALID = " is invalid";
+    public static final String USER_UPDATE_FAIL_DOES_NOT_EXIST = " update error - admin was not saved in the database earlier";
+    public static final String USER_PASSWORD_CHANGE_ERROR = " doesn'admin exists in database - unable to change password";
 
 }

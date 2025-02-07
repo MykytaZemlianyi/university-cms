@@ -19,17 +19,17 @@ public class UserService<T extends User> {
 
     public T addNew(T user) {
         verifyObject(user);
-        logger.info("Adding new admin - {}", user);
+        logger.info("Adding new {} - {}", user.getClass().getSimpleName(), user);
         return dao.save(user);
     }
 
     public T update(T user) {
         verifyObject(user);
         if (dao.existsById(user.getId())) {
-            logger.info("Updating admin - {}", user);
+            logger.info("Updating {} - {}", user.getClass().getSimpleName(), user);
             return dao.save(user);
         } else {
-            throw new IllegalArgumentException(Constants.ADMIN_UPDATE_FAIL_DOES_NOT_EXIST);
+            throw new IllegalArgumentException(Constants.USER_UPDATE_FAIL_DOES_NOT_EXIST);
         }
     }
 
@@ -41,16 +41,18 @@ public class UserService<T extends User> {
         if (managedAdminOptional.isPresent()) {
             T managedAdmin = managedAdminOptional.get();
             managedAdmin.setPassword(user.getPassword());
-            logger.info("Changed password for admin - {}", user);
+            logger.info("Changed password for {} - {}", user.getClass().getSimpleName(), user);
             return dao.save(managedAdmin);
         } else {
-            throw new IllegalArgumentException(Constants.ADMIN_PASSWORD_CHANGE_ERROR);
+            throw new IllegalArgumentException(Constants.USER_PASSWORD_CHANGE_ERROR);
         }
     }
 
     private void verifyObject(T user) {
-        if (user == null || !user.verify()) {
-            throw new IllegalArgumentException(Constants.ADMIN_INVALID);
+        if (user == null) {
+            throw new IllegalArgumentException(Constants.USER_NULL);
+        } else if (!user.verify()) {
+            throw new IllegalArgumentException(user.getClass().getSimpleName() + Constants.USER_INVALID);
         }
     }
 }
