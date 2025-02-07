@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.User;
 
-public class UserService<T extends User> {
+public abstract class UserService<T extends User> {
     private static Logger logger = LogManager.getLogger(UserService.class.getName());
     CrudRepository<T, Long> dao;
 
