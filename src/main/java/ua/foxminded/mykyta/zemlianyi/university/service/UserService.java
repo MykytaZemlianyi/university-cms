@@ -13,7 +13,7 @@ public abstract class UserService<T extends User> {
     private static Logger logger = LogManager.getLogger(UserService.class.getName());
     CrudRepository<T, Long> dao;
 
-    public UserService(CrudRepository<T, Long> dao) {
+    protected UserService(CrudRepository<T, Long> dao) {
         this.dao = dao;
     }
 
