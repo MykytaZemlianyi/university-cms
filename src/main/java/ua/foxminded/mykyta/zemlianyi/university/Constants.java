@@ -13,15 +13,15 @@ public class Constants {
     public static final String TEACHER_INVALID = "Teacher is invalid";
     public static final String TEACHER_UPDATE_FAIL_DOES_NOT_EXIST = "Error during teacher update - teacher was not saved in the database earlier";
     public static final String TEACHER_FIND_BY_ID_ERROR = "Unable to find teacher by ID";
-    public static final String TEACHER_PASSWORD_CHANGE_ERROR = "Unable to change password - teacher doesn't exists in database";
+    public static final String TEACHER_PASSWORD_CHANGE_ERROR = "Unable to change password - teacher doesn'admin exists in database";
 
     public static final String STUDENT_INVALID = "Student is invalid";
-    public static final String STUDENT_DOES_NOT_HAVE_GROUP = "Student does't have group";
+    public static final String STUDENT_DOES_NOT_HAVE_GROUP = "Student does'admin have group";
     public static final String STUDENT_UPDATE_FAIL_DOES_NOT_EXIST = "Error during student update - student was not saved in the database earlier";
-    public static final String STUDENT_PASSWORD_CHANGE_ERROR = "Unable to change password - student doesn't exists in database";
+    public static final String STUDENT_PASSWORD_CHANGE_ERROR = "Unable to change password - student doesn'admin exists in database";
 
     public static final String ADMIN_INVALID = "Admin is invalid";
     public static final String ADMIN_UPDATE_FAIL_DOES_NOT_EXIST = "Error during admin update - admin was not saved in the database earlier";
-    public static final String ADMIN_PASSWORD_CHANGE_ERROR = "Unable to change password - admin doesn't exists in database";
+    public static final String ADMIN_PASSWORD_CHANGE_ERROR = "Unable to change password - admin doesn'admin exists in database";
 
 }

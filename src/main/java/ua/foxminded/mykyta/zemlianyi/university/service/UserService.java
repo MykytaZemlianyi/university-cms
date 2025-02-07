@@ -1,0 +1,56 @@
+package ua.foxminded.mykyta.zemlianyi.university.service;
+
+import java.util.Optional;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.data.repository.CrudRepository;
+
+import ua.foxminded.mykyta.zemlianyi.university.Constants;
+import ua.foxminded.mykyta.zemlianyi.university.dto.User;
+
+public class UserService<T extends User> {
+    private static Logger logger = LogManager.getLogger(UserService.class.getName());
+    CrudRepository<T, Long> dao;
+
+    public UserService(CrudRepository<T, Long> dao) {
+        this.dao = dao;
+    }
+
+    public T addNew(T user) {
+        verifyObject(user);
+        logger.info("Adding new admin - {}", user);
+        return dao.save(user);
+    }
+
+    public T update(T user) {
+        verifyObject(user);
+        if (dao.existsById(user.getId())) {
+            logger.info("Updating admin - {}", user);
+            return dao.save(user);
+        } else {
+            throw new IllegalArgumentException(Constants.ADMIN_UPDATE_FAIL_DOES_NOT_EXIST);
+        }
+    }
+
+    public T changePassword(T user) {
+        verifyObject(user);
+
+        Optional<T> managedAdminOptional = dao.findById(user.getId());
+
+        if (managedAdminOptional.isPresent()) {
+            T managedAdmin = managedAdminOptional.get();
+            managedAdmin.setPassword(user.getPassword());
+            logger.info("Changed password for admin - {}", user);
+            return dao.save(managedAdmin);
+        } else {
+            throw new IllegalArgumentException(Constants.ADMIN_PASSWORD_CHANGE_ERROR);
+        }
+    }
+
+    private void verifyObject(T user) {
+        if (user == null || !user.verify()) {
+            throw new IllegalArgumentException(Constants.ADMIN_INVALID);
+        }
+    }
+}

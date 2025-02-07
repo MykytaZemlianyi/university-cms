@@ -40,7 +40,7 @@ public class CourseServiceImpl implements CourseService {
             logger.info("Updating course - {}", course);
             return courseDao.save(course);
         } else {
-            throw new IllegalArgumentException(Constants.FAIL_UPDATE_COURSE_DOES_NOT_EXIST);
+            throw new IllegalArgumentException(Constants.COURSE_UPDATE_FAIL_DOES_NOT_EXIST);
         }
     }
 
