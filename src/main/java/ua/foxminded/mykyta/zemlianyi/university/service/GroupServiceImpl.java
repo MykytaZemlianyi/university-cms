@@ -1,13 +1,12 @@
-package ua.foxminded.mykyta.zemlianyi.university.dao;
+package ua.foxminded.mykyta.zemlianyi.university.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
+import ua.foxminded.mykyta.zemlianyi.university.dao.GroupDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
-import ua.foxminded.mykyta.zemlianyi.university.service.CourseServiceImpl;
-import ua.foxminded.mykyta.zemlianyi.university.service.GroupService;
 
 public class GroupServiceImpl implements GroupService {
     private static Logger logger = LogManager.getLogger(GroupServiceImpl.class.getName());
