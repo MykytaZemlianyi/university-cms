@@ -28,4 +28,8 @@ public class Constants {
     public static final String USER_UPDATE_FAIL_DOES_NOT_EXIST = " update error - admin was not saved in the database earlier";
     public static final String USER_PASSWORD_CHANGE_ERROR = " doesn'admin exists in database - unable to change password";
 
+    public static final String ROOM_LECTURE_OVERLAP_ERROR = "Lecture time is overlapping with existing lecture records";
+
+    public static final String LECTURE_INVALID = "Lecture or its time attributes cannot be null";
+
 }

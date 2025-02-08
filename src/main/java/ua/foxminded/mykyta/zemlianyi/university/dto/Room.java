@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import ua.foxminded.mykyta.zemlianyi.university.Constants;
 
 @Entity
 @Table(name = "rooms", schema = "university")
@@ -50,13 +51,34 @@ public class Room implements Verifiable {
     }
 
     public void addLecture(Lecture lecture) {
+        if(isAvailable(lecture)) {            
         this.lectures.add(lecture);
         lecture.setRoom(this);
+        }else {
+            throw new IllegalArgumentException(Constants.ROOM_LECTURE_OVERLAP_ERROR);
+        }
     }
 
     public void removeLecture(Lecture lecture) {
         this.lectures.remove(lecture);
         lecture.setRoom(null);
+    }
+
+    public boolean isAvailable(Lecture lecture) {
+        if (lecture == null || lecture.getTimeStart() == null || lecture.getTimeEnd() == null) {
+            throw new IllegalArgumentException(Constants.LECTURE_INVALID);
+        }
+
+        for (Lecture existingLecture : lectures) {
+            if (isOverlapping(existingLecture, lecture)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isOverlapping(Lecture l1, Lecture l2) {
+        return !(l1.getTimeEnd().isBefore(l2.getTimeStart()) || l1.getTimeStart().isAfter(l2.getTimeEnd()));
     }
 
     @Override
