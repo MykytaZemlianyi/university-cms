@@ -32,4 +32,8 @@ public class Constants {
 
     public static final String LECTURE_INVALID = "Lecture or its time attributes cannot be null";
 
+    public static final String ROOM_OBJECT_INVALID_MSG = "Room is invalid";
+
+    public static final String ROOM_UPDATE_FAIL_DOES_NOT_EXIST = "Error during room update - room was not saved in the database earlier";
+
 }
