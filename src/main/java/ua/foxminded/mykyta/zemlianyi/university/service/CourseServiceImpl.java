@@ -52,7 +52,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> findForTeacher(Teacher teacher) {
         if (teacher == null || teacher.getId() == null) {
-            throw new IllegalArgumentException(Constants.TEACHER_INVALID);
+            throw new IllegalArgumentException("Teacher" + Constants.USER_INVALID);
         }
         logger.info("Looking for courses for teacher {}", teacher);
         return courseDao.findByTeacher(teacher);
@@ -61,7 +61,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> findForStduent(Student student) {
         if (student == null || student.getId() == null) {
-            throw new IllegalArgumentException(Constants.STUDENT_INVALID);
+            throw new IllegalArgumentException("Student" + Constants.USER_INVALID);
         } else if (student.getGroup() == null) {
             throw new IllegalArgumentException(Constants.STUDENT_DOES_NOT_HAVE_GROUP);
         }

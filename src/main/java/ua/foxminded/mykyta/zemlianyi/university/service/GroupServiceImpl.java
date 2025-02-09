@@ -42,7 +42,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Group findForStudent(Student student) {
         if (student == null || student.getId() == null) {
-            throw new IllegalArgumentException(Constants.STUDENT_INVALID);
+            throw new IllegalArgumentException("Student" + Constants.USER_INVALID);
         }
         logger.info("Looking for Group for student - {}", student);
         return groupDao.findByStudents(student);

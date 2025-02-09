@@ -65,7 +65,7 @@ public class Room implements Verifiable {
     }
 
     public boolean isAvailable(Lecture lecture) {
-        if (lecture == null || lecture.getTimeStart() == null || lecture.getTimeEnd() == null) {
+        if (lecture == null || !lecture.verify()) {
             throw new IllegalArgumentException(Constants.LECTURE_INVALID);
         }
 
