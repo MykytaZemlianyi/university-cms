@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -87,4 +88,43 @@ class RoomServiceImplTest {
 
         verify(roomDao).save(trackedRoom);
     }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_roomIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            roomService.delete(null);
+        });
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_roomIsInvalid() {
+        Room invalidRoom = new Room();
+        assertThrows(IllegalArgumentException.class, () -> {
+            roomService.delete(invalidRoom);
+        });
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_roomIsNotSavedInDb() {
+        Room room = new Room();
+        room.setNumber(1);
+
+        doReturn(false).when(roomDao).existsById(room.getId());
+        assertThrows(IllegalArgumentException.class, () -> {
+            roomService.delete(room);
+        });
+    }
+
+    @Test
+    void delete_shouldDeleteRoom_when_roomIsValidAndExistsInDb() {
+        Room room = new Room();
+        room.setNumber(1);
+
+        doReturn(true).when(roomDao).existsById(room.getId());
+
+        roomService.delete(room);
+
+        verify(roomDao).delete(room);
+    }
+
 }

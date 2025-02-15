@@ -37,4 +37,18 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
+    @Override
+    public void delete(Room room) {
+        if (room == null || !room.verify()) {
+            throw new IllegalArgumentException(Constants.ROOM_OBJECT_INVALID_MSG);
+        }
+        if (roomDao.existsById(room.getId())) {
+            logger.info("Updating room - {}", room);
+            roomDao.delete(room);
+        } else {
+            throw new IllegalArgumentException(Constants.ROOM_DELETE_FAIL_DOES_NOT_EXIST);
+        }
+        
+    }
+
 }

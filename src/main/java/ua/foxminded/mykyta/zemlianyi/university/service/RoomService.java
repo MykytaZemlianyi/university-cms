@@ -6,4 +6,6 @@ public interface RoomService {
     Room addNew(Room room);
 
     Room update(Room room);
+
+    void delete(Room room);
 }

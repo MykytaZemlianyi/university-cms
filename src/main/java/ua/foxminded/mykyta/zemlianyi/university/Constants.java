@@ -30,6 +30,7 @@ public class Constants {
     public static final String ROOM_OBJECT_INVALID_MSG = "Room is invalid";
     public static final String ROOM_UPDATE_FAIL_DOES_NOT_EXIST = "Error during room update - room was not saved in the database earlier";
     public static final String ROOM_LECTURE_OVERLAP_ERROR = "Lecture time is overlapping with existing lecture records";
+    public static final String ROOM_DELETE_FAIL_DOES_NOT_EXIST = "Error during room delete - room was not saved in the database earlier";
 
     public static final String LECTURE_INVALID = "Lecture or its time attributes cannot be null";
     public static final String LECTURE_OBJECT_INVALID_MSG = "Lecture is invalid";
