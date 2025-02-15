@@ -7,7 +7,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "students", schema = "university")
-public class Student extends User implements Dto {
+public class Student extends User{
 
     @ManyToOne
     @JoinColumn(name = "group_id", referencedColumnName = "group_id")

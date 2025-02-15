@@ -109,6 +109,10 @@ class CourseServiceImplTest {
     void findForTeacher_shouldReturnCoursesForTeacher_whenTeacherIsCorrect() {
         Teacher teacher = new Teacher();
         teacher.setId(1L);
+        teacher.setName("Marek");
+        teacher.setSurname("Szepski");
+        teacher.setEmail("mszepski@gmail.com");
+        teacher.setPassword("123456789");
         courseService.findForTeacher(teacher);
         verify(courseDao).findByTeacher(teacher);
     }
