@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -136,4 +137,41 @@ class GroupServiceImplTest {
         assertEquals(expectedGroup, actualGroup);
     }
 
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_groupIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            groupService.delete(null);
+        });
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_groupIsInvalid() {
+        Group invalidGroup = new Group();
+        assertThrows(IllegalArgumentException.class, () -> {
+            groupService.delete(invalidGroup);
+        });
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_groupIsNotSavedInDb() {
+        Group group = new Group();
+        group.setName("Valid Group");
+
+        doReturn(false).when(groupDao).existsById(group.getId());
+        assertThrows(IllegalArgumentException.class, () -> {
+            groupService.delete(group);
+        });
+    }
+
+    @Test
+    void delete_shouldDeleteGroup_when_groupIsValidAndExistsInDb() {
+        Group group = new Group();
+        group.setName("Valid Group");
+
+        doReturn(true).when(groupDao).existsById(group.getId());
+
+        groupService.delete(group);
+
+        verify(groupDao).delete(group);
+    }
 }

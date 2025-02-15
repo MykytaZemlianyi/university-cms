@@ -40,6 +40,19 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public void delete(Group group) {
+        if (group == null || !group.verify()) {
+            throw new IllegalArgumentException(Constants.GROUP_OBJECT_INVALID_MSG);
+        }
+        if (groupDao.existsById(group.getId())) {
+            logger.info("Updating group - {}", group);
+            groupDao.delete(group);
+        } else {
+            throw new IllegalArgumentException(Constants.GROUP_DELETE_FAIL_DOES_NOT_EXIST);
+        }
+    }
+
+    @Override
     public Group findForStudent(Student student) {
         if (student == null || student.getId() == null) {
             throw new IllegalArgumentException("Student" + Constants.USER_INVALID);

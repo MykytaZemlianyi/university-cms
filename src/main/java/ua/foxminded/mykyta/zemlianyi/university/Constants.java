@@ -21,9 +21,11 @@ public class Constants {
 
     public static final String COURSE_OBJECT_INVALID_MSG = "Course is invalid";
     public static final String COURSE_UPDATE_FAIL_DOES_NOT_EXIST = "Error during course update - course was not saved in the database earlier";
+    public static final String COURSE_DELETE_FAIL_DOES_NOT_EXIST = "Error during course delete - course was not saved in the database earlier";
 
     public static final String GROUP_OBJECT_INVALID_MSG = "Group is invalid";
     public static final String GROUP_UPDATE_FAIL_DOES_NOT_EXIST = "Error during group update - group was not saved in the database earlier";
+    public static final String GROUP_DELETE_FAIL_DOES_NOT_EXIST = "Error during group delete - group was not saved in the database earlier";
 
     public static final String ROOM_OBJECT_INVALID_MSG = "Room is invalid";
     public static final String ROOM_UPDATE_FAIL_DOES_NOT_EXIST = "Error during room update - room was not saved in the database earlier";

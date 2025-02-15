@@ -9,4 +9,6 @@ public interface GroupService {
     Group update(Group group);
 
     Group findForStudent(Student student);
+    
+    void delete(Group group);
 }
