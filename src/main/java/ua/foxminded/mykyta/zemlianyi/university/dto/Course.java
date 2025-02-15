@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "courses", schema = "university")
-public class Course implements Verifiable {
+public class Course implements Verifiable, Dto{
     @Id
     @Column(name = "course_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

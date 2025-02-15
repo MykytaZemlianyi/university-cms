@@ -24,37 +24,27 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course addNew(Course course) {
-        if (course == null || !course.verify()) {
-            throw new IllegalArgumentException(Constants.COURSE_OBJECT_INVALID_MSG);
-        }
+        ObjectChecker.check(course);
         logger.info("Adding new course - {}", course.getName());
         return courseDao.save(course);
     }
 
     @Override
     public Course update(Course course) {
-        if (course == null || !course.verify()) {
-            throw new IllegalArgumentException(Constants.COURSE_OBJECT_INVALID_MSG);
-        }
-        if (courseDao.existsById(course.getId())) {
-            logger.info("Updating course - {}", course);
-            return courseDao.save(course);
-        } else {
-            throw new IllegalArgumentException(Constants.COURSE_UPDATE_FAIL_DOES_NOT_EXIST);
-        }
+        ObjectChecker.check(course);
+
+        ObjectChecker.checkIfExistsInDb(course, courseDao);
+        logger.info("Updating course - {}", course);
+        return courseDao.save(course);
     }
 
     @Override
     public void delete(Course course) {
-        if (course == null || !course.verify()) {
-            throw new IllegalArgumentException(Constants.COURSE_OBJECT_INVALID_MSG);
-        }
-        if (courseDao.existsById(course.getId())) {
-            logger.info("Deleting course - {}", course);
-            courseDao.delete(course);
-        } else {
-            throw new IllegalArgumentException(Constants.COURSE_DELETE_FAIL_DOES_NOT_EXIST);
-        }
+        ObjectChecker.check(course);
+
+        ObjectChecker.checkIfExistsInDb(course, courseDao);
+        logger.info("Deleting course - {}", course);
+        courseDao.delete(course);
     }
 
     @Override
@@ -64,9 +54,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<Course> findForTeacher(Teacher teacher) {
-        if (teacher == null || teacher.getId() == null) {
-            throw new IllegalArgumentException("Teacher" + Constants.USER_INVALID);
-        }
+        ObjectChecker.check(teacher);
+
         logger.info("Looking for courses for teacher {}", teacher);
         return courseDao.findByTeacher(teacher);
     }

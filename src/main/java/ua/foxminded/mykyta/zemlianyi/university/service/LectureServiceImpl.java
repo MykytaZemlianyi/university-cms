@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dao.LectureDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
@@ -21,60 +20,42 @@ public class LectureServiceImpl implements LectureService {
 
     @Override
     public Lecture addNew(Lecture lecture) {
-        if (lecture == null || !lecture.verify()) {
-            throw new IllegalArgumentException(Constants.LECTURE_INVALID);
-        }
+        ObjectChecker.check(lecture);
         logger.info("Adding new lecture - {}", lecture);
         return lectureDao.save(lecture);
     }
 
     @Override
     public Lecture update(Lecture lecture) {
-        if (lecture == null || !lecture.verify()) {
-            throw new IllegalArgumentException(Constants.LECTURE_OBJECT_INVALID_MSG);
-        }
-        if (lectureDao.existsById(lecture.getId())) {
-            logger.info("Updating course - {}", lecture);
-            return lectureDao.save(lecture);
-        } else {
-            throw new IllegalArgumentException(Constants.LECTURE_UPDATE_FAIL_DOES_NOT_EXIST);
-        }
+        ObjectChecker.check(lecture);
+        ObjectChecker.checkIfExistsInDb(lecture, lectureDao);
+        logger.info("Updating course - {}", lecture);
+        return lectureDao.save(lecture);
     }
 
     @Override
     public void delete(Lecture lecture) {
-        if (lecture == null || !lecture.verify()) {
-            throw new IllegalArgumentException(Constants.LECTURE_OBJECT_INVALID_MSG);
-        }
-        if (lectureDao.existsById(lecture.getId())) {
-            logger.info("Updating course - {}", lecture);
-            lectureDao.delete(lecture);
-        } else {
-            throw new IllegalArgumentException(Constants.LECTURE_DELETE_FAIL_DOES_NOT_EXIST);
-        }
+        ObjectChecker.check(lecture);
+        ObjectChecker.checkIfExistsInDb(lecture, lectureDao);
+
+        logger.info("Updating course - {}", lecture);
+        lectureDao.delete(lecture);
 
     }
 
     @Override
     public List<Lecture> findForCourse(Course course) {
-        if (course == null || !course.verify()) {
-            throw new IllegalArgumentException(Constants.COURSE_OBJECT_INVALID_MSG);
-        }
+        ObjectChecker.check(course);
         logger.info("Looking for lectures for course - {}", course);
         return lectureDao.findByCourse(course);
     }
 
     @Override
     public List<Lecture> findForCourseInTimeInterval(Course course, LocalDateTime timeStart, LocalDateTime timeEnd) {
-        if (course == null || !course.verify()) {
-            throw new IllegalArgumentException(Constants.COURSE_OBJECT_INVALID_MSG);
-        }
-        if (timeStart == null || timeEnd == null) {
-            throw new IllegalArgumentException(Constants.TIME_INVALID);
-        }
-        if (timeEnd.isBefore(timeStart) || timeStart.isAfter(timeEnd)) {
-            throw new IllegalArgumentException(Constants.TIME_INVALID);
-        }
+        ObjectChecker.check(course);
+
+        ObjectChecker.checkInterval(timeStart, timeEnd);
+
         logger.info("Looking for lectures for course - {} between {} and {}", course, timeStart, timeEnd);
         return lectureDao.findByCourseAndTimeStartBetween(course, timeStart, timeEnd);
 

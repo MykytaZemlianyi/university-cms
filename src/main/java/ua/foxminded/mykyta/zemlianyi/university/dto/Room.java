@@ -16,7 +16,7 @@ import ua.foxminded.mykyta.zemlianyi.university.Constants;
 
 @Entity
 @Table(name = "rooms", schema = "university")
-public class Room implements Verifiable {
+public class Room implements Verifiable,Dto {
     @Id
     @Column(name = "room_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

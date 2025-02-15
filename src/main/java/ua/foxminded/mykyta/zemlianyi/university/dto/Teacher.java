@@ -10,7 +10,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "teachers", schema = "university")
-public class Teacher extends User {
+public class Teacher extends User implements Dto{
 
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
     private Set<Course> courses = new HashSet<>();

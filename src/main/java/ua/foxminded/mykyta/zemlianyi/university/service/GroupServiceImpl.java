@@ -19,37 +19,28 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group addNew(Group group) {
-        if (group == null || !group.verify()) {
-            throw new IllegalArgumentException(Constants.GROUP_OBJECT_INVALID_MSG);
-        }
+        ObjectChecker.check(group);
+
         logger.info("Adding new group - {}", group);
         return groupDao.save(group);
     }
 
     @Override
     public Group update(Group group) {
-        if (group == null || !group.verify()) {
-            throw new IllegalArgumentException(Constants.GROUP_OBJECT_INVALID_MSG);
-        }
-        if (groupDao.existsById(group.getId())) {
-            logger.info("Updating group - {}", group);
-            return groupDao.save(group);
-        } else {
-            throw new IllegalArgumentException(Constants.GROUP_UPDATE_FAIL_DOES_NOT_EXIST);
-        }
+        ObjectChecker.check(group);
+        ObjectChecker.checkIfExistsInDb(group, groupDao);
+
+        logger.info("Updating group - {}", group);
+        return groupDao.save(group);
     }
 
     @Override
     public void delete(Group group) {
-        if (group == null || !group.verify()) {
-            throw new IllegalArgumentException(Constants.GROUP_OBJECT_INVALID_MSG);
-        }
-        if (groupDao.existsById(group.getId())) {
-            logger.info("Updating group - {}", group);
-            groupDao.delete(group);
-        } else {
-            throw new IllegalArgumentException(Constants.GROUP_DELETE_FAIL_DOES_NOT_EXIST);
-        }
+        ObjectChecker.check(group);
+        ObjectChecker.checkIfExistsInDb(group, groupDao);
+
+        logger.info("Updating group - {}", group);
+        groupDao.delete(group);
     }
 
     @Override

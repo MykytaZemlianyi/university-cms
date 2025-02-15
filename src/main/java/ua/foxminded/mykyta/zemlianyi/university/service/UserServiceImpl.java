@@ -18,33 +18,28 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
     }
 
     public T addNew(T user) {
-        verifyObject(user);
+        ObjectChecker.check(user);
         logger.info("Adding new {} - {}", user.getClass().getSimpleName(), user);
         return dao.save(user);
     }
 
     public T update(T user) {
-        verifyObject(user);
-        if (dao.existsById(user.getId())) {
-            logger.info("Updating {} - {}", user.getClass().getSimpleName(), user);
-            return dao.save(user);
-        } else {
-            throw new IllegalArgumentException(Constants.USER_UPDATE_FAIL_DOES_NOT_EXIST);
-        }
+        ObjectChecker.check(user);
+        ObjectChecker.checkIfExistsInDb(user, dao);
+        logger.info("Updating {} - {}", user.getClass().getSimpleName(), user);
+        return dao.save(user);
     }
 
     public void delete(T user) {
-        verifyObject(user);
-        if (dao.existsById(user.getId())) {
-            logger.info("Deleting {} - {}", user.getClass().getSimpleName(), user);
-            dao.delete(user);
-        } else {
-            throw new IllegalArgumentException(Constants.USER_DELETE_ERROR);
-        }
+        ObjectChecker.check(user);
+        ObjectChecker.checkIfExistsInDb(user, dao);
+
+        logger.info("Deleting {} - {}", user.getClass().getSimpleName(), user);
+        dao.delete(user);
     }
 
     public T changePassword(T user) {
-        verifyObject(user);
+        ObjectChecker.check(user);
 
         Optional<T> managedAdminOptional = dao.findById(user.getId());
 
@@ -55,14 +50,6 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
             return dao.save(managedAdmin);
         } else {
             throw new IllegalArgumentException(Constants.USER_PASSWORD_CHANGE_ERROR);
-        }
-    }
-
-    private void verifyObject(T user) {
-        if (user == null) {
-            throw new IllegalArgumentException(Constants.USER_NULL);
-        } else if (!user.verify()) {
-            throw new IllegalArgumentException(user.getClass().getSimpleName() + Constants.USER_INVALID);
         }
     }
 

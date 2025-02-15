@@ -5,6 +5,6 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "admins", schema = "university")
-public class Admin extends User {
+public class Admin extends User implements Dto {
 
 }

@@ -10,7 +10,7 @@ import jakarta.persistence.MappedSuperclass;
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
 
 @MappedSuperclass
-public abstract class User implements Verifiable {
+public abstract class User implements Dto, Verifiable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
