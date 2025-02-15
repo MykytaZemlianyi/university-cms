@@ -34,5 +34,6 @@ public class Constants {
     public static final String LECTURE_INVALID = "Lecture or its time attributes cannot be null";
     public static final String LECTURE_OBJECT_INVALID_MSG = "Lecture is invalid";
     public static final String LECTURE_UPDATE_FAIL_DOES_NOT_EXIST = "Error during lecture update - lecture was not saved in the database earlier";
+    public static final String LECTURE_DELETE_FAIL_DOES_NOT_EXIST = "Error during lecture delete - lecture was not saved in the database earlier";
 
 }

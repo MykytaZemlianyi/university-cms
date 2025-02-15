@@ -14,4 +14,6 @@ public interface LectureService {
     List<Lecture> findForCourse(Course course);
 
     List<Lecture> findForCourseInTimeInterval(Course course, LocalDateTime timeStart, LocalDateTime timeEnd);
+    
+    void delete(Lecture lecture);
 }

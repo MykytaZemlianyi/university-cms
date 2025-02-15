@@ -42,6 +42,20 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
+    public void delete(Lecture lecture) {
+        if (lecture == null || !lecture.verify()) {
+            throw new IllegalArgumentException(Constants.LECTURE_OBJECT_INVALID_MSG);
+        }
+        if (lectureDao.existsById(lecture.getId())) {
+            logger.info("Updating course - {}", lecture);
+            lectureDao.delete(lecture);
+        } else {
+            throw new IllegalArgumentException(Constants.LECTURE_DELETE_FAIL_DOES_NOT_EXIST);
+        }
+
+    }
+
+    @Override
     public List<Lecture> findForCourse(Course course) {
         if (course == null || !course.verify()) {
             throw new IllegalArgumentException(Constants.COURSE_OBJECT_INVALID_MSG);
