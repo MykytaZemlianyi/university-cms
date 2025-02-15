@@ -69,6 +69,9 @@ public class LectureServiceImpl implements LectureService {
         if (course == null || !course.verify()) {
             throw new IllegalArgumentException(Constants.COURSE_OBJECT_INVALID_MSG);
         }
+        if (timeStart == null || timeEnd == null) {
+            throw new IllegalArgumentException(Constants.TIME_INVALID);
+        }
         if (timeEnd.isBefore(timeStart) || timeStart.isAfter(timeEnd)) {
             throw new IllegalArgumentException(Constants.TIME_INVALID);
         }

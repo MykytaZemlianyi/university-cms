@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.testcontainers.shaded.com.google.common.base.Optional;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.LectureDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
@@ -145,5 +144,64 @@ class LectureServiceImplTest {
     void findForCourse_shouldReturnLectures_whenCourseIsValid() {
         lectureService.findForCourse(course);
         verify(lectureDao).findByCourse(course);
+    }
+
+    @Test
+    void findForCourseInTimeInterval_shouldThrowIllegalArgumentException_whenCourseNull() {
+        LocalDateTime timeStart = LocalDateTime.of(2025, 1, 16, 0, 0);
+        LocalDateTime timeEnd = LocalDateTime.of(2025, 1, 16, 23, 59);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            lectureService.findForCourseInTimeInterval(null, timeStart, timeEnd);
+        });
+    }
+
+    @Test
+    void findForCourseInTimeInterval_shouldThrowIllegalArgumentException_whenCourseIsInvalid() {
+        Course invalidCourse = new Course();
+        LocalDateTime timeStart = LocalDateTime.of(2025, 1, 16, 0, 0);
+        LocalDateTime timeEnd = LocalDateTime.of(2025, 1, 16, 23, 59);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            lectureService.findForCourseInTimeInterval(invalidCourse, timeStart, timeEnd);
+        });
+    }
+
+    @Test
+    void findForCourseInTimeInterval_shouldThrowIllegalArgumentException_whenTimeStartAfterTimeEnd() {
+        LocalDateTime timeStart = LocalDateTime.of(2025, 1, 16, 23, 59);
+        LocalDateTime timeEnd = LocalDateTime.of(2025, 1, 16, 0, 0);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            lectureService.findForCourseInTimeInterval(course, timeStart, timeEnd);
+        });
+    }
+
+    @Test
+    void findForCourseInTimeInterval_shouldThrowIllegalArgumentException_whenTimeStartNull() {
+        LocalDateTime timeEnd = LocalDateTime.of(2025, 1, 16, 23, 59);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            lectureService.findForCourseInTimeInterval(course, null, timeEnd);
+        });
+    }
+
+    @Test
+    void findForCourseInTimeInterval_shouldThrowIllegalArgumentException_whenTimeEndNull() {
+        LocalDateTime timeStart = LocalDateTime.of(2025, 1, 16, 0, 0);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            lectureService.findForCourseInTimeInterval(course, timeStart, null);
+        });
+    }
+
+    @Test
+    void findForCourseInTimeInterval_shouldReturnLectures_whenCourseIsValidAndTimeIsValid() {
+        LocalDateTime timeStart = LocalDateTime.of(2025, 1, 16, 0, 0);
+        LocalDateTime timeEnd = LocalDateTime.of(2025, 1, 16, 23, 59);
+
+        lectureService.findForCourseInTimeInterval(course, timeStart, timeEnd);
+
+        verify(lectureDao).findByCourseAndTimeStartBetween(course, timeStart, timeEnd);
     }
 }
