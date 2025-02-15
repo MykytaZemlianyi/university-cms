@@ -124,4 +124,36 @@ class TeacherServiceImplTest {
         verify(teacherDao).save(teacher);
     }
 
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_teacherIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            teacherService.delete(null);
+        });
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_teacherIsInvalid() {
+        Teacher invalidTeacher = new Teacher();
+        assertThrows(IllegalArgumentException.class, () -> {
+            teacherService.delete(invalidTeacher);
+        });
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_teacherIsNotSavedInDb() {
+        doReturn(false).when(teacherDao).existsById(teacher.getId());
+        assertThrows(IllegalArgumentException.class, () -> {
+            teacherService.delete(teacher);
+        });
+    }
+
+    @Test
+    void delete_shouldDeleteTeacher_when_teacherIsValidAndExistsInDb() {
+        doReturn(true).when(teacherDao).existsById(teacher.getId());
+
+        teacherService.delete(teacher);
+
+        verify(teacherDao).delete(teacher);
+    }
+
 }

@@ -124,4 +124,36 @@ class StudentServiceImplTest {
         verify(studentDao).save(student);
     }
 
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_studentIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            studentService.delete(null);
+        });
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_studentIsInvalid() {
+        Student invalidStudent = new Student();
+        assertThrows(IllegalArgumentException.class, () -> {
+            studentService.delete(invalidStudent);
+        });
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_studentIsNotSavedInDb() {
+        doReturn(false).when(studentDao).existsById(student.getId());
+        assertThrows(IllegalArgumentException.class, () -> {
+            studentService.delete(student);
+        });
+    }
+
+    @Test
+    void delete_shouldDeleteStudent_when_studentIsValidAndExistsInDb() {
+        doReturn(true).when(studentDao).existsById(student.getId());
+
+        studentService.delete(student);
+
+        verify(studentDao).delete(student);
+    }
+
 }

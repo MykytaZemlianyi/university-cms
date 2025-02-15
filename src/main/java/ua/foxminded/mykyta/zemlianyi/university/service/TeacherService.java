@@ -9,4 +9,5 @@ public interface TeacherService {
 
     Teacher changePassword(Teacher teacher);
 
+    void delete(Teacher teacher);
 }

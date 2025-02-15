@@ -33,6 +33,16 @@ public abstract class UserService<T extends User> {
         }
     }
 
+    public void delete(T user) {
+        verifyObject(user);
+        if (dao.existsById(user.getId())) {
+            logger.info("Deleting {} - {}", user.getClass().getSimpleName(), user);
+            dao.delete(user);
+        } else {
+            throw new IllegalArgumentException(Constants.USER_DELETE_ERROR);
+        }
+    }
+
     public T changePassword(T user) {
         verifyObject(user);
 
@@ -55,4 +65,5 @@ public abstract class UserService<T extends User> {
             throw new IllegalArgumentException(user.getClass().getSimpleName() + Constants.USER_INVALID);
         }
     }
+
 }

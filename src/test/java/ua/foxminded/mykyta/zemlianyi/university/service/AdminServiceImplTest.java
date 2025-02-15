@@ -124,4 +124,35 @@ class AdminServiceImplTest {
         verify(adminDao).save(admin);
     }
 
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_adminIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            adminService.delete(null);
+        });
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_adminIsInvalid() {
+        Admin invalidAdmin = new Admin();
+        assertThrows(IllegalArgumentException.class, () -> {
+            adminService.delete(invalidAdmin);
+        });
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_whenAdminIsNotSavedInDb() {
+        doReturn(false).when(adminDao).existsById(admin.getId());
+        assertThrows(IllegalArgumentException.class, () -> {
+            adminService.delete(admin);
+        });
+    }
+
+    @Test
+    void delete_shouldDeleteAdmin_whenAdminIsValidAndExistsInDb() {
+        doReturn(true).when(adminDao).existsById(admin.getId());
+
+        adminService.delete(admin);
+
+        verify(adminDao).delete(admin);
+    }
 }

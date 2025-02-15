@@ -9,4 +9,6 @@ public interface StudentService {
 
     Student changePassword(Student student);
 
+    void delete(Student student);
+
 }

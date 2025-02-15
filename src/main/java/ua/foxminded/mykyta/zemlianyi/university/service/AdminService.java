@@ -10,4 +10,6 @@ public interface AdminService {
 
     Admin changePassword(Admin admin);
 
+    void delete(Admin admin);
+
 }
