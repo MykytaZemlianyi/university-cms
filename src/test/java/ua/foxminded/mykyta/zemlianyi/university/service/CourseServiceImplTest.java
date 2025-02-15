@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -145,5 +146,43 @@ class CourseServiceImplTest {
 
         courseService.findForStduent(student);
         verify(courseDao).findByGroups(group);
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_courseIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.delete(null);
+        });
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_courseIsInvalid() {
+        Course invalidCourse = new Course();
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.delete(invalidCourse);
+        });
+    }
+
+    @Test
+    void delete_shouldThrowIllegalArgumentException_when_courseIsNotSavedInDb() {
+        Course course = new Course();
+        course.setName("Valid Course");
+
+        doReturn(false).when(courseDao).existsById(course.getId());
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.delete(course);
+        });
+    }
+
+    @Test
+    void delete_shouldDeleteCourse_when_courseIsValidAndExistsInDb() {
+        Course course = new Course();
+        course.setName("Valid Course");
+
+        doReturn(true).when(courseDao).existsById(course.getId());
+
+        courseService.delete(course);
+
+        verify(courseDao).delete(course);
     }
 }

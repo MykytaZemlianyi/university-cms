@@ -45,6 +45,19 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public void delete(Course course) {
+        if (course == null || !course.verify()) {
+            throw new IllegalArgumentException(Constants.COURSE_OBJECT_INVALID_MSG);
+        }
+        if (courseDao.existsById(course.getId())) {
+            logger.info("Deleting course - {}", course);
+            courseDao.delete(course);
+        } else {
+            throw new IllegalArgumentException(Constants.COURSE_DELETE_FAIL_DOES_NOT_EXIST);
+        }
+    }
+
+    @Override
     public List<Course> findAll() {
         return courseDao.findAll();
     }
@@ -68,4 +81,5 @@ public class CourseServiceImpl implements CourseService {
         logger.info("looking for courses for student {} in group {}", student, student.getGroup());
         return courseDao.findByGroups(student.getGroup());
     }
+
 }

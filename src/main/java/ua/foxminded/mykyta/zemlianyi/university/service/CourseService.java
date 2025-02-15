@@ -16,5 +16,7 @@ public interface CourseService {
     List<Course> findForTeacher(Teacher teacher);
 
     List<Course> findForStduent(Student student);
+    
+    void delete(Course course);
 
 }
