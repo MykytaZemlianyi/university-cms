@@ -66,8 +66,15 @@ public class LectureServiceImpl implements LectureService {
 
     @Override
     public List<Lecture> findForCourseInTimeInterval(Course course, LocalDateTime timeStart, LocalDateTime timeEnd) {
-        // TODO Auto-generated method stub
-        return null;
+        if (course == null || !course.verify()) {
+            throw new IllegalArgumentException(Constants.COURSE_OBJECT_INVALID_MSG);
+        }
+        if (timeEnd.isBefore(timeStart) || timeStart.isAfter(timeEnd)) {
+            throw new IllegalArgumentException(Constants.TIME_INVALID);
+        }
+        logger.info("Looking for lectures for course - {} between {} and {}", course, timeStart, timeEnd);
+        return lectureDao.findByCourseAndTimeStartBetween(course, timeStart, timeEnd);
+
     }
 
 }

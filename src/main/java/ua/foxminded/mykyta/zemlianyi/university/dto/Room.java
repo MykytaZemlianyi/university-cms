@@ -51,10 +51,10 @@ public class Room implements Verifiable {
     }
 
     public void addLecture(Lecture lecture) {
-        if(isAvailable(lecture)) {            
-        this.lectures.add(lecture);
-        lecture.setRoom(this);
-        }else {
+        if (isAvailable(lecture)) {
+            this.lectures.add(lecture);
+            lecture.setRoom(this);
+        } else {
             throw new IllegalArgumentException(Constants.ROOM_LECTURE_OVERLAP_ERROR);
         }
     }
@@ -78,7 +78,7 @@ public class Room implements Verifiable {
     }
 
     private boolean isOverlapping(Lecture l1, Lecture l2) {
-        return !(l1.getTimeEnd().isBefore(l2.getTimeStart()) || l1.getTimeStart().isAfter(l2.getTimeEnd()));
+        return (l1.getTimeEnd().isAfter(l2.getTimeStart()) || l1.getTimeStart().isBefore(l2.getTimeEnd()));
     }
 
     @Override
