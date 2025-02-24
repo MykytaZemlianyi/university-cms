@@ -3,6 +3,7 @@ package ua.foxminded.mykyta.zemlianyi.university.service;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
 
@@ -17,6 +18,9 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Room addNew(Room room) {
         ObjectChecker.check(room);
+        if (roomDao.existsByNumber(room.getNumber())) {
+            throw new IllegalArgumentException(room.getNumber() + Constants.ROOM_ADD_NEW_ERROR_EXISTS_BY_NUMBER);
+        }
         logger.info("Adding new room - {}", room);
         return roomDao.save(room);
     }

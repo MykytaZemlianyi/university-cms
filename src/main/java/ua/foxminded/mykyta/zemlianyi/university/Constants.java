@@ -25,5 +25,6 @@ public class Constants {
     public static final String OBJECT_UPDATE_FAIL_DOES_NOT_EXIST = "Error during object update - object was not saved in the database earlier - ";
     public static final String COURSE_ADD_NEW_ERROR_EXISTS_BY_NAME = " - course with the same name already exists";
     public static final String GROUP_ADD_NEW_ERROR_EXISTS_BY_NAME = " - group with the same name already exists";
+    public static final String ROOM_ADD_NEW_ERROR_EXISTS_BY_NUMBER = " - room with the same number already exists";
 
 }
