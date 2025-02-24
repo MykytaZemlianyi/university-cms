@@ -1,10 +1,15 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -143,13 +148,30 @@ class CourseServiceImplTest {
 
     @Test
     void findForStudent_shouldReturnCourses_whenStudendIsCorrectAndHaveGroup() {
+        Course course = new Course();
+        course.setId(1L);
+        course.setName("Computer Science");
+
         Group group = new Group();
+        group.addCourse(course);
+
         Student student = new Student();
         student.setId(1L);
         student.setGroup(group);
 
-        courseService.findForStduent(student);
+        List<Course> returnedCourses = new ArrayList<>();
+        returnedCourses.add(course);
+
+        doReturn(returnedCourses).when(courseDao).findByGroups(group);
+
+        List<Course> expectedCourses = new ArrayList<>();
+        expectedCourses.add(course);
+
+        List<Course> actualCourses = courseService.findForStduent(student);
+
         verify(courseDao).findByGroups(group);
+
+        assertArrayEquals(expectedCourses.toArray(), actualCourses.toArray());
     }
 
     @Test
