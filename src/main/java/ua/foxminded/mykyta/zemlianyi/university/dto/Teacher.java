@@ -29,8 +29,10 @@ public class Teacher extends User {
     }
 
     public void removeCourse(Course course) {
-        this.courses.remove(course);
-        course.setTeacher(null);
+        boolean successRemoval = this.courses.remove(course);
+        if (successRemoval) {
+            course.setTeacher(null);
+        }
     }
 
 }

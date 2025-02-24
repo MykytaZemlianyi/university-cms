@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "courses", schema = "university")
-public class Course implements Verifiable, Dto{
+public class Course implements Verifiable, Dto {
     @Id
     @Column(name = "course_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -83,8 +83,10 @@ public class Course implements Verifiable, Dto{
     }
 
     public void removeGroup(Group group) {
-        this.groups.remove(group);
-        group.removeCourse(this);
+        boolean successRemoval = this.groups.remove(group);
+        if (successRemoval) {
+            group.removeCourse(this);
+        }
     }
 
     @Override
