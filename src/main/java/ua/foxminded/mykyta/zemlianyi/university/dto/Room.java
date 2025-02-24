@@ -16,7 +16,7 @@ import ua.foxminded.mykyta.zemlianyi.university.Constants;
 
 @Entity
 @Table(name = "rooms", schema = "university")
-public class Room implements Verifiable,Dto {
+public class Room implements Verifiable, Dto {
     @Id
     @Column(name = "room_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,8 +60,10 @@ public class Room implements Verifiable,Dto {
     }
 
     public void removeLecture(Lecture lecture) {
-        this.lectures.remove(lecture);
-        lecture.setRoom(null);
+        boolean successRemoval = this.lectures.remove(lecture);
+        if (successRemoval) {
+            lecture.setRoom(null);
+        }
     }
 
     public boolean isAvailable(Lecture lecture) {
@@ -70,15 +72,11 @@ public class Room implements Verifiable,Dto {
         }
 
         for (Lecture existingLecture : lectures) {
-            if (isOverlapping(existingLecture, lecture)) {
+            if (existingLecture.isOverlappingWith(lecture)) {
                 return false;
             }
         }
         return true;
-    }
-
-    private boolean isOverlapping(Lecture l1, Lecture l2) {
-        return (l1.getTimeEnd().isAfter(l2.getTimeStart()) || l1.getTimeStart().isBefore(l2.getTimeEnd()));
     }
 
     @Override
