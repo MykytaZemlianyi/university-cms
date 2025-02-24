@@ -1,11 +1,14 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -142,8 +145,17 @@ class LectureServiceImplTest {
 
     @Test
     void findForCourse_shouldReturnLectures_whenCourseIsValid() {
-        lectureService.findForCourse(course);
+        List<Lecture> returnedLectures = new ArrayList<>();
+        returnedLectures.add(lecture);
+        doReturn(returnedLectures).when(lectureDao).findByCourse(course);
+
+        List<Lecture> expectedLectures = new ArrayList<>();
+        expectedLectures.add(lecture);
+
+        List<Lecture> actualLectures = lectureService.findForCourse(course);
         verify(lectureDao).findByCourse(course);
+
+        assertArrayEquals(expectedLectures.toArray(), actualLectures.toArray());
     }
 
     @Test
