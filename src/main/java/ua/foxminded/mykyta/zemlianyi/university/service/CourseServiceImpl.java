@@ -27,6 +27,10 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course addNew(Course course) {
         ObjectChecker.check(course);
+        if (courseDao.existsByName(course.getName())) {
+            throw new IllegalArgumentException(course.getName() + Constants.COURSE_ADD_NEW_ERROR_EXISTS_BY_NAME);
+        }
+
         logger.info("Adding new course - {}", course.getName());
         return courseDao.save(course);
     }

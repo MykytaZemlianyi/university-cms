@@ -16,4 +16,6 @@ public interface CourseDao extends JpaRepository<Course, Long> {
 
     List<Course> findByGroups(Group group);
 
+    boolean existsByName(String name);
+
 }
