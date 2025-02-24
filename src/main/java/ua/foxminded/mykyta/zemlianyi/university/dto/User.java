@@ -106,6 +106,11 @@ public abstract class User implements Dto, Verifiable {
     }
 
     @Override
+    public String toString() {
+        return "User{id=" + id + ", username='" + name + " " + surname + "'}";
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(id, name, surname);
     }
