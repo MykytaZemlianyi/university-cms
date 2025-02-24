@@ -9,4 +9,5 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 @Repository
 public interface GroupDao extends JpaRepository<Group, Long> {
     Group findByStudents(Student student);
+    boolean existsByName(String name);
 }

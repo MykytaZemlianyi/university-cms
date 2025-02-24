@@ -20,7 +20,9 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Group addNew(Group group) {
         ObjectChecker.check(group);
-
+        if (groupDao.existsByName(group.getName())) {
+            throw new IllegalArgumentException(group.getName() + Constants.GROUP_ADD_NEW_ERROR_EXISTS_BY_NAME);
+        }
         logger.info("Adding new group - {}", group);
         return groupDao.save(group);
     }
