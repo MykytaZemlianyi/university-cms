@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -116,12 +117,24 @@ class StudentServiceImplTest {
     @Test
     void changePassword_shouldChangePassword_whenStudentIsValidAndExistsInDb() {
         doReturn(Optional.of(student)).when(studentDao).findById(student.getId());
+
         Student studentWithNewPassword = student;
+        studentWithNewPassword.setId(student.getId());
         studentWithNewPassword.setPassword("987654321");
+
+        ArgumentCaptor<Student> captor = ArgumentCaptor.forClass(Student.class);
 
         studentService.changePassword(studentWithNewPassword);
 
-        verify(studentDao).save(student);
+        verify(studentDao).save(captor.capture());
+
+        Student savedStudent = captor.getValue();
+        assertEquals(student.getId(), savedStudent.getId());
+        assertEquals(student.getName(), savedStudent.getName());
+        assertEquals(student.getSurname(), savedStudent.getSurname());
+        assertEquals(student.getEmail(), savedStudent.getEmail());
+
+        assertEquals(studentWithNewPassword.getPassword(), savedStudent.getPassword());
     }
 
     @Test
