@@ -23,7 +23,7 @@ public class ObjectChecker {
         if (timeStart == null || timeEnd == null) {
             throw new IllegalArgumentException(Constants.TIME_NULL + timeStart + Constants.PIPE + timeEnd);
         }
-        if (timeEnd.isBefore(timeStart) || timeStart.isAfter(timeEnd)) {
+        if (timeEnd.isBefore(timeStart)) {
             throw new IllegalArgumentException(Constants.TIME_INVALID_TIME_START_BEFORE_TIME_END);
         }
         if (timeStart.equals(timeEnd)) {

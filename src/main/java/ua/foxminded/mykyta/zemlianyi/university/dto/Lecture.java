@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "lectures", schema = "university")
-public class Lecture implements Verifiable, Dto{
+public class Lecture implements Verifiable, Dto {
     @Id
     @Column(name = "lecture_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -116,9 +116,9 @@ public class Lecture implements Verifiable, Dto{
     public boolean verifyTimeEnd() {
         return this.timeEnd != null;
     }
-    
+
     public boolean isOverlappingWith(Lecture l2) {
-        return (this.getTimeEnd().isAfter(l2.getTimeStart()) || this.getTimeStart().isBefore(l2.getTimeEnd()));
+        return (this.getTimeStart().isBefore(l2.getTimeEnd()));
     }
 
     @Override
