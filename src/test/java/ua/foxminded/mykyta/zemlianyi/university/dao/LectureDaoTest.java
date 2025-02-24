@@ -63,12 +63,6 @@ class LectureDaoTest {
 
     @Test
     void findByCourseAndDateBetween_shouldFilterLectures_whenDateIsOneDay() {
-        Lecture lectureDayOne = new Lecture();
-        lectureDayOne.setId(2L);
-        lectureDayOne.setLectureType(LectureType.LECTURE);
-        lectureDayOne.setCourse(course2);
-        lectureDayOne.setTimeStart(LocalDateTime.of(2025, 1, 15, 9, 0));
-        lectureDayOne.setTimeEnd(LocalDateTime.of(2025, 1, 15, 10, 30));
 
         Lecture lectureDayTwo = new Lecture();
         lectureDayTwo.setId(3L);
@@ -76,13 +70,6 @@ class LectureDaoTest {
         lectureDayTwo.setCourse(course2);
         lectureDayTwo.setTimeStart(LocalDateTime.of(2025, 1, 16, 11, 0));
         lectureDayTwo.setTimeEnd(LocalDateTime.of(2025, 1, 16, 12, 30));
-
-        Lecture lectureDayThree = new Lecture();
-        lectureDayThree.setId(4L);
-        lectureDayThree.setLectureType(LectureType.LECTURE);
-        lectureDayThree.setCourse(course2);
-        lectureDayThree.setTimeStart(LocalDateTime.of(2025, 1, 17, 14, 0));
-        lectureDayThree.setTimeEnd(LocalDateTime.of(2025, 1, 17, 15, 30));
 
         List<Lecture> expLectures = new ArrayList<>();
         expLectures.add(lectureDayTwo);
