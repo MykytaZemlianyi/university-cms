@@ -38,6 +38,18 @@ class RoomServiceImplTest {
     }
 
     @Test
+    void addNew_shouldThrowIllegalArgumentException_whenRoomWithSameNumberExists() {
+        Room roomWithSameNumber = new Room();
+        roomWithSameNumber.setNumber(1);
+
+        doReturn(true).when(roomDao).existsByNumber(roomWithSameNumber.getNumber());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            roomService.addNew(roomWithSameNumber);
+        });
+    }
+
+    @Test
     void addNew_shouldSaveRoom_whenRoomIsValid() {
         Room room = new Room();
         room.setNumber(1);

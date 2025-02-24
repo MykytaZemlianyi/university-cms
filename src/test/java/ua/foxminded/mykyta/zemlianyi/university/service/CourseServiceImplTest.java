@@ -45,6 +45,18 @@ class CourseServiceImplTest {
     }
 
     @Test
+    void addNew_shouldThrowIllegalArgumentException_whenAddingSameCourse() {
+        Course courseWithSameName = new Course();
+        courseWithSameName.setName("Java Programming");
+
+        doReturn(true).when(courseDao).existsByName(courseWithSameName.getName());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.addNew(courseWithSameName);
+        });
+    }
+
+    @Test
     void addNew_shouldSaveCourse_whenCourseIsValid() {
         Course course = new Course();
         course.setName("Valid Course");

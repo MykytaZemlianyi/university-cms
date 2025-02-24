@@ -42,6 +42,17 @@ class GroupServiceImplTest {
     }
 
     @Test
+    void addNew_shouldThrowIllegalArgumentException_whenGroupWithSameNameExists() {
+        Group groupWithSameName = new Group();
+        groupWithSameName.setName("AA-11");
+
+        doReturn(true).when(groupDao).existsByName(groupWithSameName.getName());
+        assertThrows(IllegalArgumentException.class, () -> {
+            groupService.addNew(groupWithSameName);
+        });
+    }
+
+    @Test
     void addNew_shouldSaveGroup_whenGroupIsValid() {
         Group group = new Group();
         group.setName("Valid Group");
