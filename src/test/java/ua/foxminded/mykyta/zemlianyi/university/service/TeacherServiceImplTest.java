@@ -51,6 +51,21 @@ class TeacherServiceImplTest {
     }
 
     @Test
+    void addNew_shouldThrowIllegalArgumentException_whenTeacherWithSameEmailExists() {
+        Teacher teacherWithSameEmail = new Teacher();
+        teacherWithSameEmail.setId(2L);
+        teacherWithSameEmail.setName("Marek");
+        teacherWithSameEmail.setSurname("Szwepster");
+        teacherWithSameEmail.setEmail(teacher.getEmail());
+        teacherWithSameEmail.setPassword("securePass123");
+        doReturn(true).when(teacherDao).existsByEmail(teacherWithSameEmail.getEmail());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            teacherService.addNew(teacherWithSameEmail);
+        });
+    }
+
+    @Test
     void addNew_shouldSaveTeacher_whenTeacherIsVerified() {
 
         teacherService.addNew(teacher);
@@ -118,12 +133,11 @@ class TeacherServiceImplTest {
     void changePassword_shouldChangePassword_whenTeacherIsValidAndExistsInDb() {
         doReturn(Optional.of(teacher)).when(teacherDao).findById(teacher.getId());
 
-        Teacher teacherWithNewPassword = teacher;
-        teacherWithNewPassword.setPassword("987654321");
+        teacher.setPassword("987654321");
 
         ArgumentCaptor<Teacher> captor = ArgumentCaptor.forClass(Teacher.class);
 
-        teacherService.changePassword(teacherWithNewPassword);
+        teacherService.changePassword(teacher);
 
         verify(teacherDao).save(captor.capture());
 
@@ -133,7 +147,7 @@ class TeacherServiceImplTest {
         assertEquals(teacher.getSurname(), savedTeacher.getSurname());
         assertEquals(teacher.getEmail(), savedTeacher.getEmail());
 
-        assertEquals(teacherWithNewPassword.getPassword(), savedTeacher.getPassword());
+        assertEquals(teacher.getPassword(), savedTeacher.getPassword());
     }
 
     @Test

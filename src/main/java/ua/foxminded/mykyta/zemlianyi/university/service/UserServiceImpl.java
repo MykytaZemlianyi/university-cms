@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.repository.CrudRepository;
 
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
+import ua.foxminded.mykyta.zemlianyi.university.dao.UserDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.User;
 
 public abstract class UserServiceImpl<T extends User> implements UserService<T> {
@@ -19,6 +20,10 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
 
     public T addNew(T user) {
         ObjectChecker.check(user);
+        if (dao instanceof UserDao userDao && userDao.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException(user.getEmail() + Constants.USER_SAVE_ERROR_EMAIL_EXISTS);
+        }
+
         logger.info("Adding new {} - {}", user.getClass().getSimpleName(), user);
         return dao.save(user);
     }
