@@ -26,5 +26,6 @@ public class Constants {
     public static final String COURSE_ADD_NEW_ERROR_EXISTS_BY_NAME = " - course with the same name already exists";
     public static final String GROUP_ADD_NEW_ERROR_EXISTS_BY_NAME = " - group with the same name already exists";
     public static final String ROOM_ADD_NEW_ERROR_EXISTS_BY_NUMBER = " - room with the same number already exists";
+    public static final String USER_SAVE_ERROR_EMAIL_EXISTS = " - user with this email already exists";
 
 }

@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 @Repository
-public interface StudentDao extends JpaRepository<Student, Long> {
+public interface StudentDao extends JpaRepository<Student, Long>, UserDao {
 
 }
