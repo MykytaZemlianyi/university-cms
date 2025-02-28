@@ -5,7 +5,7 @@ CREATE TABLE university.admins (
     admin_name VARCHAR(25) NOT NULL,
     admin_surname VARCHAR(25) NOT NULL,
     admin_email VARCHAR(320) NOT NULL,
-    admin_password VARCHAR(25) NOT NULL
+    admin_password VARCHAR(60) NOT NULL
 );
 
 CREATE TABLE university.teachers (
@@ -13,7 +13,7 @@ CREATE TABLE university.teachers (
     teacher_name VARCHAR(25) NOT NULL,
     teacher_surname VARCHAR(25) NOT NULL,
     teacher_email VARCHAR(320) NOT NULL,
-    teacher_password VARCHAR(25) NOT NULL
+    teacher_password VARCHAR(60) NOT NULL
 );
 
 CREATE TABLE university.students (
@@ -22,7 +22,7 @@ CREATE TABLE university.students (
     student_name VARCHAR(25) NOT NULL,
     student_surname VARCHAR(25) NOT NULL,
     student_email VARCHAR(320) NOT NULL,
-    student_password VARCHAR(25) NOT NULL
+    student_password VARCHAR(60) NOT NULL
 );
 
 CREATE TABLE university.groups (

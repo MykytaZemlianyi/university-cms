@@ -1,8 +1,9 @@
 
 -- Insert administrators
 INSERT INTO university.admins (name, surname, email, password) VALUES
-('John', 'Smith', 'john.smith@gmail.com', '12345'),
-('Emma', 'Johnson', 'emma.johnson@gmail.com', '54321');
+('Mykyta', 'Zemlianyi', 'zemlianoyne@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('John', 'Smith', 'john.smith@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Emma', 'Johnson', 'emma.johnson@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG');
 
 -- Insert groups
 INSERT INTO university.groups (group_name) VALUES
@@ -11,11 +12,11 @@ INSERT INTO university.groups (group_name) VALUES
 
 -- Insert teachers
 INSERT INTO university.teachers (name, surname, email, password) VALUES
-('Michael', 'Brown', 'michael.brown@gmail.com', '11111'),
-('David', 'Wilson', 'david.wilson@gmail.com', '22222'),
-('Sarah', 'Moore', 'sarah.moore@gmail.com', '33333'),
-('James', 'Taylor', 'james.taylor@gmail.com', '44444'),
-('Olivia', 'Anderson', 'olivia.anderson@gmail.com', '55555');
+('Michael', 'Brown', 'michael.brown@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('David', 'Wilson', 'david.wilson@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Sarah', 'Moore', 'sarah.moore@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('James', 'Taylor', 'james.taylor@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Olivia', 'Anderson', 'olivia.anderson@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG');
 
 -- Insert courses
 INSERT INTO university.courses (course_name) VALUES
@@ -27,21 +28,21 @@ INSERT INTO university.courses (course_name) VALUES
 
 -- Insert students
 INSERT INTO university.students (name, surname, email, password) VALUES
-('William', 'Hall', 'william.hall@gmail.com', '67890'),
-('Alexander', 'Allen', 'alexander.allen@gmail.com', '13579'),
-('Ethan', 'Young', 'ethan.young@gmail.com', '24680'),
-('Daniel', 'King', 'daniel.king@gmail.com', '11223'),
-('Benjamin', 'Wright', 'benjamin.wright@gmail.com', '33445'),
-('Matthew', 'Scott', 'matthew.scott@gmail.com', '55667'),
-('Lucas', 'Adams', 'lucas.adams@gmail.com', '77889'),
-('Henry', 'Baker', 'henry.baker@gmail.com', '99000'),
-('Jack', 'Harris', 'jack.harris@gmail.com', '12321'),
-('Logan', 'Nelson', 'logan.nelson@gmail.com', '43234'),
-('Mason', 'Carter', 'mason.carter@gmail.com', '54345'),
-('Jacob', 'Mitchell', 'jacob.mitchell@gmail.com', '65456'),
-('Noah', 'Perez', 'noah.perez@gmail.com', '76567'),
-('Owen', 'Roberts', 'owen.roberts@gmail.com', '87678'),
-('Elijah', 'Turner', 'elijah.turner@gmail.com', '98789');
+('William', 'Hall', 'william.hall@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Alexander', 'Allen', 'alexander.allen@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Ethan', 'Young', 'ethan.young@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Daniel', 'King', 'daniel.king@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Benjamin', 'Wright', 'benjamin.wright@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Matthew', 'Scott', 'matthew.scott@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Lucas', 'Adams', 'lucas.adams@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Henry', 'Baker', 'henry.baker@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Jack', 'Harris', 'jack.harris@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Logan', 'Nelson', 'logan.nelson@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Mason', 'Carter', 'mason.carter@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Jacob', 'Mitchell', 'jacob.mitchell@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Noah', 'Perez', 'noah.perez@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Owen', 'Roberts', 'owen.roberts@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG'),
+('Elijah', 'Turner', 'elijah.turner@gmail.com', '$2a$10$S7kE9HXuqvvXsGkG2dElWeHbaJqz9ok2e3vhcfbTEtkAzI5A0V6qG');
 
 -- Insert rooms
 INSERT INTO university.rooms (room_number) VALUES

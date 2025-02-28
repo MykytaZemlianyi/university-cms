@@ -10,4 +10,14 @@ public class StartPageController {
     public String index() {
         return "index";
     }
+
+    @GetMapping("/login")
+    public String showLoginPage() {
+        return "login";
+    }
+
+    @GetMapping("/welcome")
+    public String showWelcomePage() {
+        return "welcome";
+    }
 }

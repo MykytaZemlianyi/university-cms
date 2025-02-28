@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Menu</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+	<nav>
+		<ul>
+			<li><a href="/">Home</a></li>
+
+			<li sec:authorize="hasAuthority('ROLE_ADMIN')"><a
+				href="/admin/users">Users</a></li>
+			<li sec:authorize="hasAuthority('ROLE_ADMIN')"><a
+				href="/admin/groups">Groups</a></li>
+			<li sec:authorize="hasAuthority('ROLE_ADMIN')"><a
+				href="/admin/courses">Courses</a></li>
+			<li sec:authorize="hasAuthority('ROLE_ADMIN')"><a
+				href="/admin/lectures">Lectures</a></li>
+
+			<li sec:authorize="hasAuthority('ROLE_TEACHER')"><a
+				href="/teacher/courses">My Courses</a></li>
+			<li sec:authorize="hasAuthority('ROLE_TEACHER')"><a
+				href="/teacher/schedule">My Schedule</a></li>
+
+			<li sec:authorize="hasAuthority('ROLE_STUDENT')"><a
+				href="/student/courses">My Courses</a></li>
+			<li sec:authorize="hasAuthority('ROLE_STUDENT')"><a
+				href="/student/group">My Group</a></li>
+			<li sec:authorize="hasAuthority('ROLE_STUDENT')"><a
+				href="/student/schedule">My Group</a></li>
+
+			<li><a href="/logout">Log out</a></li>
+		</ul>
+	</nav>
+</body>
+</html>
