@@ -24,7 +24,7 @@ public class SampleDataGenerator {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostConstruct
+    // @PostConstruct
     public void encryptPasswords() {
         encryptAdminsPasswords();
         encryptTeachersPasswords();

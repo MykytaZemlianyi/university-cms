@@ -21,7 +21,7 @@ public class SecurityConfig {
                 .hasAuthority("ROLE_TEACHER").requestMatchers("/student/**").hasAuthority("ROLE_STUDENT").anyRequest()
                 .authenticated())
                 .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/welcome", true).permitAll())
-                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login?logout").permitAll());
+                .logout(logout -> logout.logoutUrl("/").logoutSuccessUrl("/login?logout").permitAll());
 
         return http.build();
     }
