@@ -8,6 +8,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dao.AdminDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.StudentDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.TeacherDao;
 
+@Deprecated
 @Service
 public class SampleDataGenerator {
     private AdminDao adminDao;
