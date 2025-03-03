@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<meta charset="UTF-8">
+<title>Universal nav</title>
+<link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+	<nav th:fragment="navbar">
+		<div th:if="${role == 'ADMIN'}"
+			th:insert="~{navs/admin_nav :: navbar}"></div>
+		<div th:if="${role == 'TEACHER'}"
+			th:insert="~{navs/teacher_nav :: navbar}"></div>
+		<div th:if="${role == 'STUDENT'}"
+			th:insert="~{navs/student_nav :: navbar}"></div>
+	</nav>
+
+
+</body>
+</html>
