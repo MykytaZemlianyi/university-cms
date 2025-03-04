@@ -2,6 +2,8 @@ package ua.foxminded.mykyta.zemlianyi.university.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dao.GroupDao;
@@ -52,6 +54,11 @@ public class GroupServiceImpl implements GroupService {
         }
         logger.info("Looking for Group for student - {}", student);
         return groupDao.findByStudents(student);
+    }
+
+    @Override
+    public Page<Group> findAll(Pageable pageable) {
+        return groupDao.findAll(pageable);
     }
 
 }
