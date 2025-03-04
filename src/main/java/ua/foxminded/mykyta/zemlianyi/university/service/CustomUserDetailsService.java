@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,7 +15,6 @@ import ua.foxminded.mykyta.zemlianyi.university.dao.AdminDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.StudentDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.TeacherDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
-import ua.foxminded.mykyta.zemlianyi.university.dto.CustomUserDetails;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 
@@ -36,21 +36,24 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<Admin> admin = adminDao.findByEmail(username);
         if (admin.isPresent()) {
             logger.info("User found and identified as Admin");
-            return new CustomUserDetails(admin.get().getEmail(), admin.get().getPassword(), Constants.ROLE_ADMIN);
+            return User.withUsername(admin.get().getEmail()).password(admin.get().getPassword())
+                    .roles(Constants.ROLE_ADMIN).build();
         }
         logger.error("User NOT found in Admin table");
 
         Optional<Teacher> teacher = teacherDao.findByEmail(username);
         if (teacher.isPresent()) {
             logger.info("User found and identified as Teacher");
-            return new CustomUserDetails(teacher.get().getEmail(), teacher.get().getPassword(), Constants.ROLE_TEACHER);
+            return User.withUsername(teacher.get().getEmail()).password(teacher.get().getPassword())
+                    .roles(Constants.ROLE_TEACHER).build();
         }
         logger.error("User NOT found in Teacher table");
 
         Optional<Student> student = studentDao.findByEmail(username);
         if (student.isPresent()) {
             logger.info("User found and identified as Student");
-            return new CustomUserDetails(student.get().getEmail(), student.get().getPassword(), Constants.ROLE_STUDENT);
+            return User.withUsername(student.get().getEmail()).password(student.get().getPassword())
+                    .roles(Constants.ROLE_STUDENT).build();
         }
         logger.error("User NOT found in Student table");
 
