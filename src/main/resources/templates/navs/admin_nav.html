@@ -23,16 +23,16 @@
 
 					<li class="nav-item"><a class="nav-link" href="/welcome">Home</a></li>
 
-					<li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a
+					<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
 						class="nav-link" href="/admin/users">Users</a></li>
 
-					<li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a
+					<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
 						class="nav-link" href="/admin/groups">Groups</a></li>
 
-					<li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a
+					<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
 						class="nav-link" href="/admin/courses">Courses</a></li>
 
-					<li class="nav-item" sec:authorize="hasAuthority('ADMIN')"><a
+					<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
 						class="nav-link" href="/admin/lectures">Lectures</a></li>
 
 					<li class="nav-item"><a class="nav-link" href="/logout">Log

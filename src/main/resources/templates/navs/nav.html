@@ -8,13 +8,17 @@
 </head>
 <body>
 	<nav th:fragment="navbar">
-		<div th:if="${role == 'ADMIN'}"
+		<div sec:authorize="hasRole('ADMIN')"
 			th:insert="~{navs/admin_nav :: navbar}"></div>
-		<div th:if="${role == 'TEACHER'}"
+		<div sec:authorize="hasRole('TEACHER')"
 			th:insert="~{navs/teacher_nav :: navbar}"></div>
-		<div th:if="${role == 'STUDENT'}"
+		<div sec:authorize="hasRole('STUDENT')"
 			th:insert="~{navs/student_nav :: navbar}"></div>
 	</nav>
+
+
+
+
 
 
 </body>

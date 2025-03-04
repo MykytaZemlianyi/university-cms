@@ -36,8 +36,13 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<Admin> admin = adminDao.findByEmail(username);
         if (admin.isPresent()) {
             logger.info("User found and identified as Admin");
-            return User.withUsername(admin.get().getEmail()).password(admin.get().getPassword())
-                    .roles(Constants.ROLE_ADMIN).build();
+            UserDetails userDetails = User.withUsername(admin.get().getEmail()).password(admin.get().getPassword())
+                    .authorities(Constants.ROLE_PREFIX + Constants.ROLE_ADMIN).build();
+
+            logger.info("UserDetails loaded: {}", userDetails.getUsername());
+            logger.info("User authorities: {}", userDetails.getAuthorities());
+            return userDetails;
+
         }
         logger.error("User NOT found in Admin table");
 
@@ -45,7 +50,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (teacher.isPresent()) {
             logger.info("User found and identified as Teacher");
             return User.withUsername(teacher.get().getEmail()).password(teacher.get().getPassword())
-                    .roles(Constants.ROLE_TEACHER).build();
+                    .authorities(Constants.ROLE_PREFIX + Constants.ROLE_TEACHER).build();
         }
         logger.error("User NOT found in Teacher table");
 
@@ -53,7 +58,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         if (student.isPresent()) {
             logger.info("User found and identified as Student");
             return User.withUsername(student.get().getEmail()).password(student.get().getPassword())
-                    .roles(Constants.ROLE_STUDENT).build();
+                    .authorities(Constants.ROLE_PREFIX + Constants.ROLE_STUDENT).build();
         }
         logger.error("User NOT found in Student table");
 
