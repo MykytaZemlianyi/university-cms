@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.service.GroupService;
@@ -19,10 +20,15 @@ public class AdminController {
     }
 
     @GetMapping("/admin/groups")
-    public String getGroups(Model model) {
-        Pageable pageable = PageRequest.of(0, 5);
+    public String getGroups(@RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "5") Integer size, Model model) {
+        Pageable pageable = PageRequest.of(page, size);
         Page<Group> groups = groupService.findAll(pageable);
+
         model.addAttribute("groups", groups);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", groups.getTotalPages());
+
         return "admin/groups";
     }
 
