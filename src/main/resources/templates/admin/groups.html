@@ -23,9 +23,9 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr th:each="group : ${groups}">
-				<td th:text="$group.id"></td>
-				<td th:text="$group.name"></td>
+			<tr th:each="group : ${groups.content}">
+				<td th:text="${group.id}"></td>
+				<td th:text="${group.name}"></td>
 			</tr>
 		</tbody>
 	</table>
