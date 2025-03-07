@@ -14,20 +14,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 import ua.foxminded.mykyta.zemlianyi.university.service.AdminService;
 import ua.foxminded.mykyta.zemlianyi.university.service.GroupService;
 import ua.foxminded.mykyta.zemlianyi.university.service.StudentService;
+import ua.foxminded.mykyta.zemlianyi.university.service.TeacherService;
 
 @Controller
 public class AdminController {
     private GroupService groupService;
     private StudentService studentService;
     private AdminService adminService;
+    private TeacherService teacherService;
 
-    public AdminController(GroupService groupService, StudentService studentService, AdminService adminService) {
+    public AdminController(GroupService groupService, StudentService studentService, AdminService adminService,
+            TeacherService teacherService) {
         this.groupService = groupService;
         this.studentService = studentService;
         this.adminService = adminService;
+        this.teacherService = teacherService;
     }
 
     @GetMapping("/admin/groups")
@@ -84,6 +89,27 @@ public class AdminController {
         model.addAttribute("totalPages", admins.hasContent() ? admins.getTotalPages() : 1);
 
         return "admin/admins";
+    }
+
+    @GetMapping("admin/teachers")
+    public String getTeachers(@RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "5") Integer size, Model model) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Teacher> teachers = teacherService.findAll(pageable);
+
+        LinkedHashMap<String, Function<Teacher, Object>> columnData = new LinkedHashMap<>();
+        columnData.put("ID", Teacher::getId);
+        columnData.put("Name", Teacher::getName);
+        columnData.put("Surname", Teacher::getSurname);
+        columnData.put("Email", Teacher::getEmail);
+
+        model.addAttribute("teachers", teachers);
+        model.addAttribute("columns", columnData);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", teachers.hasContent() ? teachers.getTotalPages() : 1);
+
+        return "admin/teachers";
     }
 
 }
