@@ -18,8 +18,9 @@ public class AdminController {
     private GroupService groupService;
     private StudentService studentService;
 
-    public AdminController(GroupService groupService) {
+    public AdminController(GroupService groupService, StudentService studentService) {
         this.groupService = groupService;
+        this.studentService = studentService;
     }
 
     @GetMapping("/admin/groups")
