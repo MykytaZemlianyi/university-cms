@@ -8,10 +8,38 @@
 		</thead>
 		<tbody>
 			<tr th:each="object : ${objects.content}">
-				<td th:each="colFunc : ${columns.values()}" class="text-center">
+				<td th:each="colFunc : ${columns.values()}" class="text-start">
 					<span th:text="${colFunc.apply(object)}"></span>
 				</td>
 			</tr>
 		</tbody>
 	</table>
 </div>
+
+<nav
+	th:fragment="table-pagination (objectsPool, paginationUrl, currentPage, totalPages)"
+	aria-label="Page navigation">
+	<ul class="pagination">
+		<li class="page-item"
+			th:classappend="${currentPage == 0} ? 'disabled'"><a
+			class="page-link"
+			th:href="@{${paginationUrl}(page=${currentPage - 1}, size=${objectsPool})}"
+			aria-label="Previous"> <span aria-hidden="true">«</span>
+		</a></li>
+
+		<li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+			class="page-item" th:classappend="${i == currentPage} ? 'active'">
+			<a class="page-link"
+			th:href="@{${paginationUrl}(page=${i}, size=${objectsPool})}"
+			th:text="${i + 1}"></a>
+		</li>
+
+		<li class="page-item"
+			th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+			<a class="page-link"
+			th:href="@{${paginationUrl}(page=${currentPage + 1}, size=${objectsPool})}"
+			aria-label="Next"> <span aria-hidden="true">»</span>
+		</a>
+		</li>
+	</ul>
+</nav>

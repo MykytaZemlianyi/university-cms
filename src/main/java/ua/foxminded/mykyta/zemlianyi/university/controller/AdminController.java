@@ -55,7 +55,7 @@ public class AdminController {
         columnData.put("Surname", Student::getSurname);
         columnData.put("Group", student -> student.getGroup() != null ? student.getGroup().getName() : "No group");
 
-        model.addAttribute("objects", students);
+        model.addAttribute("students", students);
         model.addAttribute("columns", columnData);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", students.hasContent() ? students.getTotalPages() : 1);
