@@ -11,7 +11,7 @@
 	rel="stylesheet">
 </head>
 <body>
-	<div th:insert="~{navs/nav :: navbar}"></div>
+	<div th:insert="~{fragments/navs/nav :: navbar}"></div>
 
 	<table class="table table-striped">
 		<thead>
@@ -31,25 +31,30 @@
 	</table>
 
 	<nav aria-label="Page navigation">
-    <ul class="pagination">
-        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-            <a class="page-link" th:href="@{/admin/groups(page=${currentPage - 1}, size=${groups.size})}" aria-label="Previous">
-                <span aria-hidden="true">«</span>
-            </a>
-        </li>
+		<ul class="pagination">
+			<li class="page-item"
+				th:classappend="${currentPage == 0} ? 'disabled'"><a
+				class="page-link"
+				th:href="@{/admin/groups(page=${currentPage - 1}, size=${groups.size})}"
+				aria-label="Previous"> <span aria-hidden="true">«</span>
+			</a></li>
 
-        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
-            class="page-item" th:classappend="${i == currentPage} ? 'active'">
-            <a class="page-link" th:href="@{/admin/groups(page=${i}, size=${groups.size})}" th:text="${i + 1}"></a>
-        </li>
+			<li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+				class="page-item" th:classappend="${i == currentPage} ? 'active'">
+				<a class="page-link"
+				th:href="@{/admin/groups(page=${i}, size=${groups.size})}"
+				th:text="${i + 1}"></a>
+			</li>
 
-        <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
-            <a class="page-link" th:href="@{/admin/groups(page=${currentPage + 1}, size=${groups.size})}" aria-label="Next">
-                <span aria-hidden="true">»</span>
-            </a>
-        </li>
-    </ul>
-</nav>
+			<li class="page-item"
+				th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+				<a class="page-link"
+				th:href="@{/admin/groups(page=${currentPage + 1}, size=${groups.size})}"
+				aria-label="Next"> <span aria-hidden="true">»</span>
+			</a>
+			</li>
+		</ul>
+	</nav>
 
 
 	<script

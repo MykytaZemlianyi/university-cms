@@ -1,5 +1,8 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
+import java.util.LinkedHashMap;
+import java.util.function.Function;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,10 +45,20 @@ public class AdminController {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<Student> students = studentService.findAll(pageable);
+        if (students == null) {
+            students = Page.empty(pageable);
+        }
 
-        model.addAttribute("students", students);
+        LinkedHashMap<String, Function<Student, Object>> columnData = new LinkedHashMap<>();
+        columnData.put("ID", Student::getId);
+        columnData.put("Name", Student::getName);
+        columnData.put("Surname", Student::getSurname);
+        columnData.put("Group", student -> student.getGroup() != null ? student.getGroup().getName() : "No group");
+
+        model.addAttribute("objects", students);
+        model.addAttribute("columns", columnData);
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", students.getTotalPages());
+        model.addAttribute("totalPages", students.hasContent() ? students.getTotalPages() : 1);
 
         return "admin/students";
     }

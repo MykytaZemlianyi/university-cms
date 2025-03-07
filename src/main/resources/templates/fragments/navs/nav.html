@@ -1,25 +1,8 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-<meta charset="UTF-8">
-<title>Universal nav</title>
-<link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
-	<nav th:fragment="navbar">
-		<div sec:authorize="hasRole('ADMIN')"
-			th:insert="~{navs/admin_nav :: navbar}"></div>
-		<div sec:authorize="hasRole('TEACHER')"
-			th:insert="~{navs/teacher_nav :: navbar}"></div>
-		<div sec:authorize="hasRole('STUDENT')"
-			th:insert="~{navs/student_nav :: navbar}"></div>
-	</nav>
-
-
-
-
-
-
-</body>
-</html>
+<nav th:fragment="navbar">
+	<div sec:authorize="hasRole('ADMIN')"
+		th:insert="~{fragments/navs/admin_nav :: navbar}"></div>
+	<div sec:authorize="hasRole('TEACHER')"
+		th:insert="~{fragments/navs/teacher_nav :: navbar}"></div>
+	<div sec:authorize="hasRole('STUDENT')"
+		th:insert="~{fragments/navs/student_nav :: navbar}"></div>
+</nav>

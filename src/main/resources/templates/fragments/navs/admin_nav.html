@@ -1,55 +1,43 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head>
-<meta charset="UTF-8">
-<title>Admin nav</title>
-<link rel="stylesheet" href="/css/styles.css">
-</head>
-<body>
+<nav th:fragment="navbar"
+	class="navbar navbar-expand-lg navbar-light bg-light">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="#">Admin</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+			data-bs-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-	<nav th:fragment="navbar"
-		class="navbar navbar-expand-lg navbar-light bg-light">
-		<div class="container-fluid">
-			<a class="navbar-brand" href="#">Admin</a>
-			<button class="navbar-toggler" type="button"
-				data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-				aria-controls="navbarSupportedContent" aria-expanded="false"
-				aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+				<li class="nav-item"><a class="nav-link" href="/welcome">Home</a></li>
 
-					<li class="nav-item"><a class="nav-link" href="/welcome">Home</a></li>
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+					role="button" aria-expanded="false">Users</a>
+					<ul class="dropdown-menu">
+						<li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item"
+							href="/admin/admins">Admins</a></li>
+						<li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item"
+							href="/admin/students">Students</a></li>
+						<li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item"
+							href="/admin/teachers">Teachers</a></li>
+					</ul></li>
 
-					<li class="nav-item dropdown"><a
-						class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
-						href="#" role="button" aria-expanded="false">Users</a>
-						<ul class="dropdown-menu">
-							<li sec:authorize="hasRole('ADMIN')"><a
-								class="dropdown-item" href="/admin/admins">Admins</a></li>
-							<li sec:authorize="hasRole('ADMIN')"><a
-								class="dropdown-item" href="/admin/students">Students</a></li>
-							<li sec:authorize="hasRole('ADMIN')"><a
-								class="dropdown-item" href="/admin/teachers">Teachers</a></li>
-						</ul></li>
+				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
+					class="nav-link" href="/admin/groups">Groups</a></li>
 
-					<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
-						class="nav-link" href="/admin/groups">Groups</a></li>
+				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
+					class="nav-link" href="/admin/courses">Courses</a></li>
 
-					<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
-						class="nav-link" href="/admin/courses">Courses</a></li>
+				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
+					class="nav-link" href="/admin/lectures">Lectures</a></li>
 
-					<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
-						class="nav-link" href="/admin/lectures">Lectures</a></li>
+				<li class="nav-item"><a class="nav-link" href="/logout">Log
+						out</a></li>
 
-					<li class="nav-item"><a class="nav-link" href="/logout">Log
-							out</a></li>
-
-				</ul>
-			</div>
+			</ul>
 		</div>
-	</nav>
-</body>
-</html>
+	</div>
+</nav>

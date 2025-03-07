@@ -1,0 +1,17 @@
+<div th:fragment="table (objects, columns)">
+	<table class="table table-striped table-bordered">
+		<thead>
+			<tr>
+				<th th:each="col : ${columns.keySet()}" class="text-center"><span
+					th:text="${col}"></span></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="object : ${objects.content}">
+				<td th:each="colFunc : ${columns.values()}" class="text-center">
+					<span th:text="${colFunc.apply(object)}"></span>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
