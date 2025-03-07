@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
@@ -14,17 +14,17 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.User;
 
 public abstract class UserServiceImpl<T extends User> implements UserService<T> {
     private static Logger logger = LogManager.getLogger(UserServiceImpl.class.getName());
-    CrudRepository<T, Long> dao;
+    UserDao<T> dao;
     private PasswordEncoder passwordEncoder;
 
-    protected UserServiceImpl(CrudRepository<T, Long> dao, PasswordEncoder passwordEncoder) {
+    protected UserServiceImpl(UserDao<T> dao, PasswordEncoder passwordEncoder) {
         this.dao = dao;
         this.passwordEncoder = passwordEncoder;
     }
 
     public T addNew(T user) {
         ObjectChecker.check(user);
-        if (dao instanceof UserDao userDao && userDao.existsByEmail(user.getEmail())) {
+        if (dao.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException(user.getEmail() + Constants.USER_SAVE_ERROR_EMAIL_EXISTS);
         }
 
@@ -68,6 +68,10 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
         } else {
             throw new IllegalArgumentException(Constants.USER_PASSWORD_CHANGE_ERROR);
         }
+    }
+
+    public Page<T> findAll(Pageable page) {
+        return dao.findAll(page);
     }
 
 }

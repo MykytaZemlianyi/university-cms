@@ -9,11 +9,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 import ua.foxminded.mykyta.zemlianyi.university.service.GroupService;
+import ua.foxminded.mykyta.zemlianyi.university.service.StudentService;
 
 @Controller
 public class AdminController {
     private GroupService groupService;
+    private StudentService studentService;
 
     public AdminController(GroupService groupService) {
         this.groupService = groupService;
@@ -30,6 +33,20 @@ public class AdminController {
         model.addAttribute("totalPages", groups.getTotalPages());
 
         return "admin/groups";
+    }
+
+    @GetMapping("admin/students")
+    public String getStudents(@RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "5") Integer size, Model model) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Student> students = studentService.findAll(pageable);
+
+        model.addAttribute("students", students);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", students.getTotalPages());
+
+        return "admin/students";
     }
 
 }
