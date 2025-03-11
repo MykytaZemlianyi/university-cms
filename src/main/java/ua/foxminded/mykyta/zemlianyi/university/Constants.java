@@ -1,5 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university;
 
+import java.time.format.DateTimeFormatter;
+
 public class Constants {
     private Constants() {
         throw new IllegalStateException("Utility Class");
@@ -7,6 +9,7 @@ public class Constants {
 
     public static final String EMAIL_PATTERN_REGEX = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
     public static final String PIPE = "|";
+    public static final Object SPACE = " ";
 
     public static final String ROLE_PREFIX = "ROLE_";
     public static final String ROLE_ADMIN = "ADMIN";
@@ -34,4 +37,6 @@ public class Constants {
     public static final String GROUP_ADD_NEW_ERROR_EXISTS_BY_NAME = " - group with the same name already exists";
     public static final String ROOM_ADD_NEW_ERROR_EXISTS_BY_NUMBER = " - room with the same number already exists";
 
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM");
+    public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 }
