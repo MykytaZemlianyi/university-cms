@@ -104,14 +104,7 @@ public class AdminController {
         Pageable pageable = PageRequest.of(page, size);
         Page<Teacher> teachers = teacherService.findAll(pageable);
 
-        LinkedHashMap<String, Function<Teacher, Object>> columnData = new LinkedHashMap<>();
-        columnData.put("ID", Teacher::getId);
-        columnData.put("Name", Teacher::getName);
-        columnData.put("Surname", Teacher::getSurname);
-        columnData.put("Email", Teacher::getEmail);
-
         model.addAttribute("teachers", teachers);
-        model.addAttribute("columns", columnData);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", teachers.hasContent() ? teachers.getTotalPages() : 1);
 
