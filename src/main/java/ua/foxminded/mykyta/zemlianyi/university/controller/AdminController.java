@@ -49,7 +49,7 @@ public class AdminController {
         this.roomService = roomService;
     }
 
-    @GetMapping("/admin/groups")
+    @GetMapping("tables/groups")
     public String getGroups(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
         Pageable pageable = PageRequest.of(page, size);
@@ -59,10 +59,10 @@ public class AdminController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", groups.getTotalPages());
 
-        return "admin/groups";
+        return "tables/groups";
     }
 
-    @GetMapping("admin/students")
+    @GetMapping("tables/students")
     public String getStudents(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -81,10 +81,10 @@ public class AdminController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", students.hasContent() ? students.getTotalPages() : 1);
 
-        return "admin/students";
+        return "tables/students";
     }
 
-    @GetMapping("admin/admins")
+    @GetMapping("tables/admins")
     public String getAdmins(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -102,10 +102,10 @@ public class AdminController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", admins.hasContent() ? admins.getTotalPages() : 1);
 
-        return "admin/admins";
+        return "tables/admins";
     }
 
-    @GetMapping("admin/teachers")
+    @GetMapping("tables/teachers")
     public String getTeachers(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -123,10 +123,10 @@ public class AdminController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", teachers.hasContent() ? teachers.getTotalPages() : 1);
 
-        return "admin/teachers";
+        return "tables/teachers";
     }
 
-    @GetMapping("admin/courses")
+    @GetMapping("tables/courses")
     public String getCourses(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -161,10 +161,10 @@ public class AdminController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", courses.hasContent() ? courses.getTotalPages() : 1);
 
-        return "admin/courses";
+        return "tables/courses";
     }
 
-    @GetMapping("admin/lectures")
+    @GetMapping("tables/lectures")
     public String getLectures(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
         Pageable pageable = PageRequest.of(page, size);
@@ -206,10 +206,10 @@ public class AdminController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", lectures.hasContent() ? lectures.getTotalPages() : 1);
 
-        return "admin/lectures";
+        return "tables/lectures";
     }
 
-    @GetMapping("admin/rooms")
+    @GetMapping("tables/rooms")
     public String getRooms(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -225,6 +225,6 @@ public class AdminController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", rooms.hasContent() ? rooms.getTotalPages() : 1);
 
-        return "admin/rooms";
+        return "tables/rooms";
     }
 }
