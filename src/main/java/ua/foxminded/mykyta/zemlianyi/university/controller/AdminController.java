@@ -111,31 +111,7 @@ public class AdminController {
         Pageable pageable = PageRequest.of(page, size);
         Page<Course> courses = courseService.findAll(pageable);
 
-        LinkedHashMap<String, Function<Course, Object>> columnData = new LinkedHashMap<>();
-        columnData.put("ID", Course::getId);
-        columnData.put("Name", Course::getName);
-        columnData.put("Teacher", course -> {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.append(course.getTeacher().getName());
-            stringBuilder.append(Constants.SPACE);
-            stringBuilder.append(course.getTeacher().getSurname());
-            return stringBuilder.toString();
-        });
-        columnData.put("Groups", course -> {
-            StringBuilder stringBuilder = new StringBuilder();
-            course.getGroups().stream().forEach(group -> {
-                if (!stringBuilder.isEmpty()) {
-                    stringBuilder.append(Constants.SPACE);
-                    stringBuilder.append(Constants.PIPE);
-                    stringBuilder.append(Constants.SPACE);
-                }
-                stringBuilder.append(group.getName());
-            });
-            return stringBuilder.toString();
-        });
-
         model.addAttribute("courses", courses);
-        model.addAttribute("columns", columnData);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", courses.hasContent() ? courses.getTotalPages() : 1);
 
