@@ -13,14 +13,14 @@
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 </head>
 <body>
-	<div th:insert="~{fragments/navs/nav :: navbar}"></div>
+	<div th:insert="~{fragments/general_fragments :: navbar}"></div>
 
 	<div
 		class="d-flex flex-column justify-content-center align-items-center">
 
-		<div th:replace="~{fragments/table-fragment :: table-rooms(${rooms})}"></div>
+		<div th:replace="~{fragments/room_fragments :: table(${rooms})}"></div>
 		<div
-			th:insert="~{fragments/table-fragment :: table-pagination(${rooms.size},${paginationUrl},${currentPage},${totalPages})}"></div>
+			th:insert="~{fragments/general_fragments :: table-pagination(${rooms.size},${paginationUrl},${currentPage},${totalPages})}"></div>
 
 	</div>
 	<script

@@ -1,8 +1,0 @@
-<nav th:fragment="navbar">
-	<div sec:authorize="hasRole('ADMIN')"
-		th:insert="~{fragments/navs/admin_nav :: navbar}"></div>
-	<div sec:authorize="hasRole('TEACHER')"
-		th:insert="~{fragments/navs/teacher_nav :: navbar}"></div>
-	<div sec:authorize="hasRole('STUDENT')"
-		th:insert="~{fragments/navs/student_nav :: navbar}"></div>
-</nav>

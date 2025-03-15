@@ -14,16 +14,15 @@
 
 </head>
 <body>
-	<div th:insert="~{fragments/navs/nav :: navbar}"></div>
+	<div th:insert="~{fragments/general_fragments :: navbar}"></div>
 
 	<div
 		class="d-flex flex-column justify-content-center align-items-center">
 
-		<div
-			th:replace="~{fragments/table-fragment :: table-students(${students})}"></div>
+		<div th:replace="~{fragments/student_fragments :: table(${students})}"></div>
 
 		<div
-			th:insert="~{fragments/table-fragment :: table-pagination(${students.size},${paginationUrl},${currentPage},${totalPages})}"></div>
+			th:insert="~{fragments/general_fragments :: table-pagination(${students.size},${paginationUrl},${currentPage},${totalPages})}"></div>
 	</div>
 
 	<script
