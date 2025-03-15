@@ -32,7 +32,7 @@ public class SampleDataGenerator {
     }
 
     private void encryptAdminsPasswords() {
-        adminDao.findAll().stream().forEach(admin -> {
+        adminDao.findAll().forEach(admin -> {
             String rawPassword = admin.getPassword();
             admin.setPassword(passwordEncoder.encode(rawPassword));
             adminDao.save(admin);
@@ -40,7 +40,7 @@ public class SampleDataGenerator {
     }
 
     private void encryptTeachersPasswords() {
-        teacherDao.findAll().stream().forEach(teacher -> {
+        teacherDao.findAll().forEach(teacher -> {
             String rawPassword = teacher.getPassword();
             teacher.setPassword(passwordEncoder.encode(rawPassword));
             teacherDao.save(teacher);
@@ -48,7 +48,7 @@ public class SampleDataGenerator {
     }
 
     private void encryptStudentsPasswords() {
-        studentDao.findAll().stream().forEach(student -> {
+        studentDao.findAll().forEach(student -> {
             String rawPassword = student.getPassword();
             student.setPassword(passwordEncoder.encode(rawPassword));
             studentDao.save(student);
