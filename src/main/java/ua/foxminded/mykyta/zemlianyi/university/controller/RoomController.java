@@ -12,25 +12,24 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.*;
 import ua.foxminded.mykyta.zemlianyi.university.service.*;
 
 @Controller
-public class AdminController {
-    private AdminService adminService;
+public class RoomController {
+    private RoomService roomService;
 
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
+    public RoomController(RoomService roomService) {
+        this.roomService = roomService;
     }
 
-    @GetMapping("tables/admins")
-    public String getAdmins(@RequestParam(defaultValue = "0") Integer page,
+    @GetMapping("tables/rooms")
+    public String getRooms(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<Admin> admins = adminService.findAll(pageable);
+        Page<Room> rooms = roomService.findAll(pageable);
 
-        model.addAttribute("admins", admins);
+        model.addAttribute("rooms", rooms);
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", admins.hasContent() ? admins.getTotalPages() : 1);
+        model.addAttribute("totalPages", rooms.hasContent() ? rooms.getTotalPages() : 1);
 
-        return "tables/admins";
+        return "tables/rooms";
     }
-
 }
