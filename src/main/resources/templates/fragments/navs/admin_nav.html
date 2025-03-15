@@ -18,23 +18,23 @@
 					role="button" aria-expanded="false">Users</a>
 					<ul class="dropdown-menu">
 						<li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item"
-							href="/tables/admins">Admins</a></li>
+							href="/admins">Admins</a></li>
 						<li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item"
-							href="/tables/students">Students</a></li>
+							href="/students">Students</a></li>
 						<li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item"
-							href="/tables/teachers">Teachers</a></li>
+							href="/teachers">Teachers</a></li>
 					</ul></li>
 
 				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
-					class="nav-link" href="/tables/groups">Groups</a></li>
+					class="nav-link" href="/groups">Groups</a></li>
 
 				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
-					class="nav-link" href="/tables/courses">Courses</a></li>
+					class="nav-link" href="/courses">Courses</a></li>
 
 				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
-					class="nav-link" href="/tables/lectures">Lectures</a></li>
+					class="nav-link" href="/lectures">Lectures</a></li>
 				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
-					class="nav-link" href="/tables/rooms">Rooms</a></li>
+					class="nav-link" href="/rooms">Rooms</a></li>
 
 				<li class="nav-item"><a class="nav-link" href="/logout">Log
 						out</a></li>

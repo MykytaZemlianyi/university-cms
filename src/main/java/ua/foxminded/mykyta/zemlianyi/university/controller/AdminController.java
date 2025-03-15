@@ -19,7 +19,7 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @GetMapping("tables/admins")
+    @GetMapping("/admins")
     public String getAdmins(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 

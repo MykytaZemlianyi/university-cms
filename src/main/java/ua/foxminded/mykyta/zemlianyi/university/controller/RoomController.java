@@ -19,7 +19,7 @@ public class RoomController {
         this.roomService = roomService;
     }
 
-    @GetMapping("tables/rooms")
+    @GetMapping("/rooms")
     public String getRooms(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
