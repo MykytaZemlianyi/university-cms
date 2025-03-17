@@ -9,8 +9,9 @@
 	</button>
 </div>
 
-<div th:fragment="show_modal_table(btn_text)">
-	<button class="btn btn-outline-primary btn-lg p-2">
+<div th:fragment="show_modal_table(btn_text,data_bs_target)">
+	<button class="btn btn-outline-primary btn-lg p-2"
+		th:data-bs-toggle="modal" th:data-bs-target="${data_bs_target}">
 		<i class=" bi bi-search me-2"></i> <span th:text="${btn_text}"></span>
 	</button>
 </div>
