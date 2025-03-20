@@ -1,0 +1,63 @@
+package ua.foxminded.mykyta.zemlianyi.university.controller;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
+import ua.foxminded.mykyta.zemlianyi.university.service.RoomService;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+class RoomControllerTest {
+    @Autowired
+    MockMvc mockMvc;
+
+    @MockitoBean
+    RoomService service;
+
+    @BeforeEach
+    void setUp() throws Exception {
+    }
+
+    @Test
+    void getRooms_shouldReturnCorrectModel() throws Exception {
+        Room room = new Room();
+        room.setId(1L);
+        room.setNumber(123);
+
+        List<Room> roomList = new ArrayList<>();
+        roomList.add(room);
+
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<Room> roomPage = new PageImpl<Room>(roomList, pageable, roomList.size());
+
+        when(service.findAll(pageable)).thenReturn(roomPage);
+
+        mockMvc.perform(
+                get("/rooms").param("page", "0").param("size", "5").with(user("zemlianoyne@gmail.com").roles("ADMIN")))
+                .andExpect(status().isOk()).andExpect(view().name("tables/rooms"))
+                .andExpect(model().attributeExists("rooms")).andExpect(model().attributeExists("currentPage"))
+                .andExpect(model().attributeExists("totalPages")).andExpect(model().attribute("currentPage", 0))
+                .andExpect(model().attribute("totalPages", 1)).andExpect(model().attribute("rooms", roomPage));
+    }
+
+}
