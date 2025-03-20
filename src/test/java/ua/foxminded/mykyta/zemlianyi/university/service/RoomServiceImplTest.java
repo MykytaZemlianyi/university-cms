@@ -13,7 +13,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
 
-@SpringBootTest(classes = { RoomServiceImpl.class })
+@SpringBootTest
 class RoomServiceImplTest {
     @MockitoBean
     RoomDao roomDao;

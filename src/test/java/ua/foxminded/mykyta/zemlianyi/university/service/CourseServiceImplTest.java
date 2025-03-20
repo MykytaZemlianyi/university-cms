@@ -20,7 +20,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 
-@SpringBootTest(classes = { CourseServiceImpl.class })
+@SpringBootTest
 class CourseServiceImplTest {
     @MockitoBean
     CourseDao courseDao;

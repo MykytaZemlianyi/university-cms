@@ -1,6 +1,5 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,11 +34,6 @@ class CourseControllerTest {
 
     @MockitoBean
     CourseService service;
-
-    @Test
-    void test() {
-        fail("Not yet implemented");
-    }
 
     @Test
     void getCourses_shouldReturnCorrectModel() throws Exception {

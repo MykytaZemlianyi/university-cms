@@ -16,13 +16,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.foxminded.mykyta.zemlianyi.university.UniversityApplication;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
 
 @Testcontainers
-@SpringBootTest(classes = { UniversityApplication.class })
+@SpringBootTest
 @ActiveProfiles("test")
 @ComponentScan(basePackages = "ua.foxminded.mykyta.zemlianyi.university")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
