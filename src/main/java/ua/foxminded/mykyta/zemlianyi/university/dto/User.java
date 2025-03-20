@@ -2,8 +2,6 @@ package ua.foxminded.mykyta.zemlianyi.university.dto;
 
 import java.util.Objects;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
