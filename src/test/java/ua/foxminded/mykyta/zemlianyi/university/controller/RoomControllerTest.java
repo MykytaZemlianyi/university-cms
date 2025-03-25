@@ -54,7 +54,7 @@ class RoomControllerTest {
 
         mockMvc.perform(
                 get("/rooms").param("page", "0").param("size", "5").with(user("zemlianoyne@gmail.com").roles("ADMIN")))
-                .andExpect(status().isOk()).andExpect(view().name("tables/rooms"))
+                .andExpect(status().isOk()).andExpect(view().name("/view-all-rooms"))
                 .andExpect(model().attributeExists("rooms")).andExpect(model().attributeExists("currentPage"))
                 .andExpect(model().attributeExists("totalPages")).andExpect(model().attribute("currentPage", 0))
                 .andExpect(model().attribute("totalPages", 1)).andExpect(model().attribute("rooms", roomPage));

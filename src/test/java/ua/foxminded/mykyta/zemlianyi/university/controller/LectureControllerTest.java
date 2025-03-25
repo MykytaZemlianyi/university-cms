@@ -73,7 +73,7 @@ class LectureControllerTest {
 
         mockMvc.perform(get("/lectures").param("page", "0").param("size", "5")
                 .with(user("zemlianoyne@gmail.com").roles("ADMIN"))).andExpect(status().isOk())
-                .andExpect(view().name("tables/lectures")).andExpect(model().attributeExists("lectures"))
+                .andExpect(view().name("/view-all-lectures")).andExpect(model().attributeExists("lectures"))
                 .andExpect(model().attributeExists("currentPage")).andExpect(model().attributeExists("totalPages"))
                 .andExpect(model().attribute("currentPage", 0)).andExpect(model().attribute("totalPages", 1))
                 .andExpect(model().attribute("lectures", lecturePage));

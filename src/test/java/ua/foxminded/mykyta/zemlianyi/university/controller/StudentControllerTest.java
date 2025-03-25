@@ -57,7 +57,7 @@ class StudentControllerTest {
 
         mockMvc.perform(get("/students").param("page", "0").param("size", "5")
                 .with(user("zemlianoyne@gmail.com").roles("ADMIN"))).andExpect(status().isOk())
-                .andExpect(view().name("tables/students")).andExpect(model().attributeExists("students"))
+                .andExpect(view().name("/view-all-students")).andExpect(model().attributeExists("students"))
                 .andExpect(model().attributeExists("currentPage")).andExpect(model().attributeExists("totalPages"))
                 .andExpect(model().attribute("currentPage", 0)).andExpect(model().attribute("totalPages", 1))
                 .andExpect(model().attribute("students", studentsPage));

@@ -52,7 +52,7 @@ class AdminControllerTest {
 
         mockMvc.perform(
                 get("/admins").param("page", "0").param("size", "5").with(user("zemlianoyne@gmail.com").roles("ADMIN")))
-                .andExpect(status().isOk()).andExpect(view().name("tables/admins"))
+                .andExpect(status().isOk()).andExpect(view().name("/view-all-admins"))
                 .andExpect(model().attributeExists("admins")).andExpect(model().attributeExists("currentPage"))
                 .andExpect(model().attributeExists("totalPages")).andExpect(model().attribute("currentPage", 0))
                 .andExpect(model().attribute("totalPages", 1)).andExpect(model().attribute("admins", adminPage));
