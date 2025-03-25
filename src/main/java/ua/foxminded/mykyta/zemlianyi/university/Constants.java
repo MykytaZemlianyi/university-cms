@@ -16,6 +16,14 @@ public class Constants {
     public static final String ROLE_TEACHER = "TEACHER";
     public static final String ROLE_STUDENT = "STUDENT";
 
+    public static final String LOAD_USER_BY_USERNAME = """
+            SELECT email, "password", 'ROLE_ADMIN' AS role FROM university.admins WHERE email = ?;
+            UNION ALL
+            SELECT email, "password", 'ROLE_STUDENT' AS role FROM university.students WHERE email = ?
+            UNION ALL
+            SELECT email, "password", 'ROLE_TEACHER' AS role FROM university.teachers WHERE email = ?
+            """;
+
     public static final String STUDENT_DOES_NOT_HAVE_GROUP = "Student doesn't have group";
 
     public static final String USER_INVALID = " is invalid";
@@ -39,4 +47,5 @@ public class Constants {
 
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM");
     public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+
 }
