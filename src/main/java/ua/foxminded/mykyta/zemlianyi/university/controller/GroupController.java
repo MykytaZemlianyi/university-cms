@@ -29,6 +29,6 @@ public class GroupController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", groups.getTotalPages());
 
-        return "tables/groups";
+        return "/view-all-groups";
     }
 }

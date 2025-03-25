@@ -30,7 +30,7 @@ public class AdminController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", admins.hasContent() ? admins.getTotalPages() : 1);
 
-        return "tables/admins";
+        return "/view-all-admins";
     }
 
 }

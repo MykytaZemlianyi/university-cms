@@ -40,9 +40,9 @@
 			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 				<li class="nav-item"><a class="nav-link" href="/welcome">Home</a></li>
 
-				<li class="nav-item" sec:authorize="hasAuthority('TEACHER')"><a
+				<li class="nav-item" sec:authorize="hasRole('TEACHER')"><a
 					class="nav-link" href="/courses">My Courses</a></li>
-				<li class="nav-item" sec:authorize="hasAuthority('TEACHER')"><a
+				<li class="nav-item" sec:authorize="hasRole('TEACHER')"><a
 					class="nav-link" href="/schedule">My Schedule</a></li>
 				<li class="nav-item"><a class="nav-link" href="/logout">Log
 						out</a></li>
