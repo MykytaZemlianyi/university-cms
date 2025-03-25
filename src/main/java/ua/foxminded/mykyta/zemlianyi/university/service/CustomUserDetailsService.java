@@ -44,7 +44,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             return userDetails;
 
         }
-        logger.error("User NOT found in Admin table");
+        logger.info("User NOT found in Admin table");
 
         Optional<Teacher> teacher = teacherDao.findByEmail(username);
         if (teacher.isPresent()) {
@@ -52,7 +52,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             return User.withUsername(teacher.get().getEmail()).password(teacher.get().getPassword())
                     .authorities(Constants.ROLE_PREFIX + Constants.ROLE_TEACHER).build();
         }
-        logger.error("User NOT found in Teacher table");
+        logger.info("User NOT found in Teacher table");
 
         Optional<Student> student = studentDao.findByEmail(username);
         if (student.isPresent()) {
@@ -60,7 +60,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             return User.withUsername(student.get().getEmail()).password(student.get().getPassword())
                     .authorities(Constants.ROLE_PREFIX + Constants.ROLE_STUDENT).build();
         }
-        logger.error("User NOT found in Student table");
+        logger.info("User NOT found in Student table");
 
         throw new UsernameNotFoundException(Constants.USER_NOT_FOUND_ERROR);
     }
