@@ -3,6 +3,9 @@ package ua.foxminded.mykyta.zemlianyi.university.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 
@@ -16,4 +19,6 @@ public interface LectureService {
     List<Lecture> findForCourseInTimeInterval(Course course, LocalDateTime timeStart, LocalDateTime timeEnd);
     
     void delete(Lecture lecture);
+
+    Page<Lecture> findAll(Pageable pageable);
 }

@@ -5,11 +5,15 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.LectureDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 
+@Service
 public class LectureServiceImpl implements LectureService {
     private static Logger logger = LogManager.getLogger(LectureServiceImpl.class.getName());
     private LectureDao lectureDao;
@@ -59,6 +63,11 @@ public class LectureServiceImpl implements LectureService {
         logger.info("Looking for lectures for course - {} between {} and {}", course, timeStart, timeEnd);
         return lectureDao.findByCourseAndTimeStartBetween(course, timeStart, timeEnd);
 
+    }
+
+    @Override
+    public Page<Lecture> findAll(Pageable pageable) {
+        return lectureDao.findAll(pageable);
     }
 
 }

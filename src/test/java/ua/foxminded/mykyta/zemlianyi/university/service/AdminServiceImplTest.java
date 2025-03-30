@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -16,7 +17,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ua.foxminded.mykyta.zemlianyi.university.dao.AdminDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
 
-@SpringBootTest(classes = { AdminServiceImpl.class })
+@SpringBootTest
 class AdminServiceImplTest {
 
     @MockitoBean

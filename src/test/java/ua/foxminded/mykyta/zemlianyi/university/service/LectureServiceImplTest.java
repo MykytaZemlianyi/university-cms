@@ -21,7 +21,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
 
-@SpringBootTest(classes = { LectureServiceImpl.class })
+@SpringBootTest
 class LectureServiceImplTest {
     @MockitoBean
     LectureDao lectureDao;

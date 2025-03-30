@@ -16,7 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import ua.foxminded.mykyta.zemlianyi.university.dao.StudentDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 
-@SpringBootTest(classes = { StudentServiceImpl.class })
+@SpringBootTest
 class StudentServiceImplTest {
     @MockitoBean
     StudentDao studentDao;

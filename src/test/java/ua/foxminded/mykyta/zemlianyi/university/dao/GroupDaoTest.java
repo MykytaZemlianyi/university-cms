@@ -1,6 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.dao;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,12 +12,11 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.foxminded.mykyta.zemlianyi.university.UniversityApplication;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 
 @Testcontainers
-@SpringBootTest(classes = { UniversityApplication.class })
+@SpringBootTest
 @ActiveProfiles("test")
 @ComponentScan(basePackages = "ua.foxminded.mykyta.zemlianyi.university")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)

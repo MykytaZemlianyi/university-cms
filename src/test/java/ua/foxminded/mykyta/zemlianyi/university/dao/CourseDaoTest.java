@@ -17,12 +17,11 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import ua.foxminded.mykyta.zemlianyi.university.UniversityApplication;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 
 @Testcontainers
-@SpringBootTest(classes = { UniversityApplication.class })
+@SpringBootTest
 @ActiveProfiles("test")
 @ComponentScan(basePackages = "ua.foxminded.mykyta.zemlianyi.university")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)

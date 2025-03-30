@@ -1,0 +1,52 @@
+<th:block th:fragment="table (courses)">
+	<table class="table table-striped table-bordered w-75  mx-auto">
+		<thead>
+			<tr class="text-center align-middle">
+				<th scope="col" class="p-2">ID</th>
+				<th scope="col" class="p-2">Name</th>
+				<th scope="col" class="p-2">Teacher</th>
+				<th scope="col" class="p-2">Groups</th>
+				<th scope="col" class="p-2">Tools</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="align-middle" th:each="course : ${courses}">
+				<td class="text-center p-2" th:text="${course.id}"></td>
+				<td class="p-2" th:text="${course.name}"></td>
+				<td class="p-2"
+					th:text="${course.teacher.name + ' ' + course.teacher.surname}"></td>
+
+				<td class="p-2"><span
+					th:each="group, iterStat : ${course.groups}"> <a
+						th:text="${group.name}"></a> <span th:if="${!iterStat.last}">,
+					</span>
+				</span></td>
+
+				<td class="text-center p-2">
+					<div th:insert="~{fragments/button-fragments :: edit}"></div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</th:block>
+
+<div th:fragment="modal(group)">
+	<div class="modal fade" th:id="'coursesModal_' + ${group.id}"
+		tabindex="-1" aria-labelledby="studentsModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						Courses for group <span th:text="${group.name}"></span>
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div
+						th:replace="~{fragments/course_fragments :: table(courses=${group.courses})}"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

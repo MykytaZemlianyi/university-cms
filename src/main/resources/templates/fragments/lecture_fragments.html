@@ -1,0 +1,64 @@
+<th:block th:fragment="table (lectures)">
+	<table class="table table-striped table-bordered w-75  mx-auto">
+		<thead>
+			<tr class="text-center align-middle">
+				<th scope="col" class="p-2">ID</th>
+				<th scope="col" class="p-2">Date</th>
+				<th scope="col" class="p-2">Begins</th>
+				<th scope="col" class="p-2">Ends</th>
+				<th scope="col" class="p-2">Room</th>
+				<th scope="col" class="p-2">Type</th>
+				<th scope="col" class="p-2">Course</th>
+				<th scope="col" class="p-2">Teacher</th>
+				<th scope="col" class="p-2">Groups</th>
+				<th scope="col" class="p-2">Tools</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="align-middle" th:each="lecture : ${lectures}">
+				<td class="text-center p-2" th:text="${lecture.id}"></td>
+				<td class="text-center p-2"
+					th:text="${#temporals.format(lecture.timeStart, 'dd-MM')}"></td>
+				<td class="text-center p-2"
+					th:text="${#temporals.format(lecture.timeStart, 'HH:mm')}"></td>
+				<td class="text-center p-2"
+					th:text="${#temporals.format(lecture.timeEnd, 'HH:mm')}"></td>
+				<td class="text-center p-2" th:text="${lecture.room.number}"></td>
+				<td class="p-2" th:text="${lecture.lectureType}"></td>
+				<td class="p-2" th:text="${lecture.course.name}"></td>
+				<td class="p-2"
+					th:text="${lecture.course.teacher.name + ' ' + lecture.course.teacher.surname}"></td>
+
+				<td class="p-2"><span
+					th:each="group, iterStat : ${lecture.course.groups}"> <a
+						th:text="${group.name}"></a> <span th:if="${!iterStat.last}">,
+					</span>
+						<td class="text-center p-2">
+							<div th:insert="~{fragments/button-fragments :: edit}"></div>
+					</td>
+			</tr>
+		</tbody>
+	</table>
+</th:block>
+
+<div th:fragment="modal(room)">
+	<div class="modal fade" th:id="'lecturesModal_' + ${room.id}"
+		tabindex="-1" aria-labelledby="studentsModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						Lectures in room <span th:text="${room.number}"></span>
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div
+						th:replace="~{fragments/lecture_fragments :: table(lectures=${room.lectures})}"></div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -17,7 +17,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dao.GroupDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 
-@SpringBootTest(classes = { GroupServiceImpl.class })
+@SpringBootTest
 class GroupServiceImplTest {
     @MockitoBean
     GroupDao groupDao;
