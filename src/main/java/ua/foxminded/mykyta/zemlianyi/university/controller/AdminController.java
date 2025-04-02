@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ua.foxminded.mykyta.zemlianyi.university.dto.*;
 import ua.foxminded.mykyta.zemlianyi.university.service.*;
@@ -42,8 +43,15 @@ public class AdminController {
     }
 
     @PostMapping("/admin/add-admin")
-    public String createAdmin(@ModelAttribute("admin") Admin admin) {
-        adminService.addNew(admin);
-        return "redirect:/admins?success";
+    public String createAdmin(@ModelAttribute("admin") Admin admin, RedirectAttributes redirectAttributes) {
+        try {
+            adminService.addNew(admin);
+            redirectAttributes.addFlashAttribute("successMessage", "Admin added successfully!");
+            return "redirect:/admins";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+            return "redirect:/admins";
+        }
     }
+
 }
