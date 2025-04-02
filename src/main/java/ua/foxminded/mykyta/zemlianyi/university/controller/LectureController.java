@@ -19,7 +19,7 @@ public class LectureController {
         this.lectureService = lectureService;
     }
 
-    @GetMapping("/lectures")
+    @GetMapping("/admin/lectures")
     public String getLectures(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
         Pageable pageable = PageRequest.of(page, size);

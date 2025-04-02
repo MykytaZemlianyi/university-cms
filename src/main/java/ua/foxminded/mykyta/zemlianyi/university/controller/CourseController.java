@@ -19,7 +19,7 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @GetMapping("/courses")
+    @GetMapping("/admin/courses")
     public String getCourses(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 

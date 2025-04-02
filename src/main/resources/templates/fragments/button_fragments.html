@@ -1,7 +1,7 @@
-<div th:fragment="edit">
-	<button class="btn btn-primary btn-lg">
-		<i class="bi bi-gear"></i>
-	</button>
+<div th:fragment="edit(link)">
+	<a th:href="${link}" class="btn btn-primary btn-lg"> <i
+		class="bi bi-gear"></i> <span>Edit</span>
+	</a>
 </div>
 
 <div th:fragment="delete">

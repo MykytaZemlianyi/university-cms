@@ -19,7 +19,7 @@ public class TeacherController {
         this.teacherService = teacherService;
     }
 
-    @GetMapping("/teachers")
+    @GetMapping("/admin/teachers")
     public String getTeachers(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 

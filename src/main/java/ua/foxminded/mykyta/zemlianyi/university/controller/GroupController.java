@@ -19,7 +19,7 @@ public class GroupController {
         this.groupService = groupService;
     }
 
-    @GetMapping("/groups")
+    @GetMapping("/admin/groups")
     public String getGroups(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
         Pageable pageable = PageRequest.of(page, size);
