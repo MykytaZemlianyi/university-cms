@@ -15,7 +15,7 @@
 				<td class="p-2" th:text="${group.name}"></td>
 				<td class="text-center p-2">
 					<div class="d-flex justify-content-center"
-						th:insert="~{fragments/button-fragments :: show_modal_table(btn_text='View Students', data_bs_target=|#studentsModal_${group.id}|)}">
+						th:insert="~{fragments/button_fragments :: show_modal_table(btn_text='View Students', data_bs_target=|#studentsModal_${group.id}|)}">
 					</div>
 
 					<div
@@ -23,7 +23,7 @@
 				</td>
 				<td class="text-center p-2">
 					<div class="d-flex justify-content-center"
-						th:insert="~{fragments/button-fragments :: show_modal_table(btn_text='View Courses', data_bs_target=|#coursesModal_${group.id}|)}">
+						th:insert="~{fragments/button_fragments :: show_modal_table(btn_text='View Courses', data_bs_target=|#coursesModal_${group.id}|)}">
 					</div>
 
 					<div
@@ -31,7 +31,7 @@
 				</td>
 				<td class="text-center p-2">
 					<div class="d-flex justify-content-center"
-						th:insert="~{fragments/button-fragments :: edit}"></div>
+						th:insert="~{fragments/button_fragments :: edit}"></div>
 				</td>
 
 			</tr>

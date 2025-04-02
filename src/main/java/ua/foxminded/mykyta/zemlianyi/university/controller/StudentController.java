@@ -30,7 +30,7 @@ public class StudentController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", students.hasContent() ? students.getTotalPages() : 1);
 
-        return "/view-all-students";
+        return "view-all-students";
     }
 
 }

@@ -29,7 +29,7 @@ public class LectureController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", lectures.hasContent() ? lectures.getTotalPages() : 1);
 
-        return "/view-all-lectures";
+        return "view-all-lectures";
     }
 
 }

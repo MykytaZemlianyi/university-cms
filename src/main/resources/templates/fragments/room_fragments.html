@@ -14,14 +14,14 @@
 				<td class="text-center p-2" th:text="${room.number}"></td>
 				<td class="text-center p-2">
 					<div
-						th:insert="~{fragments/button-fragments :: show_modal_table(btn_text='View Lectures', data_bs_target=|#lecturesModal_${room.id}|)}">
+						th:insert="~{fragments/button_fragments :: show_modal_table(btn_text='View Lectures', data_bs_target=|#lecturesModal_${room.id}|)}">
 					</div>
 					<div
 						th:replace="~{fragments/lecture_fragments :: modal(room=${room})}"></div>
 				</td>
 
 				<td class="text-center p-2">
-					<div th:insert="~{fragments/button-fragments :: edit}"></div>
+					<div th:insert="~{fragments/button_fragments :: edit}"></div>
 				</td>
 			</tr>
 		</tbody>

@@ -18,7 +18,7 @@
 				<td class="p-2" th:text="${student.email}"></td>
 				<td class="p-2 text-center" th:text="${student.group.name}"></td>
 				<td class="text-center p-2">
-					<div th:insert="~{fragments/button-fragments :: edit}"></div>
+					<div th:insert="~{fragments/button_fragments :: edit}"></div>
 				</td>
 			</tr>
 		</tbody>
@@ -46,10 +46,10 @@
 					class="nav-link" href="/schedule">My Schedule</a></li>
 
 				<li class="nav-item">
-                    <form th:action="@{/logout}" method="post">
-                        <button type="submit" class="nav-link">Log out</button>
-                    </form>
-                </li>
+					<form th:action="@{/logout}" method="post">
+						<button type="submit" class="nav-link">Log out</button>
+					</form>
+				</li>
 			</ul>
 		</div>
 	</div>

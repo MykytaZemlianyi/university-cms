@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security" data-bs-theme="auto">
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	data-bs-theme="auto">
 
 <head>
 <meta charset="utf-8">
@@ -18,7 +19,11 @@
 	<div
 		class="d-flex flex-column justify-content-center align-items-center">
 
+		<div class="d-flex w-75 p-2"
+			th:insert="~{fragments/button_fragments :: create}"></div>
+
 		<div th:replace="~{fragments/admin_fragments :: table(${admins})}"></div>
+
 		<div
 			th:insert="~{fragments/general_fragments :: table-pagination(${admins.size},${paginationUrl},${currentPage},${totalPages})}"></div>
 	</div>

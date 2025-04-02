@@ -30,6 +30,6 @@ public class RoomController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", rooms.hasContent() ? rooms.getTotalPages() : 1);
 
-        return "/view-all-rooms";
+        return "view-all-rooms";
     }
 }
