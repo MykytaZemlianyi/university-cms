@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ua.foxminded.mykyta.zemlianyi.university.dto.*;
@@ -33,4 +35,15 @@ public class AdminController {
         return "view-all-admins";
     }
 
+    @GetMapping("/add-new-admin")
+    public String showCreateAdminForm(Model model) {
+        model.addAttribute("admin", new Admin());
+        return "add-new-admin";
+    }
+
+    @PostMapping("/admin/add-admin")
+    public String createAdmin(@ModelAttribute("admin") Admin admin) {
+        adminService.addNew(admin);
+        return "redirect:/admins?success";
+    }
 }
