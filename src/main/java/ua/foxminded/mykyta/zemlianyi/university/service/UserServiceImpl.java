@@ -42,7 +42,13 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
 
     public T update(T user) {
         ObjectChecker.check(user);
-        ObjectChecker.checkIfExistsInDb(user, dao);
+        T existingUser = dao.findById(user.getId()).get();
+
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            user.setPassword(existingUser.getPassword());
+        } else {
+            encodePasswordBeforeSave(user);
+        }
         logger.info("Updating {} - {}", user.getClass().getSimpleName(), user);
         return dao.save(user);
     }
@@ -61,10 +67,11 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
         Optional<T> managedAdminOptional = dao.findById(user.getId());
 
         if (managedAdminOptional.isPresent()) {
-            T managedAdmin = managedAdminOptional.get();
-            managedAdmin.setPassword(user.getPassword());
+            T managedUser = managedAdminOptional.get();
+            managedUser.setPassword(user.getPassword());
             logger.info("Changed password for {} - {}", user.getClass().getSimpleName(), user);
-            return dao.save(managedAdmin);
+            encodePasswordBeforeSave(managedUser);
+            return dao.save(managedUser);
         } else {
             throw new IllegalArgumentException(Constants.USER_PASSWORD_CHANGE_ERROR);
         }
@@ -72,6 +79,10 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
 
     public Page<T> findAll(Pageable page) {
         return dao.findAll(page);
+    }
+
+    public Optional<T> findById(Long id) {
+        return dao.findById(id);
     }
 
 }

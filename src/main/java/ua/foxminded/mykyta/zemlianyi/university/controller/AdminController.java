@@ -1,13 +1,18 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -15,6 +20,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.*;
 import ua.foxminded.mykyta.zemlianyi.university.service.*;
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
     private AdminService adminService;
 
@@ -42,16 +48,57 @@ public class AdminController {
         return "add-new-admin";
     }
 
-    @PostMapping("/admin/add-admin")
+    @PostMapping("/add-admin")
     public String createAdmin(@ModelAttribute("admin") Admin admin, RedirectAttributes redirectAttributes) {
         try {
             adminService.addNew(admin);
             redirectAttributes.addFlashAttribute("successMessage", "Admin added successfully!");
-            return "redirect:/admins";
+            return "redirect:/admin/admins";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-            return "redirect:/admins";
+            return "redirect:/admin/admins";
         }
+    }
+
+    @GetMapping("/edit-admin/{id}")
+    public String showEditAdminForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        Optional<Admin> admin = adminService.findById(id);
+        if (admin.isPresent()) {
+            model.addAttribute("admin", admin.get());
+            return "edit-admin";
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: Admin doesn't found");
+            return "redirect:/admin/admins";
+        }
+    }
+
+    @PostMapping("/edit-admin/{id}")
+    public String updateAdmin(@PathVariable Long id, @ModelAttribute("admin") Admin admin,
+            RedirectAttributes redirectAttributes) {
+        try {
+            adminService.update(admin);
+            redirectAttributes.addFlashAttribute("successMessage", "Admin update successfully!");
+            return "redirect:/admin/admins";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+            return "redirect:/admin/edit-admin/" + id;
+        }
+    }
+
+    @DeleteMapping("/delete-admin/{id}")
+    public String deleteAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            Optional<Admin> admin = adminService.findById(id);
+            if (admin.isPresent()) {
+                adminService.delete(admin.get());
+                redirectAttributes.addFlashAttribute("successMessage", "Admin deleted successfully!");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Error: Admin does not exists");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/admin/admins";
     }
 
 }

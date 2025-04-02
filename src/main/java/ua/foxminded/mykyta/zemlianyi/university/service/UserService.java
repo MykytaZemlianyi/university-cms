@@ -1,5 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
+import java.util.Optional;
+
 import ua.foxminded.mykyta.zemlianyi.university.dto.User;
 
 public interface UserService<T extends User> {
@@ -10,4 +12,6 @@ public interface UserService<T extends User> {
     public void delete(T user);
 
     public T changePassword(T user);
+
+    public Optional<T> findById(Long id);
 }
