@@ -73,11 +73,26 @@ public class AdminController {
     }
 
     @PostMapping("/edit-admin/{id}")
-    public String updateAdmin(@PathVariable Long id, @ModelAttribute("admin") Admin admin,
+    public String updateAdmin(@PathVariable Long id, @ModelAttribute("admin") Admin updatedAdmin,
             RedirectAttributes redirectAttributes) {
         try {
-            adminService.update(admin);
-            redirectAttributes.addFlashAttribute("successMessage", "Admin update successfully!");
+            Optional<Admin> existingAdminOpt = adminService.findById(id);
+
+            if (existingAdminOpt.isPresent()) {
+                Admin existingAdmin = existingAdminOpt.get();
+                existingAdmin.setName(updatedAdmin.getName());
+                existingAdmin.setSurname(updatedAdmin.getSurname());
+                existingAdmin.setEmail(updatedAdmin.getEmail());
+
+                if (updatedAdmin.getPassword() != null && !updatedAdmin.getPassword().isEmpty()) {
+                    existingAdmin.setPassword(updatedAdmin.getPassword());
+                }
+
+                adminService.update(existingAdmin);
+                redirectAttributes.addFlashAttribute("successMessage", "Admin updated successfully!");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Error: Admin not found");
+            }
             return "redirect:/admin/admins";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
