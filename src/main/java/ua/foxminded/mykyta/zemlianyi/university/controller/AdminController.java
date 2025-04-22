@@ -84,8 +84,7 @@ public class AdminController {
             if (newPassword != null && !newPassword.isBlank()) {
                 updatedAdmin.setPassword(newPassword);
                 adminService.changePassword(updatedAdmin);
-
-            } 
+            }
             redirectAttributes.addFlashAttribute("successMessage", "Admin updated successfully!");
             return "redirect:/admin/admins";
         } catch (Exception e) {
