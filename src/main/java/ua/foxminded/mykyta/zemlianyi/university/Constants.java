@@ -7,7 +7,7 @@ public class Constants {
         throw new IllegalStateException("Utility Class");
     }
 
-    public static final String EMAIL_PATTERN_REGEX = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+    public static final String NAME_SURNAME_VALIDATION_REGEX = "^[A-Z][a-z' -]*$";
     public static final String PIPE = "|";
     public static final Object SPACE = " ";
 
@@ -48,4 +48,6 @@ public class Constants {
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM");
     public static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
+    public static final String INVALID_NAME_MSG = "Name should contain only letters and [',-]";
+    public static final String INVALID_SURNAME_MSG = "Surname should contain only letters and [',-]";
 }
