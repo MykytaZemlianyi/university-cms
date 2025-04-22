@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.validation.Valid;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
 import ua.foxminded.mykyta.zemlianyi.university.service.AdminService;
 
@@ -52,7 +54,13 @@ public class AdminController {
     }
 
     @PostMapping("/add-admin")
-    public String createAdmin(@ModelAttribute("admin") Admin admin, RedirectAttributes redirectAttributes) {
+    public String createAdmin(@Valid @ModelAttribute("admin") Admin admin, BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            return "add-new-admin";
+        }
+
         try {
             adminService.addNew(admin);
             redirectAttributes.addFlashAttribute("successMessage", "Admin added successfully!");
@@ -76,20 +84,20 @@ public class AdminController {
     }
 
     @PostMapping("/edit-admin/{id}")
-    public String updateAdmin(@PathVariable Long id, @ModelAttribute("admin") Admin updatedAdmin,
-            @RequestParam String newPassword, RedirectAttributes redirectAttributes) {
+    public String updateAdmin(@PathVariable Long id, @Valid @ModelAttribute("admin") Admin updatedAdmin,
+            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            return "edit-admin";
+        }
+
         try {
             adminService.update(updatedAdmin);
-
-            if (newPassword != null && !newPassword.isBlank()) {
-                updatedAdmin.setPassword(newPassword);
-                adminService.changePassword(updatedAdmin);
-            }
             redirectAttributes.addFlashAttribute("successMessage", "Admin updated successfully!");
             return "redirect:/admin/admins";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-            return "redirect:/admin/edit-admin/" + id;
+            return "redirect:/admin/admins";
         }
     }
 

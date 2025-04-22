@@ -7,7 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 
 @MappedSuperclass
 public abstract class User implements Dto, Verifiable {
@@ -15,12 +16,16 @@ public abstract class User implements Dto, Verifiable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name cannot be blank")
     @Column(name = "name")
     private String name;
 
+    @NotBlank(message = "Surname cannot be blank")
     @Column(name = "surname")
     private String surname;
 
+    @NotBlank(message = "Email cannot be blank")
+    @Email(message = "Email should be valid")
     @Column(name = "email")
     private String email;
 
@@ -52,57 +57,28 @@ public abstract class User implements Dto, Verifiable {
     // Setters
 
     public void setId(Long id) {
-        if (id != null && id >= 0) {
-            this.id = id;
-        } else {
-            throw new IllegalArgumentException("invalid ID");
-        }
+        this.id = id;
     }
 
     public void setName(String name) {
-        if (verifyString(name)) {
-            this.name = name;
-        } else {
-            throw new IllegalArgumentException("Invalid name");
-        }
+        this.name = name;
     }
 
     public void setSurname(String surname) {
-        if (verifyString(surname)) {
-            this.surname = surname;
-        } else {
-            throw new IllegalArgumentException("Invalid surname");
-        }
+        this.surname = surname;
     }
 
     public void setEmail(String email) {
-        if (isEmail(email)) {
-            this.email = email;
-        } else {
-            throw new IllegalArgumentException("Invalid email");
-        }
+        this.email = email;
     }
 
     public void setPassword(String password) {
-        if (verifyString(password)) {
-            this.password = password;
-        } else {
-            throw new IllegalArgumentException("Invalid password");
-        }
+        this.password = password;
     }
 
     @Override
     public boolean verify() {
-        return verifyString(name) && verifyString(surname) && verifyString(email) && isEmail(email)
-                && verifyString(password);
-    }
-
-    private boolean verifyString(String str) {
-        return str != null && !str.isEmpty() && !str.isBlank();
-    }
-
-    public boolean isEmail(String email) {
-        return email.matches(Constants.EMAIL_PATTERN_REGEX);
+        return name != null && surname != null && email != null && password != null;
     }
 
     @Override
