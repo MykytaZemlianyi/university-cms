@@ -2,6 +2,8 @@ package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ import ua.foxminded.mykyta.zemlianyi.university.service.*;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
+    private static Logger logger = LogManager.getLogger(AdminController.class.getName());
     private AdminService adminService;
 
     public AdminController(AdminService adminService) {
@@ -80,13 +83,7 @@ public class AdminController {
 
             if (existingAdminOpt.isPresent()) {
                 Admin existingAdmin = existingAdminOpt.get();
-                existingAdmin.setName(updatedAdmin.getName());
-                existingAdmin.setSurname(updatedAdmin.getSurname());
-                existingAdmin.setEmail(updatedAdmin.getEmail());
-
-                if (updatedAdmin.getPassword() != null && !updatedAdmin.getPassword().isEmpty()) {
-                    existingAdmin.setPassword(updatedAdmin.getPassword());
-                }
+                existingAdmin = combineUpdatedWithExisting(updatedAdmin, existingAdmin);
 
                 adminService.update(existingAdmin);
                 redirectAttributes.addFlashAttribute("successMessage", "Admin updated successfully!");
@@ -98,6 +95,19 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
             return "redirect:/admin/edit-admin/" + id;
         }
+    }
+
+    private Admin combineUpdatedWithExisting(Admin updatedAdmin, Admin existingAdmin) {
+        Admin combinedAdmin = existingAdmin;
+        combinedAdmin.setName(updatedAdmin.getName());
+        combinedAdmin.setSurname(updatedAdmin.getSurname());
+        combinedAdmin.setEmail(updatedAdmin.getEmail());
+
+        if (!(updatedAdmin.getPassword().equals(combinedAdmin.getPassword()))) {
+            combinedAdmin.setPassword(updatedAdmin.getPassword());
+            logger.info("New password for {}", updatedAdmin);
+        }
+        return combinedAdmin;
     }
 
     @DeleteMapping("/delete-admin/{id}")

@@ -107,7 +107,15 @@ public abstract class User implements Dto, Verifiable {
 
     @Override
     public String toString() {
-        return "User{id=" + id + ", username='" + name + " " + surname + "'}";
+        StringBuilder builder = new StringBuilder();
+        builder.append("User{id=");
+        builder.append(id);
+        builder.append(", full name='");
+        builder.append(name);
+        builder.append(" ");
+        builder.append(surname);
+        builder.append("'}");
+        return builder.toString();
     }
 
     @Override
