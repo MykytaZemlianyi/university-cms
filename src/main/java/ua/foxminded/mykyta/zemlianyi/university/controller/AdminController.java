@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ua.foxminded.mykyta.zemlianyi.university.dto.*;
-import ua.foxminded.mykyta.zemlianyi.university.service.*;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
+import ua.foxminded.mykyta.zemlianyi.university.service.AdminService;
 
 @Controller
 @RequestMapping("/admin")
@@ -77,37 +77,21 @@ public class AdminController {
 
     @PostMapping("/edit-admin/{id}")
     public String updateAdmin(@PathVariable Long id, @ModelAttribute("admin") Admin updatedAdmin,
-            RedirectAttributes redirectAttributes) {
+            @RequestParam String newPassword, RedirectAttributes redirectAttributes) {
         try {
-            Optional<Admin> existingAdminOpt = adminService.findById(id);
+            adminService.update(updatedAdmin);
 
-            if (existingAdminOpt.isPresent()) {
-                Admin existingAdmin = existingAdminOpt.get();
-                existingAdmin = combineUpdatedWithExisting(updatedAdmin, existingAdmin);
+            if (newPassword != null && !newPassword.isBlank()) {
+                updatedAdmin.setPassword(newPassword);
+                adminService.changePassword(updatedAdmin);
 
-                adminService.update(existingAdmin);
-                redirectAttributes.addFlashAttribute("successMessage", "Admin updated successfully!");
-            } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Error: Admin not found");
-            }
+            } 
+            redirectAttributes.addFlashAttribute("successMessage", "Admin updated successfully!");
             return "redirect:/admin/admins";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
             return "redirect:/admin/edit-admin/" + id;
         }
-    }
-
-    private Admin combineUpdatedWithExisting(Admin updatedAdmin, Admin existingAdmin) {
-        Admin combinedAdmin = existingAdmin;
-        combinedAdmin.setName(updatedAdmin.getName());
-        combinedAdmin.setSurname(updatedAdmin.getSurname());
-        combinedAdmin.setEmail(updatedAdmin.getEmail());
-
-        if (!(updatedAdmin.getPassword().equals(combinedAdmin.getPassword()))) {
-            combinedAdmin.setPassword(updatedAdmin.getPassword());
-            logger.info("New password for {}", updatedAdmin);
-        }
-        return combinedAdmin;
     }
 
     @DeleteMapping("/delete-admin/{id}")

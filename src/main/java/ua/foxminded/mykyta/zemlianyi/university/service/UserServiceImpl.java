@@ -41,14 +41,17 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
     }
 
     public T update(T user) {
-        ObjectChecker.check(user);
         T existingUser = dao.findById(user.getId()).get();
 
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
             user.setPassword(existingUser.getPassword());
         } else {
-            encodePasswordBeforeSave(user);
+            if (!user.getPassword().equals(existingUser.getPassword())) {
+                encodePasswordBeforeSave(user);
+            }
         }
+
+        ObjectChecker.check(user);
         logger.info("Updating {} - {}", user.getClass().getSimpleName(), user);
         return dao.save(user);
     }
