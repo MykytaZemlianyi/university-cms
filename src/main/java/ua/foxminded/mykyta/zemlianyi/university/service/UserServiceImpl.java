@@ -41,19 +41,24 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
     }
 
     public T update(T user) {
-        T existingUser = dao.findById(user.getId()).get();
+        Optional<T> existingUserOpt = dao.findById(user.getId());
+        if (existingUserOpt.isPresent()) {
+            T existingUser = existingUserOpt.get();
 
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            user.setPassword(existingUser.getPassword());
-        } else {
-            if (!user.getPassword().equals(existingUser.getPassword())) {
-                encodePasswordBeforeSave(user);
+            if (user.getPassword() == null || user.getPassword().isEmpty()) {
+                user.setPassword(existingUser.getPassword());
+            } else {
+                if (!user.getPassword().equals(existingUser.getPassword())) {
+                    encodePasswordBeforeSave(user);
+                }
             }
-        }
 
-        ObjectChecker.check(user);
-        logger.info("Updating {} - {}", user.getClass().getSimpleName(), user);
-        return dao.save(user);
+            ObjectChecker.check(user);
+            logger.info("Updating {} - {}", user.getClass().getSimpleName(), user);
+            return dao.save(user);
+        } else {
+            throw new IllegalArgumentException(Constants.USER_NOT_FOUND_ERROR);
+        }
     }
 
     public void delete(T user) {
