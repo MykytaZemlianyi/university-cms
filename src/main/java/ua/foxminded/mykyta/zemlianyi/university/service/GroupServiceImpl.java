@@ -23,7 +23,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group addNew(Group group) {
-        ObjectChecker.check(group);
+        ObjectChecker.checkNullAndVerify(group);
         if (groupDao.existsByName(group.getName())) {
             throw new IllegalArgumentException(group.getName() + Constants.GROUP_ADD_NEW_ERROR_EXISTS_BY_NAME);
         }
@@ -33,7 +33,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group update(Group group) {
-        ObjectChecker.check(group);
+        ObjectChecker.checkNullAndVerify(group);
         ObjectChecker.checkIfExistsInDb(group, groupDao);
 
         logger.info("Updating group - {}", group);
@@ -42,7 +42,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public void delete(Group group) {
-        ObjectChecker.check(group);
+        ObjectChecker.checkNullAndVerify(group);
         ObjectChecker.checkIfExistsInDb(group, groupDao);
 
         logger.info("Updating group - {}", group);

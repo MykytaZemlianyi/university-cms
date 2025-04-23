@@ -10,9 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.CourseDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
@@ -20,13 +21,13 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class CourseServiceImplTest {
-    @MockitoBean
+    @Mock
     CourseDao courseDao;
 
-    @Autowired
-    CourseService courseService;
+    @InjectMocks
+    CourseServiceImpl courseService;
 
     @Test
     void addNew_shouldThrowIllegalArumentException_whenCourseIsNull() {

@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -8,21 +9,26 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.StudentDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class StudentServiceImplTest {
-    @MockitoBean
+    @Mock
     StudentDao studentDao;
 
-    @Autowired
-    StudentService studentService;
+    @Mock
+    PasswordEncoder encoder;
+
+    @InjectMocks
+    StudentServiceImpl studentService;
 
     Student student = new Student();
 
@@ -90,7 +96,7 @@ class StudentServiceImplTest {
 
     @Test
     void update_shouldThrowIllegalArgumentException_whenStudentDoesNotExistsInDb() {
-        doReturn(false).when(studentDao).existsById(student.getId());
+        doReturn(Optional.empty()).when(studentDao).findById(student.getId());
         assertThrows(IllegalArgumentException.class, () -> {
             studentService.update(student);
         });
@@ -98,7 +104,7 @@ class StudentServiceImplTest {
 
     @Test
     void update_shouldUpdate_whenStudentIsCorrectAndExistsInDb() {
-        doReturn(true).when(studentDao).existsById(student.getId());
+        doReturn(Optional.of(student)).when(studentDao).findById(student.getId());
 
         studentService.update(student);
 

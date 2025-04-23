@@ -6,20 +6,21 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class RoomServiceImplTest {
-    @MockitoBean
+    @Mock
     RoomDao roomDao;
 
-    @Autowired
-    RoomService roomService;
+    @InjectMocks
+    RoomServiceImpl roomService;
 
     @Test
     void addNew_shouldThrowIllegalArgumentException_whenRoomIsNull() {

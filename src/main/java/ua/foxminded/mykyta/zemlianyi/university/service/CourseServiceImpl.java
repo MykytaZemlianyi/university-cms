@@ -26,7 +26,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course addNew(Course course) {
-        ObjectChecker.check(course);
+        ObjectChecker.checkNullAndVerify(course);
         if (courseDao.existsByName(course.getName())) {
             throw new IllegalArgumentException(course.getName() + Constants.COURSE_ADD_NEW_ERROR_EXISTS_BY_NAME);
         }
@@ -37,7 +37,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course update(Course course) {
-        ObjectChecker.check(course);
+        ObjectChecker.checkNullAndVerify(course);
 
         ObjectChecker.checkIfExistsInDb(course, courseDao);
         logger.info("Updating course - {}", course);
@@ -46,7 +46,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void delete(Course course) {
-        ObjectChecker.check(course);
+        ObjectChecker.checkNullAndVerify(course);
 
         ObjectChecker.checkIfExistsInDb(course, courseDao);
         logger.info("Deleting course - {}", course);
@@ -60,7 +60,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<Course> findForTeacher(Teacher teacher) {
-        ObjectChecker.check(teacher);
+        ObjectChecker.checkNullAndVerify(teacher);
 
         logger.info("Looking for courses for teacher {}", teacher);
         return courseDao.findByTeacher(teacher);

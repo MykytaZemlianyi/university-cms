@@ -9,21 +9,22 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.GroupDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class GroupServiceImplTest {
-    @MockitoBean
+    @Mock
     GroupDao groupDao;
 
-    @Autowired
-    GroupService groupService;
+    @InjectMocks
+    GroupServiceImpl groupService;
 
     @Test
     void addNew_shouldThrowIllegalArgumentException_whenGroupIsNull() {

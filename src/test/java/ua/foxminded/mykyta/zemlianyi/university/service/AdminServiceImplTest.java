@@ -9,21 +9,27 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.AdminDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class AdminServiceImplTest {
 
-    @MockitoBean
+    @Mock
     AdminDao adminDao;
-    @Autowired
-    AdminService adminService;
+
+    @Mock
+    PasswordEncoder encoder;
+
+    @InjectMocks
+    AdminServiceImpl adminService;
 
     Admin admin = new Admin();
 
@@ -91,7 +97,7 @@ class AdminServiceImplTest {
 
     @Test
     void update_shouldThrowIllegalArgumentException_whenAdminDoesNotExistsInDb() {
-        doReturn(false).when(adminDao).existsById(admin.getId());
+        doReturn(Optional.empty()).when(adminDao).findById(admin.getId());
         assertThrows(IllegalArgumentException.class, () -> {
             adminService.update(admin);
         });
@@ -99,7 +105,7 @@ class AdminServiceImplTest {
 
     @Test
     void update_shouldUpdate_whenAdminIsCorrectAndExistsInDb() {
-        doReturn(true).when(adminDao).existsById(admin.getId());
+        doReturn(Optional.of(admin)).when(adminDao).findById(admin.getId());
 
         adminService.update(admin);
 

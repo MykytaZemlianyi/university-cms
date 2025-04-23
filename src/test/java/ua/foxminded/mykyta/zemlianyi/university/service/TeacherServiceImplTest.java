@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -8,20 +9,26 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.TeacherDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class TeacherServiceImplTest {
-    @MockitoBean
+    @Mock
     TeacherDao teacherDao;
-    @Autowired
-    TeacherService teacherService;
+
+    @Mock
+    PasswordEncoder encoder;
+
+    @InjectMocks
+    TeacherServiceImpl teacherService;
 
     Teacher teacher;
 
@@ -90,7 +97,7 @@ class TeacherServiceImplTest {
 
     @Test
     void update_shouldThrowIllegalArgumentException_whenTeacherDoesNotExistsInDb() {
-        doReturn(false).when(teacherDao).existsById(teacher.getId());
+        doReturn(Optional.empty()).when(teacherDao).findById(teacher.getId());
         assertThrows(IllegalArgumentException.class, () -> {
             teacherService.update(teacher);
         });
@@ -98,7 +105,7 @@ class TeacherServiceImplTest {
 
     @Test
     void update_shouldUpdate_whenTeacherIsCorrectAndExistsInDb() {
-        doReturn(true).when(teacherDao).existsById(teacher.getId());
+        doReturn(Optional.of(teacher)).when(teacherDao).findById(teacher.getId());
 
         teacherService.update(teacher);
 

@@ -21,7 +21,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room addNew(Room room) {
-        ObjectChecker.check(room);
+        ObjectChecker.checkNullAndVerify(room);
         if (roomDao.existsByNumber(room.getNumber())) {
             throw new IllegalArgumentException(room.getNumber() + Constants.ROOM_ADD_NEW_ERROR_EXISTS_BY_NUMBER);
         }
@@ -31,7 +31,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public Room update(Room room) {
-        ObjectChecker.check(room);
+        ObjectChecker.checkNullAndVerify(room);
         ObjectChecker.checkIfExistsInDb(room, roomDao);
 
         logger.info("Updating room - {}", room);
@@ -40,7 +40,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public void delete(Room room) {
-        ObjectChecker.check(room);
+        ObjectChecker.checkNullAndVerify(room);
         ObjectChecker.checkIfExistsInDb(room, roomDao);
 
         logger.info("Updating room - {}", room);

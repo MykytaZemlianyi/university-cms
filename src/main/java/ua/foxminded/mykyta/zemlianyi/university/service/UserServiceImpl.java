@@ -23,7 +23,7 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
     }
 
     public T addNew(T user) {
-        ObjectChecker.check(user);
+        ObjectChecker.checkNullAndVerify(user);
         if (dao.existsByEmail(user.getEmail())) {
             throw new IllegalArgumentException(user.getEmail() + Constants.USER_SAVE_ERROR_EMAIL_EXISTS);
         }
@@ -41,6 +41,8 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
     }
 
     public T update(T user) {
+        ObjectChecker.checkNull(user);
+
         Optional<T> existingUserOpt = dao.findById(user.getId());
         if (existingUserOpt.isPresent()) {
             T existingUser = existingUserOpt.get();
@@ -53,7 +55,7 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
                 }
             }
 
-            ObjectChecker.check(user);
+            ObjectChecker.checkNullAndVerify(user);
             logger.info("Updating {} - {}", user.getClass().getSimpleName(), user);
             return dao.save(user);
         } else {
@@ -62,7 +64,7 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
     }
 
     public void delete(T user) {
-        ObjectChecker.check(user);
+        ObjectChecker.checkNullAndVerify(user);
         ObjectChecker.checkIfExistsInDb(user, dao);
 
         logger.info("Deleting {} - {}", user.getClass().getSimpleName(), user);
@@ -70,7 +72,7 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
     }
 
     public T changePassword(T user) {
-        ObjectChecker.check(user);
+        ObjectChecker.checkNullAndVerify(user);
 
         Optional<T> managedAdminOptional = dao.findById(user.getId());
 

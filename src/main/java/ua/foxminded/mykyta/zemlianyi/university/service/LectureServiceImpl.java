@@ -24,14 +24,14 @@ public class LectureServiceImpl implements LectureService {
 
     @Override
     public Lecture addNew(Lecture lecture) {
-        ObjectChecker.check(lecture);
+        ObjectChecker.checkNullAndVerify(lecture);
         logger.info("Adding new lecture - {}", lecture);
         return lectureDao.save(lecture);
     }
 
     @Override
     public Lecture update(Lecture lecture) {
-        ObjectChecker.check(lecture);
+        ObjectChecker.checkNullAndVerify(lecture);
         ObjectChecker.checkIfExistsInDb(lecture, lectureDao);
         logger.info("Updating course - {}", lecture);
         return lectureDao.save(lecture);
@@ -39,7 +39,7 @@ public class LectureServiceImpl implements LectureService {
 
     @Override
     public void delete(Lecture lecture) {
-        ObjectChecker.check(lecture);
+        ObjectChecker.checkNullAndVerify(lecture);
         ObjectChecker.checkIfExistsInDb(lecture, lectureDao);
 
         logger.info("Updating course - {}", lecture);
@@ -49,14 +49,14 @@ public class LectureServiceImpl implements LectureService {
 
     @Override
     public List<Lecture> findForCourse(Course course) {
-        ObjectChecker.check(course);
+        ObjectChecker.checkNullAndVerify(course);
         logger.info("Looking for lectures for course - {}", course);
         return lectureDao.findByCourse(course);
     }
 
     @Override
     public List<Lecture> findForCourseInTimeInterval(Course course, LocalDateTime timeStart, LocalDateTime timeEnd) {
-        ObjectChecker.check(course);
+        ObjectChecker.checkNullAndVerify(course);
 
         ObjectChecker.checkInterval(timeStart, timeEnd);
 

@@ -12,22 +12,23 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.LectureDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class LectureServiceImplTest {
-    @MockitoBean
+    @Mock
     LectureDao lectureDao;
 
-    @Autowired
-    LectureService lectureService;
+    @InjectMocks
+    LectureServiceImpl lectureService;
 
     Lecture lecture = new Lecture();
     Course course = new Course();
