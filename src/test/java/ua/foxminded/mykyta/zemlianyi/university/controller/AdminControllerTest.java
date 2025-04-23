@@ -1,13 +1,23 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +33,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
 import ua.foxminded.mykyta.zemlianyi.university.service.AdminService;
 
@@ -100,6 +111,134 @@ class AdminControllerTest {
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/admins"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
 
+    }
+
+    @Test
+    @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
+    void createAdmin_shouldReturnWithErrors_whenBindingExceptionOccurs() throws Exception {
+        Admin newAdmin = new Admin();
+        newAdmin.setName(" ");
+        newAdmin.setSurname("Zemlianyi");
+        newAdmin.setEmail("mzeml@gmail.com");
+        newAdmin.setPassword("12345");
+
+        mockMvc.perform(post("/admin/add-admin").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", newAdmin.getName()).param("surname", newAdmin.getSurname())
+                .param("email", newAdmin.getEmail()).param("password", newAdmin.getPassword()))
+                .andExpect(status().isOk()).andExpect(view().name("add-new-admin"))
+                .andExpect(model().attributeHasFieldErrors("admin", "name"));
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
+    void showEditAdminForm_shouldReturnViewWithAdmin_whenAdminExists() throws Exception {
+        Optional<Admin> adminOpt = Optional.of(admin);
+        when(service.findById(1L)).thenReturn(adminOpt);
+
+        mockMvc.perform(get("/admin/edit-admin/1")).andExpect(status().isOk()).andExpect(view().name("edit-admin"))
+                .andExpect(model().attribute("admin", admin));
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
+    void showEditAdminForm_shouldRedirectWithError_whenServiceFails() throws Exception {
+        Optional<Admin> emptyAdminOpt = Optional.empty();
+        when(service.findById(1L)).thenReturn(emptyAdminOpt);
+
+        mockMvc.perform(get("/admin/edit-admin/1")).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/admins"))
+                .andExpect(flash().attribute("errorMessage", "Error: User not found"));
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
+    void updateAdmin_shouldRedirectWithSuccess_whenInputValidFields() throws Exception {
+
+        Admin modifiedAdmin = new Admin();
+        modifiedAdmin.setId(1L);
+        modifiedAdmin.setName("Marek");
+        modifiedAdmin.setSurname("Szepski");
+        modifiedAdmin.setEmail("mszepski@gmail.com");
+        modifiedAdmin.setPassword("12345");
+
+        mockMvc.perform(post("/admin/edit-admin/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", modifiedAdmin.getName()).param("surname", modifiedAdmin.getSurname())
+                .param("email", modifiedAdmin.getEmail()).param("password", modifiedAdmin.getPassword()))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/admins"))
+                .andExpect(flash().attribute("successMessage", "Admin updated successfully!"));
+
+        verify(service).update(modifiedAdmin);
+    }
+
+    @Test
+    @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
+    void updateAdmin_shouldRedirectWithError_whenUpdateFails() throws Exception {
+
+        Admin modifiedAdmin = new Admin();
+        modifiedAdmin.setId(1L);
+        modifiedAdmin.setName("Marek");
+        modifiedAdmin.setSurname("Szepski");
+        modifiedAdmin.setEmail("mszepski@gmail.com");
+        modifiedAdmin.setPassword("12345");
+
+        when(service.update(modifiedAdmin)).thenThrow(new IllegalArgumentException("Service Error"));
+
+        mockMvc.perform(post("/admin/edit-admin/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", modifiedAdmin.getName()).param("surname", modifiedAdmin.getSurname())
+                .param("email", modifiedAdmin.getEmail()).param("password", modifiedAdmin.getPassword()))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/admins"))
+                .andExpect(flash().attribute("errorMessage", "Error: Service Error"));
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
+    void updateAdmin_shouldReturnWithErrors_whenBindingExceptionOccurs() throws Exception {
+        Admin modifiedAdmin = new Admin();
+        modifiedAdmin.setName(" ");
+        modifiedAdmin.setSurname("Zemlianyi");
+        modifiedAdmin.setEmail("mzeml@gmail.com");
+        modifiedAdmin.setPassword("12345");
+
+        mockMvc.perform(post("/admin/edit-admin/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("name", modifiedAdmin.getName()).param("surname", modifiedAdmin.getSurname())
+                .param("email", modifiedAdmin.getEmail()).param("password", modifiedAdmin.getPassword()))
+                .andExpect(status().isOk()).andExpect(view().name("edit-admin"))
+                .andExpect(model().attributeHasFieldErrors("admin", "name"));
+
+    }
+
+    @Test
+    @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
+    void deleteAdmin_shouldRedirectWithSuccess_whenAdminExistsInDb() throws Exception {
+        when(service.findById(1L)).thenReturn(Optional.of(admin));
+
+        mockMvc.perform(delete("/admin/delete-admin/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/admins"))
+                .andExpect(flash().attribute("successMessage", "Admin deleted successfully!"));
+    }
+
+    @Test
+    @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
+    void deleteAdmin_shouldRedirectWithError_whenAdminDoesNotExistsInDb() throws Exception {
+        when(service.findById(1L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(delete("/admin/delete-admin/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/admins"))
+                .andExpect(flash().attribute("errorMessage", "Error: Admin does not exists"));
+    }
+
+    @Test
+    @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
+    void deleteAdmin_shouldRedirectWithError_whenServiceFails() throws Exception {
+        when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
+
+        mockMvc.perform(delete("/admin/delete-admin/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/admins"))
+                .andExpect(flash().attribute("errorMessage", "Error: Service error"));
     }
 
 }

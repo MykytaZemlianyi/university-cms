@@ -7,7 +7,7 @@ public class Constants {
         throw new IllegalStateException("Utility Class");
     }
 
-    public static final String NAME_SURNAME_VALIDATION_REGEX = "^[A-Z][a-z' -]*$";
+    public static final String NAME_SURNAME_VALIDATION_REGEX = "^[A-Z][A-Za-z' -]*$";
     public static final String PIPE = "|";
     public static final Object SPACE = " ";
 

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
+import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
 import ua.foxminded.mykyta.zemlianyi.university.service.AdminService;
 
@@ -78,7 +79,7 @@ public class AdminController {
             model.addAttribute("admin", admin.get());
             return "edit-admin";
         } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: Admin doesn't found");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + Constants.USER_NOT_FOUND_ERROR);
             return "redirect:/admin/admins";
         }
     }
