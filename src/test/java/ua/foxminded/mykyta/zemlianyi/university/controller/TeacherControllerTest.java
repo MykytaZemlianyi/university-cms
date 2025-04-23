@@ -54,9 +54,9 @@ class TeacherControllerTest {
 
         when(service.findAll(pageable)).thenReturn(teachersPage);
 
-        mockMvc.perform(get("/teachers").param("page", "0").param("size", "5")
-                .with(user("zemlianoyne@gmail.com").roles("ADMIN"))).andExpect(status().isOk())
-                .andExpect(view().name("/view-all-teachers")).andExpect(model().attributeExists("teachers"))
+        mockMvc.perform(get("/admin/teachers").param("page", "0").param("size", "5")
+                .with(user("admin@gmail.com").roles("ADMIN"))).andExpect(status().isOk())
+                .andExpect(view().name("view-all-teachers")).andExpect(model().attributeExists("teachers"))
                 .andExpect(model().attributeExists("currentPage")).andExpect(model().attributeExists("totalPages"))
                 .andExpect(model().attribute("currentPage", 0)).andExpect(model().attribute("totalPages", 1))
                 .andExpect(model().attribute("teachers", teachersPage));

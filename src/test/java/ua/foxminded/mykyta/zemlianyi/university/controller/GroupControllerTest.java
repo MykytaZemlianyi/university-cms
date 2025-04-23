@@ -62,8 +62,8 @@ class GroupControllerTest {
         when(service.findAll(pageable)).thenReturn(groupPage);
 
         mockMvc.perform(
-                get("/groups").param("page", "0").param("size", "5").with(user("zemlianoyne@gmail.com").roles("ADMIN")))
-                .andExpect(status().isOk()).andExpect(view().name("/view-all-groups"))
+                get("/admin/groups").param("page", "0").param("size", "5").with(user("admin@gmail.com").roles("ADMIN")))
+                .andExpect(status().isOk()).andExpect(view().name("view-all-groups"))
                 .andExpect(model().attributeExists("groups")).andExpect(model().attributeExists("currentPage"))
                 .andExpect(model().attributeExists("totalPages")).andExpect(model().attribute("currentPage", 0))
                 .andExpect(model().attribute("totalPages", 1)).andExpect(model().attribute("groups", groupPage));
