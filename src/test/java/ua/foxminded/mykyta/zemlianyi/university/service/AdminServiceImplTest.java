@@ -3,7 +3,9 @@ package ua.foxminded.mykyta.zemlianyi.university.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -72,10 +74,12 @@ class AdminServiceImplTest {
     }
 
     @Test
-    void addNew_shouldSaveAdmin_whenAdminIsVerified() {
-
+    void addNew_shouldEncryptPasswordAndSaveAdmin_whenAdminIsVerified() {
+        String rawPassword = admin.getPassword();
+        when(encoder.encode(admin.getPassword())).thenReturn("encodedPassword");
         adminService.addNew(admin);
 
+        verify(encoder).encode(rawPassword);
         verify(adminDao).save(admin);
     }
 
@@ -108,6 +112,40 @@ class AdminServiceImplTest {
 
         adminService.update(admin);
 
+        verify(adminDao).save(admin);
+    }
+
+    @Test
+    void update_shouldNotEncryptPassword_whenPasswordDidntChanged() {
+        String rawPassword = admin.getPassword();
+        doReturn(Optional.of(admin)).when(adminDao).findById(admin.getId());
+
+        Admin updatedAdminWithSamePassword = admin;
+        updatedAdminWithSamePassword.setName("Different-Name");
+
+        adminService.update(updatedAdminWithSamePassword);
+
+        verify(encoder, never()).encode(rawPassword);
+        verify(adminDao).save(updatedAdminWithSamePassword);
+    }
+
+    @Test
+    void update_shouldEncryptPassword_whenPasswordChanged() {
+        String newPassword = "NewPassword1234";
+
+        Admin updatedAdminWithNewPassword = new Admin();
+        updatedAdminWithNewPassword.setId(1L);
+        updatedAdminWithNewPassword.setName(admin.getName());
+        updatedAdminWithNewPassword.setSurname(admin.getSurname());
+        updatedAdminWithNewPassword.setEmail(admin.getEmail());
+        updatedAdminWithNewPassword.setPassword(newPassword);
+
+        doReturn(Optional.of(admin)).when(adminDao).findById(updatedAdminWithNewPassword.getId());
+        when(encoder.encode(newPassword)).thenReturn("newEncryptedPassword");
+
+        adminService.update(updatedAdminWithNewPassword);
+
+        verify(encoder).encode(newPassword);
         verify(adminDao).save(admin);
     }
 
