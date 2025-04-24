@@ -6,7 +6,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +77,7 @@ class CourseDaoTest {
         Course expectedCourse = new Course();
         expectedCourse.setId(1L);
         expectedCourse.setName("Computer Science");
-        List<Course> expectedCourseList = new ArrayList();
+        List<Course> expectedCourseList = new ArrayList<>();
         expectedCourseList.add(expectedCourse);
 
         List<Course> actualCourseList = courseDao.findByGroups(group);
