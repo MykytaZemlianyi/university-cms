@@ -9,21 +9,25 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.GroupDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {GroupServiceImpl.class})
 class GroupServiceImplTest {
-    @Mock
+    
+    @MockitoBean
     GroupDao groupDao;
 
-    @InjectMocks
+    @MockitoBean
+    PasswordEncoder encoder;
+    
+    @Autowired
     GroupServiceImpl groupService;
 
     @Test

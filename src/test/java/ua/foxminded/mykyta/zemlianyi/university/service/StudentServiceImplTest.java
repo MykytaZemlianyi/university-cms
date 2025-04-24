@@ -9,25 +9,25 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.StudentDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = { StudentServiceImpl.class })
 class StudentServiceImplTest {
-    @Mock
+    
+    @MockitoBean
     StudentDao studentDao;
 
-    @Mock
+    @MockitoBean
     PasswordEncoder encoder;
 
-    @InjectMocks
+    @Autowired
     StudentServiceImpl studentService;
 
     Student student = new Student();

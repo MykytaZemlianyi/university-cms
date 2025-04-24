@@ -12,22 +12,26 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.LectureDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(classes = {LectureServiceImpl.class})
 class LectureServiceImplTest {
-    @Mock
+    
+    @MockitoBean
     LectureDao lectureDao;
 
-    @InjectMocks
+    @MockitoBean
+    PasswordEncoder encoder;
+    
+    @Autowired
     LectureServiceImpl lectureService;
 
     Lecture lecture = new Lecture();
