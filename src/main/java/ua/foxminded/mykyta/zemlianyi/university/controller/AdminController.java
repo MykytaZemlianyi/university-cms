@@ -27,7 +27,6 @@ import ua.foxminded.mykyta.zemlianyi.university.service.AdminService;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-    private static Logger logger = LogManager.getLogger(AdminController.class.getName());
     private AdminService adminService;
 
     public AdminController(AdminService adminService) {

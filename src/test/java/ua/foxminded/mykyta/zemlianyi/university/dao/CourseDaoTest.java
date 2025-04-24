@@ -1,9 +1,12 @@
 package ua.foxminded.mykyta.zemlianyi.university.dao;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 
 @DataJpaTest
@@ -67,7 +71,19 @@ class CourseDaoTest {
 
     @Test
     void findByGroups_shouldReturnCourses_whenInputAssociatedGroup() {
-        // TODO complete this test
+        Group group = new Group();
+        group.setId(1L);
+        group.setName("AA-11");
+
+        Course expectedCourse = new Course();
+        expectedCourse.setId(1L);
+        expectedCourse.setName("Computer Science");
+        List<Course> expectedCourseList = new ArrayList();
+        expectedCourseList.add(expectedCourse);
+
+        List<Course> actualCourseList = courseDao.findByGroups(group);
+
+        assertArrayEquals(expectedCourseList.toArray(), actualCourseList.toArray());
     }
 
 }
