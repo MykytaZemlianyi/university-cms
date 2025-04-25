@@ -14,8 +14,8 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.User;
 
 public abstract class UserServiceImpl<T extends User> implements UserService<T> {
     private static Logger logger = LogManager.getLogger(UserServiceImpl.class.getName());
-    UserDao<T> dao;
-    private PasswordEncoder passwordEncoder;
+    protected UserDao<T> dao;
+    protected PasswordEncoder passwordEncoder;
 
     protected UserServiceImpl(UserDao<T> dao, PasswordEncoder passwordEncoder) {
         this.dao = dao;
@@ -34,34 +34,20 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
         return dao.save(user);
     }
 
-    private void encodePasswordBeforeSave(T user) {
+    public T update(T user) {
+        T mergedUser = mergeWithExisting(user);
+        ObjectChecker.checkNullAndVerify(mergedUser);
+        logger.info("Updating {} - {}", mergedUser.getClass().getSimpleName(), user);
+        return dao.save(mergedUser);
+    }
+
+    protected void encodePasswordBeforeSave(T user) {
         logger.info("Encrypting password for user - {}", user);
         String rawPassword = user.getPassword();
         user.setPassword(passwordEncoder.encode(rawPassword));
     }
 
-    public T update(T user) {
-        ObjectChecker.checkNull(user);
-
-        Optional<T> existingUserOpt = dao.findById(user.getId());
-        if (existingUserOpt.isPresent()) {
-            T existingUser = existingUserOpt.get();
-
-            if (user.getPassword() == null || user.getPassword().isEmpty()) {
-                user.setPassword(existingUser.getPassword());
-            } else {
-                if (!user.getPassword().equals(existingUser.getPassword())) {
-                    encodePasswordBeforeSave(user);
-                }
-            }
-
-            ObjectChecker.checkNullAndVerify(user);
-            logger.info("Updating {} - {}", user.getClass().getSimpleName(), user);
-            return dao.save(user);
-        } else {
-            throw new IllegalArgumentException(Constants.USER_NOT_FOUND_ERROR);
-        }
-    }
+    protected abstract T mergeWithExisting(T user);
 
     public void delete(T user) {
         ObjectChecker.checkNullAndVerify(user);
