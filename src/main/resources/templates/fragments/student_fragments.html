@@ -16,7 +16,7 @@
 				<td class="p-2" th:text="${student.name}"></td>
 				<td class="p-2" th:text="${student.surname}"></td>
 				<td class="p-2" th:text="${student.email}"></td>
-				<td class="p-2 text-center" th:text="${student.group.name}"></td>
+				<td class="p-2 text-center" th:text="${student.group?.name}"></td>
 				<td class="text-center p-2">
 					<div th:insert="~{fragments/button_fragments :: edit(link='#')}"></div>
 				</td>
