@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
-import ua.foxminded.mykyta.zemlianyi.university.dto.*;
-import ua.foxminded.mykyta.zemlianyi.university.service.*;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
+import ua.foxminded.mykyta.zemlianyi.university.service.GroupService;
+import ua.foxminded.mykyta.zemlianyi.university.service.StudentService;
 
 @Controller
 public class StudentController {
@@ -51,14 +53,15 @@ public class StudentController {
     }
 
     @PostMapping("/admin/add-student")
-    public String createAdmin(@Valid @ModelAttribute("student") Student student, BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+    public String createAdmin(@RequestParam(required = false) Long groupId, @Valid @ModelAttribute Student student,
+            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             return "add-new-student";
         }
 
         try {
+            studentService.resolveGroupFieldById(student, groupId);
             studentService.addNew(student);
             redirectAttributes.addFlashAttribute("successMessage", "Student added successfully!");
             return "redirect:/admin/students";

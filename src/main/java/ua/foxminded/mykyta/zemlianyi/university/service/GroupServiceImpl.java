@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,6 +69,12 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public List<Group> findAll() {
         return groupDao.findAll();
+    }
+
+    @Override
+    public Optional<Group> findById(Long groupId) {
+        // TODO Auto-generated method stub
+        return groupDao.findById(groupId);
     }
 
 }

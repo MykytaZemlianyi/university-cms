@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,4 +21,6 @@ public interface GroupService {
     Page<Group> findAll(Pageable pageable);
 
     List<Group> findAll();
+
+    Optional<Group> findById(Long groupId);
 }
