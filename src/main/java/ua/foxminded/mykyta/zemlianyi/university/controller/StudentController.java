@@ -76,7 +76,7 @@ public class StudentController {
     }
 
     @GetMapping("/admin/edit-student/{id}")
-    public String showEditAdminForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String showEditStudentForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Student> student = studentService.findById(id);
         List<Group> allGroups = groupService.findAll();
         if (student.isPresent()) {
@@ -90,27 +90,26 @@ public class StudentController {
     }
 
     @PostMapping("/admin/edit-student/{id}")
-    public String updateAdmin(@PathVariable Long id, @RequestParam(required = false) Long groupId,
+    public String updateStudent(@PathVariable Long id, @RequestParam(required = false) Long groupId,
             @Valid @ModelAttribute("student") Student updatedStudent, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            return "edit-admin";
+            return "edit-teacher";
         }
 
         try {
             studentService.resolveGroupFieldById(updatedStudent, groupId);
             studentService.update(updatedStudent);
             redirectAttributes.addFlashAttribute("successMessage", "Student updated successfully!");
-            return "redirect:/admin/students";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-            return "redirect:/admin/students";
         }
+        return "redirect:/admin/students";
     }
 
     @DeleteMapping("/admin/delete-student/{id}")
-    public String deleteAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String deleteTeacher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             Optional<Student> student = studentService.findById(id);
             if (student.isPresent()) {

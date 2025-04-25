@@ -20,8 +20,17 @@ public class Teacher extends User {
     }
 
     public void setCourses(Set<Course> courses) {
+        for (Course course : this.courses) {
+            if (!courses.contains(course)) {
+                course.setTeacher(null);
+            }
+        }
+
         this.courses = courses;
-        courses.forEach(course -> course.setTeacher(this));
+
+        for (Course course : this.courses) {
+            course.setTeacher(this);
+        }
     }
 
     public void addCourse(Course course) {
