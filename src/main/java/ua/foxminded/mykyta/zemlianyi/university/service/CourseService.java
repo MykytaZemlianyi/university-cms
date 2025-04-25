@@ -14,6 +14,8 @@ public interface CourseService {
 
     Course update(Course course);
 
+    List<Course> findAll();
+
     Page<Course> findAll(Pageable pageable);
 
     List<Course> findForTeacher(Teacher teacher);

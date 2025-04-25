@@ -16,8 +16,8 @@
 				<td class="p-2" th:text="${teacher.name}"></td>
 				<td class="p-2" th:text="${teacher.surname}"></td>
 				<td class="p-2" th:text="${teacher.email}"></td>
-				<td class="p-2" th:each="course : ${teacher.courses}"><a
-					th:text="${course.name}"></a></td>
+				<td class="p-2"><a th:each="course : ${teacher.courses}"
+					th:text="${course.name}" style="display: block;"></a></td>
 				<td class="text-center p-2">
 					<div th:insert="~{fragments/button_fragments :: edit(link='#')}"></div>
 				</td>

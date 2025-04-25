@@ -59,6 +59,11 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public List<Course> findAll() {
+        return courseDao.findAll();
+    }
+
+    @Override
     public List<Course> findForTeacher(Teacher teacher) {
         ObjectChecker.checkNullAndVerify(teacher);
 

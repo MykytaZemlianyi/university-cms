@@ -21,6 +21,7 @@ public class Teacher extends User {
 
     public void setCourses(Set<Course> courses) {
         this.courses = courses;
+        courses.forEach(course -> course.setTeacher(this));
     }
 
     public void addCourse(Course course) {
