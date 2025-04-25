@@ -16,4 +16,10 @@ public class TeacherServiceImpl extends UserServiceImpl<Teacher> implements Teac
         super(teacherDao, passwordEncoder);
     }
 
+    @Override
+    protected Teacher mergeWithExisting(Teacher user) {
+        // TODO Auto-generated method stub
+        return user;
+    }
+
 }

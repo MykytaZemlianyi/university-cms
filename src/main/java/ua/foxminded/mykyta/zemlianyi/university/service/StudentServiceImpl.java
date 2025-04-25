@@ -16,4 +16,10 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
         super(studentDao, passwordEncoder);
     }
 
+    @Override
+    protected Student mergeWithExisting(Student user) {
+        // TODO Auto-generated method stub
+        return user;
+    }
+
 }
