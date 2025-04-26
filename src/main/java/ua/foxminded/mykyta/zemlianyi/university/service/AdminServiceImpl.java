@@ -25,17 +25,14 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
         Optional<Admin> existingAdminOpt = dao.findById(newAdmin.getId());
 
         if (existingAdminOpt.isPresent()) {
-
             Admin existingAdmin = existingAdminOpt.get();
-            Admin mergedAdmin = new Admin();
 
-            mergedAdmin.setId(existingAdmin.getId());
-            mergedAdmin.setName(chooseString(newAdmin.getName(), existingAdmin.getName()));
-            mergedAdmin.setSurname(chooseString(newAdmin.getSurname(), existingAdmin.getSurname()));
-            mergedAdmin.setEmail(chooseString(newAdmin.getEmail(), existingAdmin.getEmail()));
-            mergedAdmin.setPassword(choosePassword(newAdmin.getPassword(), existingAdmin.getPassword()));
+            existingAdmin.setName(chooseString(newAdmin.getName(), existingAdmin.getName()));
+            existingAdmin.setSurname(chooseString(newAdmin.getSurname(), existingAdmin.getSurname()));
+            existingAdmin.setEmail(chooseString(newAdmin.getEmail(), existingAdmin.getEmail()));
+            existingAdmin.setPassword(choosePassword(newAdmin.getPassword(), existingAdmin.getPassword()));
 
-            return mergedAdmin;
+            return existingAdmin;
         } else {
             throw new IllegalArgumentException(Constants.USER_NOT_FOUND_ERROR);
         }

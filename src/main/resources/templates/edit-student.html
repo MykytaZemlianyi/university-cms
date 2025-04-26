@@ -49,7 +49,7 @@
 
 			<div class="mb-3">
 				<label for="Group" class="form-label">Group</label> <select
-					class="form-select" id="group" name="groupId">
+					class="form-select" id="group" th:field="*{group}">
 					<option value="" th:selected="${student.group == null}">--
 						Select Group --</option>
 					<option th:each="group : ${groups}" th:value="${group.id}"

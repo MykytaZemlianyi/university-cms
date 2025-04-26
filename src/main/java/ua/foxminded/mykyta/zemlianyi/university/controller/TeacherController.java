@@ -55,8 +55,7 @@ public class TeacherController {
     }
 
     @PostMapping("/admin/add-teacher")
-    public String createTeacher(@RequestParam(required = false) List<Long> selectedCoursesId,
-            @Valid @ModelAttribute Teacher teacher, BindingResult bindingResult,
+    public String createTeacher(@Valid @ModelAttribute Teacher teacher, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
@@ -64,7 +63,6 @@ public class TeacherController {
         }
 
         try {
-            teacherService.resolveCourseFieldById(teacher, selectedCoursesId);
             teacherService.addNew(teacher);
             redirectAttributes.addFlashAttribute("successMessage", "Teacher added successfully!");
         } catch (Exception e) {
@@ -88,16 +86,14 @@ public class TeacherController {
     }
 
     @PostMapping("/admin/edit-teacher/{id}")
-    public String updateTeacher(@PathVariable Long id, @RequestParam(required = false) List<Long> selectedCoursesId,
-            @Valid @ModelAttribute("teacher") Teacher updatedTeacher, BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+    public String updateTeacher(@PathVariable Long id, @Valid @ModelAttribute("teacher") Teacher updatedTeacher,
+            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             return "edit-teacher";
         }
 
         try {
-            teacherService.resolveCourseFieldById(updatedTeacher, selectedCoursesId);
             teacherService.update(updatedTeacher);
             redirectAttributes.addFlashAttribute("successMessage", "Teacher updated successfully!");
         } catch (Exception e) {

@@ -26,16 +26,15 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
 
         if (existingStudentOpt.isPresent()) {
             Student existingStudent = existingStudentOpt.get();
-            Student mergedStudent = new Student();
 
-            mergedStudent.setId(existingStudent.getId());
-            mergedStudent.setName(chooseString(newStudent.getName(), existingStudent.getName()));
-            mergedStudent.setSurname(chooseString(newStudent.getSurname(), existingStudent.getSurname()));
-            mergedStudent.setEmail(chooseString(newStudent.getEmail(), existingStudent.getEmail()));
-            mergedStudent.setGroup(newStudent.getGroup());
-            mergedStudent.setPassword(choosePassword(newStudent.getPassword(), existingStudent.getPassword()));
+            existingStudent.setName(chooseString(newStudent.getName(), existingStudent.getName()));
+            existingStudent.setSurname(chooseString(newStudent.getSurname(), existingStudent.getSurname()));
+            existingStudent.setEmail(chooseString(newStudent.getEmail(), existingStudent.getEmail()));
+            existingStudent.setPassword(choosePassword(newStudent.getPassword(), existingStudent.getPassword()));
 
-            return mergedStudent;
+            existingStudent.setGroup(newStudent.getGroup());
+
+            return existingStudent;
 
         } else {
             throw new IllegalArgumentException(Constants.USER_NOT_FOUND_ERROR);
