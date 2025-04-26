@@ -57,15 +57,14 @@ public class StudentController {
     }
 
     @PostMapping("/admin/add-student")
-    public String createStudent(@RequestParam(required = false) Long groupId, @Valid @ModelAttribute Student student,
-            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String createStudent(@Valid @ModelAttribute Student student, BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             return "add-new-student";
         }
 
         try {
-            studentService.resolveGroupFieldById(student, groupId);
             studentService.addNew(student);
             redirectAttributes.addFlashAttribute("successMessage", "Student added successfully!");
             return "redirect:/admin/students";
@@ -99,7 +98,6 @@ public class StudentController {
         }
 
         try {
-            studentService.resolveGroupFieldById(updatedStudent, groupId);
             studentService.update(updatedStudent);
             redirectAttributes.addFlashAttribute("successMessage", "Student updated successfully!");
         } catch (Exception e) {

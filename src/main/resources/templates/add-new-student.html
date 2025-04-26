@@ -48,7 +48,7 @@
 
 			<div class="mb-3">
 				<label for="Group" class="form-label">Group</label> <select
-					class="form-select" id="groupId" name="groupId">
+					class="form-select" id="groupId" th:field="*{group}">
 					<option value="" selected>-- Select Group --</option>
 					<option th:each="group : ${groups}" th:value="${group.id}"
 						th:text="${group.name}"></option>
