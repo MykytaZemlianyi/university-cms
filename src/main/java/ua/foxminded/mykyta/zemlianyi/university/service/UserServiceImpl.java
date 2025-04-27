@@ -1,5 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -79,6 +80,10 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
 
     public Optional<T> findById(Long id) {
         return dao.findById(id);
+    }
+
+    public List<T> findAll() {
+        return dao.findAll();
     }
 
 }

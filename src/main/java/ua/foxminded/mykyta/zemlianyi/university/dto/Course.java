@@ -74,7 +74,17 @@ public class Course implements Verifiable, Dto {
     }
 
     public void setGroups(Set<Group> groups) {
+        for (Group group : this.groups) {
+            if (!groups.contains(group)) {
+                group.removeCourse(this);
+            }
+        }
+
         this.groups = groups;
+
+        for (Group group : groups) {
+            group.addCourse(this);
+        }
     }
 
     public void addGroup(Group group) {

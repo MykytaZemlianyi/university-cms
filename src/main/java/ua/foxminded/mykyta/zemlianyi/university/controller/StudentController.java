@@ -67,11 +67,10 @@ public class StudentController {
         try {
             studentService.addNew(student);
             redirectAttributes.addFlashAttribute("successMessage", "Student added successfully!");
-            return "redirect:/admin/students";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-            return "redirect:/admin/students";
         }
+        return "redirect:/admin/students";
     }
 
     @GetMapping("/admin/edit-student/{id}")

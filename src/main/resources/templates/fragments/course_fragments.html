@@ -14,16 +14,17 @@
 				<td class="text-center p-2" th:text="${course.id}"></td>
 				<td class="p-2" th:text="${course.name}"></td>
 				<td class="p-2"
-					th:text="${course.teacher.name + ' ' + course.teacher.surname}"></td>
+					th:text="${course.teacher != null ? course.teacher.name + ' ' + course.teacher.surname : 'No teacher assigned'}">
+				</td>
 
-				<td class="p-2"><span
-					th:each="group, iterStat : ${course.groups}"> <a
-						th:text="${group.name}"></a> <span th:if="${!iterStat.last}">,
-					</span>
-				</span></td>
+				<td class="p-2"><a th:each="group : ${course.groups}"
+					th:text="${group.name}" style="display: block;"></a></td>
 
 				<td class="text-center p-2">
-					<div th:insert="~{fragments/button_fragments :: edit(link='#')}"></div>
+					<div th:with="editUrl=@{/admin/edit-course/{id}(id=${course.id})}">
+						<div
+							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
+					</div>
 				</td>
 			</tr>
 		</tbody>

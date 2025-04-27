@@ -73,7 +73,6 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Optional<Group> findById(Long groupId) {
-        // TODO Auto-generated method stub
         return groupDao.findById(groupId);
     }
 
