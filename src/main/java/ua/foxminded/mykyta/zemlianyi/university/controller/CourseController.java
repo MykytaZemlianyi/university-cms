@@ -50,10 +50,8 @@ public class CourseController {
 
     @GetMapping("/admin/add-new-course")
     public String showCreateCourseForm(Model model) {
-        List<Group> allGroups = groupService.findAll();
         List<Teacher> allTeachers = teacherService.findAll();
         model.addAttribute("course", new Course());
-        model.addAttribute("groupList", allGroups);
         model.addAttribute("teacherList", allTeachers);
         return "add-new-course";
     }
@@ -78,11 +76,9 @@ public class CourseController {
     @GetMapping("/admin/edit-course/{id}")
     public String showEditCourseForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Course> course = courseService.findById(id);
-        List<Group> allGroups = groupService.findAll();
         List<Teacher> allTeachers = teacherService.findAll();
         if (course.isPresent()) {
             model.addAttribute("course", course.get());
-            model.addAttribute("groupList", allGroups);
             model.addAttribute("teacherList", allTeachers);
             return "edit-course";
         } else {

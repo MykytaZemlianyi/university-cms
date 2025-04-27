@@ -78,20 +78,30 @@ public class Group implements Verifiable, Dto {
         }
     }
 
-    public void setCourses(Set<Course> courses) {
-        this.courses = courses;
+    public void setCourses(Set<Course> newCourses) {
+        if (newCourses == null) {
+            newCourses = new HashSet<>();
+        }
+
+        for (Course course : new HashSet<>(this.courses)) {
+            course.getGroups().remove(this);
+        }
+
+        for (Course course : newCourses) {
+            course.getGroups().add(this);
+        }
+
+        this.courses = newCourses;
     }
 
     public void addCourse(Course course) {
-        if (!this.courses.contains(course)) {
-            this.courses.add(course);
+        if (this.courses.add(course)) {
             course.getGroups().add(this);
         }
     }
 
     public void removeCourse(Course course) {
-        if (this.courses.contains(course)) {
-            this.courses.remove(course);
+        if (this.courses.remove(course)) {
             course.getGroups().remove(this);
         }
     }
