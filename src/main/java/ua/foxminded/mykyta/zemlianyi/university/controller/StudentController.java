@@ -88,12 +88,11 @@ public class StudentController {
     }
 
     @PostMapping("/admin/edit-student/{id}")
-    public String updateStudent(@PathVariable Long id, @RequestParam(required = false) Long groupId,
-            @Valid @ModelAttribute("student") Student updatedStudent, BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+    public String updateStudent(@PathVariable Long id, @Valid @ModelAttribute("student") Student updatedStudent,
+            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            return "edit-teacher";
+            return "edit-student";
         }
 
         try {
@@ -106,7 +105,7 @@ public class StudentController {
     }
 
     @DeleteMapping("/admin/delete-student/{id}")
-    public String deleteTeacher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+    public String deleteStudent(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             Optional<Student> student = studentService.findById(id);
             if (student.isPresent()) {

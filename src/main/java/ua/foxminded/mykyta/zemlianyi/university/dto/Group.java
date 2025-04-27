@@ -83,11 +83,17 @@ public class Group implements Verifiable, Dto {
     }
 
     public void addCourse(Course course) {
-        this.courses.add(course);
+        if (!this.courses.contains(course)) {
+            this.courses.add(course);
+            course.getGroups().add(this);
+        }
     }
 
     public void removeCourse(Course course) {
-        this.courses.remove(course);
+        if (this.courses.contains(course)) {
+            this.courses.remove(course);
+            course.getGroups().remove(this);
+        }
     }
 
     @Override

@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,10 +39,28 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course update(Course course) {
         ObjectChecker.checkNullAndVerify(course);
+        Course mergedUser = mergeWithExisting(course);
+        logger.info("Updating course - {}", mergedUser);
+        return courseDao.save(mergedUser);
+    }
 
-        ObjectChecker.checkIfExistsInDb(course, courseDao);
-        logger.info("Updating course - {}", course);
-        return courseDao.save(course);
+    private Course mergeWithExisting(Course newCourse) {
+        ObjectChecker.checkNull(newCourse);
+        Optional<Course> existingCourseOpt = courseDao.findById(newCourse.getId());
+
+        if (existingCourseOpt.isPresent()) {
+            Course existingCourse = existingCourseOpt.get();
+
+            existingCourse.setName(newCourse.getName());
+            existingCourse.setGroups(newCourse.getGroups());
+            existingCourse.setTeacher(newCourse.getTeacher());
+            existingCourse.setLectures(existingCourse.getLectures());
+
+            return existingCourse;
+
+        } else {
+            throw new IllegalArgumentException(Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
+        }
     }
 
     @Override
@@ -80,6 +99,11 @@ public class CourseServiceImpl implements CourseService {
         }
         logger.info("looking for courses for student {} in group {}", student, student.getGroup());
         return courseDao.findByGroups(student.getGroup());
+    }
+
+    @Override
+    public Optional<Course> findById(Long id) {
+        return courseDao.findById(id);
     }
 
 }
