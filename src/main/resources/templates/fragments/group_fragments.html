@@ -30,10 +30,11 @@
 						th:replace="~{fragments/course_fragments :: modal(group=${group})}"></div>
 				</td>
 				<td class="text-center p-2">
-					<div class="d-flex justify-content-center"
-						th:insert="~{fragments/button_fragments :: edit(link='#')}"></div>
+					<div th:with="editUrl=@{/admin/edit-group/{id}(id=${group.id})}">
+						<div
+							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
+					</div>
 				</td>
-
 			</tr>
 		</tbody>
 	</table>

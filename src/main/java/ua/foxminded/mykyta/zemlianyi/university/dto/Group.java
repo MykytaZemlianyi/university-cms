@@ -62,8 +62,19 @@ public class Group implements Verifiable, Dto {
         this.name = name;
     }
 
-    public void setStudents(Set<Student> students) {
-        this.students = students;
+    public void setStudents(Set<Student> newStudents) {
+        if (newStudents != null) {
+
+            for (Student student : students) {
+                student.setGroup(null);
+            }
+
+            for (Student student : newStudents) {
+                student.setGroup(this);
+            }
+
+            this.students = newStudents;
+        }
     }
 
     public void addStudent(Student student) {
@@ -79,19 +90,19 @@ public class Group implements Verifiable, Dto {
     }
 
     public void setCourses(Set<Course> newCourses) {
-        if (newCourses == null) {
+        if (newCourses != null) {
             newCourses = new HashSet<>();
-        }
 
-        for (Course course : new HashSet<>(this.courses)) {
-            course.getGroups().remove(this);
-        }
+            for (Course course : courses) {
+                course.getGroups().remove(this);
+            }
 
-        for (Course course : newCourses) {
-            course.getGroups().add(this);
-        }
+            for (Course course : newCourses) {
+                course.getGroups().add(this);
+            }
 
-        this.courses = newCourses;
+            this.courses = newCourses;
+        }
     }
 
     public void addCourse(Course course) {

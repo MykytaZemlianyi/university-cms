@@ -39,9 +39,9 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Course update(Course course) {
         ObjectChecker.checkNullAndVerify(course);
-        Course mergedUser = mergeWithExisting(course);
-        logger.info("Updating course - {}", mergedUser);
-        return courseDao.save(mergedUser);
+        Course mergedCourse = mergeWithExisting(course);
+        logger.info("Updating course - {}", mergedCourse);
+        return courseDao.save(mergedCourse);
     }
 
     private Course mergeWithExisting(Course newCourse) {

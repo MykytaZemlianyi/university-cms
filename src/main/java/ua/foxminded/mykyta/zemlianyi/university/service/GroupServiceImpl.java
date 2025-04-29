@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dao.GroupDao;
@@ -37,10 +38,27 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Group update(Group group) {
         ObjectChecker.checkNullAndVerify(group);
-        ObjectChecker.checkIfExistsInDb(group, groupDao);
-
+        Group mergedGroup = mergeWithExisting(group);
         logger.info("Updating group - {}", group);
-        return groupDao.save(group);
+        return groupDao.save(mergedGroup);
+    }
+
+    private Group mergeWithExisting(Group newGroup) {
+        ObjectChecker.checkNull(newGroup);
+        Optional<Group> existingCourseOpt = groupDao.findById(newGroup.getId());
+
+        if (existingCourseOpt.isPresent()) {
+            Group existingGroup = existingCourseOpt.get();
+
+            existingGroup.setName(newGroup.getName());
+            existingGroup.setStudents(newGroup.getStudents());
+            existingGroup.setCourses(newGroup.getCourses());
+
+            return existingGroup;
+
+        } else {
+            throw new IllegalArgumentException(Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
+        }
     }
 
     @Override
