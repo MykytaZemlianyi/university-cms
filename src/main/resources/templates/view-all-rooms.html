@@ -19,6 +19,12 @@
 	<div
 		class="d-flex flex-column justify-content-center align-items-center">
 
+		<div class="d-flex w-75"
+			th:insert="~{fragments/general_fragments :: operation-status-alert}"></div>
+
+		<div class="d-flex w-75 p-2"
+			th:insert="~{fragments/button_fragments :: create(link='/admin/add-new-room')}"></div>
+
 		<div th:replace="~{fragments/room_fragments :: table(${rooms})}"></div>
 		<div
 			th:insert="~{fragments/general_fragments :: table-pagination(${rooms.size},${paginationUrl},${currentPage},${totalPages})}"></div>

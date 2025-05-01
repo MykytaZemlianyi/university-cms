@@ -21,7 +21,10 @@
 				</td>
 
 				<td class="text-center p-2">
-					<div th:insert="~{fragments/button_fragments :: edit(link='#')}"></div>
+					<div th:with="editUrl=@{/admin/edit-room/{id}(id=${room.id})}">
+						<div
+							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
+					</div>
 				</td>
 			</tr>
 		</tbody>
