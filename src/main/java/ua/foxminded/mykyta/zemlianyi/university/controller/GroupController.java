@@ -91,6 +91,23 @@ public class GroupController {
         }
     }
 
+    @PostMapping("/admin/edit-group/{id}")
+    public String updateGroup(@PathVariable Long id, @Valid @ModelAttribute("group") Group updatedGroup,
+            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            return "edit-group";
+        }
+
+        try {
+            groupService.update(updatedGroup);
+            redirectAttributes.addFlashAttribute("successMessage", "Group updated successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/admin/groups";
+    }
+
     @DeleteMapping("/admin/delete-group/{id}")
     public String deleteGroup(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {

@@ -27,7 +27,7 @@ public class Group implements Verifiable, Dto {
     @Column(name = "group_name")
     private String name;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "group", cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     private Set<Student> students = new HashSet<>();
 
     @ManyToMany
@@ -65,7 +65,7 @@ public class Group implements Verifiable, Dto {
     public void setStudents(Set<Student> newStudents) {
         if (newStudents != null) {
 
-            for (Student student : students) {
+            for (Student student : new HashSet<>(students)) {
                 student.setGroup(null);
             }
 
@@ -91,9 +91,8 @@ public class Group implements Verifiable, Dto {
 
     public void setCourses(Set<Course> newCourses) {
         if (newCourses != null) {
-            newCourses = new HashSet<>();
 
-            for (Course course : courses) {
+            for (Course course : new HashSet<>(courses)) {
                 course.getGroups().remove(this);
             }
 

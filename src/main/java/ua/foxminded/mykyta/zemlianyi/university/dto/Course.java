@@ -74,17 +74,17 @@ public class Course implements Verifiable, Dto {
     }
 
     public void setGroups(Set<Group> newGroups) {
-        if (newGroups == null) {
-            newGroups = new HashSet<>();
-        }
+        if (newGroups != null) {
 
-        for (Group oldGroup : new HashSet<>(this.groups)) {
-            oldGroup.getCourses().remove(this);
-        }
+            for (Group oldGroup : new HashSet<>(this.groups)) {
+                oldGroup.getCourses().remove(this);
+            }
 
-        for (Group newGroup : newGroups) {
-            newGroup.getCourses().add(this);
+            for (Group newGroup : newGroups) {
+                newGroup.getCourses().add(this);
+            }
         }
+        this.groups = newGroups;
 
     }
 

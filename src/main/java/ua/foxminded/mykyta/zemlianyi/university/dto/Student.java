@@ -7,10 +7,10 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "students", schema = "university")
-public class Student extends User{
+public class Student extends User {
 
     @ManyToOne
-    @JoinColumn(name = "group_id", referencedColumnName = "group_id")
+    @JoinColumn(name = "group_id")
     private Group group;
 
     public Group getGroup() {

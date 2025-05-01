@@ -37,9 +37,8 @@
 					<div th:each="student : ${studentList}" class="form-check">
 						<input class="form-check-input" type="checkbox"
 							th:id="'student_' + ${student.id}" th:field="*{students}"
-							th:value="${student.id}"
-							th:checked="${#lists.contains(group.students, student)}" /> <label
-							class="form-check-label" th:for="'student_' + ${student.id}"
+							th:value="${student.id}" /> <label class="form-check-label"
+							th:for="'student_' + ${student.id}"
 							th:text="${student.name + ' ' + student.surname}"></label>
 					</div>
 				</div>
@@ -52,10 +51,8 @@
 					<div th:each="course : ${courseList}" class="form-check">
 						<input class="form-check-input" type="checkbox"
 							th:id="'course_' + ${course.id}" th:field="*{courses}"
-							th:value="${course.id}"
-							th:checked="${#lists.contains(group.courses, course)}" /> <label
-							class="form-check-label" th:for="'course_' + ${course.id}"
-							th:text="${course.name}"></label>
+							th:value="${course.id}" /> <label class="form-check-label"
+							th:for="'course_' + ${course.id}" th:text="${course.name}"></label>
 					</div>
 				</div>
 			</div>

@@ -25,12 +25,10 @@ import ua.foxminded.mykyta.zemlianyi.university.service.*;
 @Controller
 public class CourseController {
     private CourseService courseService;
-    private GroupService groupService;
     private TeacherService teacherService;
 
-    public CourseController(CourseService courseService, GroupService groupService, TeacherService teacherService) {
+    public CourseController(CourseService courseService, TeacherService teacherService) {
         this.courseService = courseService;
-        this.groupService = groupService;
         this.teacherService = teacherService;
     }
 
