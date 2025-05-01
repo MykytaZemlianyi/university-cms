@@ -25,17 +25,20 @@
 					th:text="${#temporals.format(lecture.timeEnd, 'HH:mm')}"></td>
 				<td class="text-center p-2" th:text="${lecture.room.number}"></td>
 				<td class="p-2" th:text="${lecture.lectureType}"></td>
-				<td class="p-2" th:text="${lecture.course.name}"></td>
-				<td class="p-2"
-					th:text="${lecture.course.teacher.name + ' ' + lecture.course.teacher.surname}"></td>
+				<td class="p-2" th:text="${lecture.course?.name}"></td>
 
-				<td class="p-2"><span
-					th:each="group, iterStat : ${lecture.course.groups}"> <a
-						th:text="${group.name}"></a> <span th:if="${!iterStat.last}">,
-					</span>
-						<td class="text-center p-2">
-							<div th:insert="~{fragments/button_fragments :: edit(link='#')}"></div>
-					</td>
+				<td class="p-2 text-center"
+					th:text="${lecture.course != null and lecture.course.teacher != null 
+              ? lecture.course.teacher.name + ' ' + lecture.course.teacher.surname 
+              : '—'}">
+				</td>
+
+				<td class="p-2"><a th:each="group : ${lecture.course?.groups}"
+					th:text="${group.name}" style="display: block;"></a></td>
+
+				<td class="text-center p-2">
+					<div th:insert="~{fragments/button_fragments :: edit(link='#')}"></div>
+				</td>
 			</tr>
 		</tbody>
 	</table>
