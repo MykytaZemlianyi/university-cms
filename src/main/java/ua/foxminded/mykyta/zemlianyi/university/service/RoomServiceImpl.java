@@ -1,5 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
@@ -32,17 +34,33 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Room update(Room room) {
         ObjectChecker.checkNullAndVerify(room);
-        ObjectChecker.checkIfExistsInDb(room, roomDao);
+        Room mergedRoom = mergeWithExisting(room);
+        logger.info("Updating room - {}", mergedRoom);
+        return roomDao.save(mergedRoom);
+    }
 
-        logger.info("Updating room - {}", room);
-        return roomDao.save(room);
+    private Room mergeWithExisting(Room newRoom) {
+        ObjectChecker.checkNull(newRoom);
+        Optional<Room> existingRoomOpt = roomDao.findById(newRoom.getId());
+
+        if (existingRoomOpt.isPresent()) {
+            Room existingRoom = existingRoomOpt.get();
+
+            existingRoom.setNumber(newRoom.getNumber());
+            existingRoom.setLectures(existingRoom.getLectures());
+
+            return existingRoom;
+
+        } else {
+            throw new IllegalArgumentException(Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
+        }
     }
 
     @Override
     public void delete(Room room) {
         ObjectChecker.checkNullAndVerify(room);
         ObjectChecker.checkIfExistsInDb(room, roomDao);
-
+        room.clearLectures();
         logger.info("Updating room - {}", room);
         roomDao.delete(room);
     }
@@ -50,6 +68,11 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Page<Room> findAll(Pageable pageable) {
         return roomDao.findAll(pageable);
+    }
+
+    @Override
+    public Optional<Room> findById(Long id) {
+        return roomDao.findById(id);
     }
 
 }

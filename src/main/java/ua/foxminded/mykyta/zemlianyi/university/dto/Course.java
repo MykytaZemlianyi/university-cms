@@ -15,6 +15,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "courses", schema = "university")
@@ -24,6 +26,8 @@ public class Course implements Verifiable, Dto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name cannot be blank")
+    @Size(max = 50, message = "Lenght < 50")
     @Column(name = "course_name")
     private String name;
 
@@ -73,6 +77,10 @@ public class Course implements Verifiable, Dto {
         this.teacher = teacher;
     }
 
+    public void clearTeacher() {
+        this.teacher.removeCourse(this);
+    }
+
     public void setGroups(Set<Group> newGroups) {
         if (newGroups != null) {
 
@@ -100,13 +108,17 @@ public class Course implements Verifiable, Dto {
         }
     }
 
-    @Override
-    public boolean verify() {
-        return verifyName(this.name);
+    public void clearGroups() {
+        for (Group group : new HashSet<>(groups)) {
+            group.getCourses().remove(this);
+        }
+        this.groups = new HashSet<>();
     }
 
-    public boolean verifyName(String name) {
-        return name != null && !name.isEmpty() && !name.isBlank();
+    public void clearRelations() {
+        clearGroups();
+        clearTeacher();
+        clearLectures();
     }
 
     public Set<Lecture> getLectures() {
@@ -125,6 +137,22 @@ public class Course implements Verifiable, Dto {
     public void removeLecture(Lecture lecture) {
         this.lectures.remove(lecture);
         lecture.setCourse(null);
+    }
+
+    public void clearLectures() {
+        for (Lecture lecture : new HashSet<>(this.lectures)) {
+            lecture.setCourse(null);
+        }
+        this.lectures = new HashSet<>();
+    }
+
+    @Override
+    public boolean verify() {
+        return verifyName(this.name);
+    }
+
+    public boolean verifyName(String name) {
+        return name != null && !name.isEmpty() && !name.isBlank();
     }
 
     @Override

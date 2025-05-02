@@ -10,6 +10,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
 
 @MappedSuperclass
@@ -19,11 +20,13 @@ public abstract class User implements Dto, Verifiable {
     private Long id;
 
     @NotBlank(message = "Name cannot be blank")
+    @Size(max = 25, message = "Lenght < 25")
     @Pattern(regexp = Constants.NAME_SURNAME_VALIDATION_REGEX, message = Constants.INVALID_NAME_MSG)
     @Column(name = "name")
     private String name;
 
     @NotBlank(message = "Surname cannot be blank")
+    @Size(max = 25, message = "Lenght < 25")
     @Pattern(regexp = Constants.NAME_SURNAME_VALIDATION_REGEX, message = Constants.INVALID_SURNAME_MSG)
     @Column(name = "surname")
     private String surname;

@@ -15,6 +15,8 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "groups", schema = "university")
@@ -23,7 +25,8 @@ public class Group implements Verifiable, Dto {
     @Column(name = "group_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @NotBlank(message = "Name cannot be blank")
+    @Size(max = 5, message = "Lenght < 5")
     @Column(name = "group_name")
     private String name;
 
@@ -65,9 +68,7 @@ public class Group implements Verifiable, Dto {
     public void setStudents(Set<Student> newStudents) {
         if (newStudents != null) {
 
-            for (Student student : new HashSet<>(students)) {
-                student.setGroup(null);
-            }
+            clearStudents();
 
             for (Student student : newStudents) {
                 student.setGroup(this);
@@ -89,12 +90,17 @@ public class Group implements Verifiable, Dto {
         }
     }
 
+    public void clearStudents() {
+        for (Student student : new HashSet<>(students)) {
+            student.setGroup(null);
+        }
+        this.students = new HashSet<>();
+    }
+
     public void setCourses(Set<Course> newCourses) {
         if (newCourses != null) {
 
-            for (Course course : new HashSet<>(courses)) {
-                course.getGroups().remove(this);
-            }
+            clearCourses();
 
             for (Course course : newCourses) {
                 course.getGroups().add(this);
@@ -114,6 +120,18 @@ public class Group implements Verifiable, Dto {
         if (this.courses.remove(course)) {
             course.getGroups().remove(this);
         }
+    }
+
+    public void clearCourses() {
+        for (Course course : new HashSet<>(courses)) {
+            course.getGroups().remove(this);
+        }
+        this.courses = new HashSet<>();
+    }
+
+    public void clearRelations() {
+        clearCourses();
+        clearStudents();
     }
 
     @Override

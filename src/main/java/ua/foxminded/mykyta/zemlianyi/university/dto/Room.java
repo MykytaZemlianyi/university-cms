@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.PositiveOrZero;
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
 
 @Entity
@@ -21,8 +22,11 @@ public class Room implements Verifiable, Dto {
     @Column(name = "room_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @PositiveOrZero(message = "Room number should be positive or zero")
     @Column(name = "room_number")
     private Integer number;
+
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private Set<Lecture> lectures = new HashSet<>();
 
@@ -64,6 +68,13 @@ public class Room implements Verifiable, Dto {
         if (successRemoval) {
             lecture.setRoom(null);
         }
+    }
+
+    public void clearLectures() {
+        for (Lecture lecture : new HashSet<>(this.lectures)) {
+            lecture.setRoom(null);
+        }
+        this.lectures = new HashSet<>();
     }
 
     public boolean isAvailable(Lecture lecture) {

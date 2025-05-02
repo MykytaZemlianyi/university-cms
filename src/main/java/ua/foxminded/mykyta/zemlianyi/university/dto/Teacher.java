@@ -20,17 +20,12 @@ public class Teacher extends User {
     }
 
     public void setCourses(Set<Course> courses) {
-        for (Course course : this.courses) {
-            if (!courses.contains(course)) {
-                course.setTeacher(null);
-            }
-        }
-
-        this.courses = courses;
+        clearCourses();
 
         for (Course course : this.courses) {
             course.setTeacher(this);
         }
+        this.courses = courses;
     }
 
     public void addCourse(Course course) {
@@ -43,6 +38,13 @@ public class Teacher extends User {
         if (successRemoval) {
             course.setTeacher(null);
         }
+    }
+
+    public void clearCourses() {
+        for (Course course : new HashSet<>(this.courses)) {
+            course.setTeacher(null);
+        }
+        this.courses = new HashSet<>();
     }
 
 }

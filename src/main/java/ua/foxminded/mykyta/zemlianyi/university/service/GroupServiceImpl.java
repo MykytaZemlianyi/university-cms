@@ -64,7 +64,7 @@ public class GroupServiceImpl implements GroupService {
     public void delete(Group group) {
         ObjectChecker.checkNullAndVerify(group);
         ObjectChecker.checkIfExistsInDb(group, groupDao);
-
+        group.clearRelations();
         logger.info("Updating group - {}", group);
         groupDao.delete(group);
     }

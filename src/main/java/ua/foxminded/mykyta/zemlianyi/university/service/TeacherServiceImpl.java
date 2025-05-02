@@ -56,4 +56,14 @@ public class TeacherServiceImpl extends UserServiceImpl<Teacher> implements Teac
         }
     }
 
+    @Override
+    public void delete(Teacher user) {
+        ObjectChecker.checkNullAndVerify(user);
+        ObjectChecker.checkIfExistsInDb(user, dao);
+
+        user.clearCourses();
+        logger.info("Deleting {} - {}", user.getClass().getSimpleName(), user);
+        dao.delete(user);
+    }
+
 }
