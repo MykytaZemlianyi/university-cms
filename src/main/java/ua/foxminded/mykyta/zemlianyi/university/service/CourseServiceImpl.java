@@ -53,8 +53,6 @@ public class CourseServiceImpl implements CourseService {
 
             existingCourse.setName(newCourse.getName());
             existingCourse.setTeacher(newCourse.getTeacher());
-            existingCourse.setGroups(existingCourse.getGroups());
-            existingCourse.setLectures(existingCourse.getLectures());
 
             return existingCourse;
 

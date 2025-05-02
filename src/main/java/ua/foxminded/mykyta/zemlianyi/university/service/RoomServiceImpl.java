@@ -45,9 +45,14 @@ public class RoomServiceImpl implements RoomService {
 
         if (existingRoomOpt.isPresent()) {
             Room existingRoom = existingRoomOpt.get();
-
-            existingRoom.setNumber(newRoom.getNumber());
-            existingRoom.setLectures(existingRoom.getLectures());
+            if (!(existingRoom.getNumber() == newRoom.getNumber())) {
+                if (roomDao.existsByNumber(newRoom.getNumber())) {
+                    throw new IllegalArgumentException(
+                            newRoom.getNumber() + Constants.ROOM_ADD_NEW_ERROR_EXISTS_BY_NUMBER);
+                } else {
+                    existingRoom.setNumber(newRoom.getNumber());
+                }
+            }
 
             return existingRoom;
 
