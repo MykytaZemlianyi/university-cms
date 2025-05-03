@@ -8,6 +8,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,15 +20,15 @@ import ua.foxminded.mykyta.zemlianyi.university.dao.GroupDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 
-@SpringBootTest(classes = {GroupServiceImpl.class})
+@SpringBootTest(classes = { GroupServiceImpl.class })
 class GroupServiceImplTest {
-    
+
     @MockitoBean
     GroupDao groupDao;
 
     @MockitoBean
     PasswordEncoder encoder;
-    
+
     @Autowired
     GroupServiceImpl groupService;
 
@@ -98,15 +100,19 @@ class GroupServiceImplTest {
 
     @Test
     void update_shouldUpdateGroup_whenGroupValidAndSavedBeforeUpdate() {
-        Group trackedGroup = new Group();
-        trackedGroup.setId(1L);
-        trackedGroup.setName("Group");
+        Group managedGroup = new Group();
+        managedGroup.setId(1L);
+        managedGroup.setName("old Group");
 
-        when(groupDao.existsById(1L)).thenReturn(true);
+        Group updatedGroup = new Group();
+        updatedGroup.setId(1L);
+        updatedGroup.setName("Group");
 
-        groupService.update(trackedGroup);
+        when(groupDao.findById(1L)).thenReturn(Optional.of(managedGroup));
 
-        verify(groupDao).save(trackedGroup);
+        groupService.update(updatedGroup);
+
+        verify(groupDao).save(updatedGroup);
     }
 
     @Test

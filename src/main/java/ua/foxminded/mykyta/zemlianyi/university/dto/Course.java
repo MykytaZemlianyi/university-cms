@@ -78,7 +78,9 @@ public class Course implements Verifiable, Dto {
     }
 
     public void clearTeacher() {
-        this.teacher.removeCourse(this);
+        if (this.teacher != null) {
+            this.teacher.removeCourse(this);
+        }
     }
 
     public void setGroups(Set<Group> newGroups) {

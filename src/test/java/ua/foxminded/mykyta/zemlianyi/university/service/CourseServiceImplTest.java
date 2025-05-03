@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,11 +101,15 @@ class CourseServiceImplTest {
 
     @Test
     void update_shouldUpdateCourse_whenCourseValidAndSavedBeforeUpdate() {
+        Course managedCourse = new Course();
+        managedCourse.setId(1L);
+        managedCourse.setName("old Course");
+
         Course trackedCourse = new Course();
         trackedCourse.setId(1L);
         trackedCourse.setName("Course");
 
-        when(courseDao.existsById(1L)).thenReturn(true);
+        when(courseDao.findById(1L)).thenReturn(Optional.of(managedCourse));
 
         courseService.update(trackedCourse);
 
