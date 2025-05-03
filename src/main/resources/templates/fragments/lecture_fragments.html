@@ -37,7 +37,11 @@
 					th:text="${group.name}" style="display: block;"></a></td>
 
 				<td class="text-center p-2">
-					<div th:insert="~{fragments/button_fragments :: edit(link='#')}"></div>
+					<div
+						th:with="editUrl=@{/admin/edit-lecture/{id}(id=${lecture.id})}">
+						<div
+							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
+					</div>
 				</td>
 			</tr>
 		</tbody>

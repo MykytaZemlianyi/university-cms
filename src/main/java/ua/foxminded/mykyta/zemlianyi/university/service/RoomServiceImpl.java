@@ -1,5 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -45,7 +46,7 @@ public class RoomServiceImpl implements RoomService {
 
         if (existingRoomOpt.isPresent()) {
             Room existingRoom = existingRoomOpt.get();
-            if (!(existingRoom.getNumber() == newRoom.getNumber())) {
+            if (!Objects.equals(existingRoom.getNumber(), newRoom.getNumber())) {
                 if (roomDao.existsByNumber(newRoom.getNumber())) {
                     throw new IllegalArgumentException(
                             newRoom.getNumber() + Constants.ROOM_ADD_NEW_ERROR_EXISTS_BY_NUMBER);
