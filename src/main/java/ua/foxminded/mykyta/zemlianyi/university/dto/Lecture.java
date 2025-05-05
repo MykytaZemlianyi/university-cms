@@ -118,7 +118,7 @@ public class Lecture implements Verifiable, Dto {
     }
 
     public boolean isOverlappingWith(Lecture l2) {
-        return (this.getTimeStart().isBefore(l2.getTimeEnd()));
+        return this.timeStart.isBefore(l2.getTimeEnd()) && this.timeEnd.isAfter(l2.getTimeStart());
     }
 
     @Override
