@@ -1,5 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -79,6 +80,11 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Optional<Room> findById(Long id) {
         return roomDao.findById(id);
+    }
+
+    @Override
+    public List<Room> findAll() {
+        return roomDao.findAll();
     }
 
 }
