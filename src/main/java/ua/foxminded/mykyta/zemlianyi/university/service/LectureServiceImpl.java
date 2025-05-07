@@ -79,6 +79,7 @@ public class LectureServiceImpl implements LectureService {
         return lectureDao.findAll(pageable);
     }
 
+    @Override
     public Lecture mapFormToLecture(LectureForm form) {
         ObjectChecker.checkNull(form);
         Lecture lecture = new Lecture();

@@ -30,15 +30,15 @@ public class Lecture implements Verifiable, Dto {
     @JoinColumn(name = "course_id", referencedColumnName = "course_id")
     private Course course;
 
+    @ManyToOne
+    @JoinColumn(name = "room_id", referencedColumnName = "room_id")
+    private Room room;
+
     @Column(name = "lecture_time_start")
     private LocalDateTime timeStart;
 
     @Column(name = "lecture_time_end")
     private LocalDateTime timeEnd;
-
-    @ManyToOne
-    @JoinColumn(name = "room_id", referencedColumnName = "room_id")
-    private Room room;
 
     public Long getId() {
         return id;

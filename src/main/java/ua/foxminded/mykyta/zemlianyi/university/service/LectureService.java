@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
+import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
 
 public interface LectureService {
     Lecture addNew(Lecture lecture);
@@ -21,4 +22,6 @@ public interface LectureService {
     void delete(Lecture lecture);
 
     Page<Lecture> findAll(Pageable pageable);
+
+    Lecture mapFormToLecture(LectureForm form);
 }

@@ -45,6 +45,17 @@
 					th:errorclass="error" th:errors="*{courseId}" />
 			</div>
 
+			<div class="mb-3">
+				<label for="roomId" class="form-label">Room</label> <select
+					class="form-select" id="room" th:field="*{roomId}">
+					<option value="" selected>-- Select Room --</option>
+					<option th:each="room : ${roomList}" th:value="${room.id}"
+						th:text="${room.number}"></option>
+				</select>
+				<p class="text-danger" th:if="${#fields.hasErrors('roomId')}"
+					th:errorclass="error" th:errors="*{roomId}" />
+			</div>
+
 			<div class="row mb-3">
 				<div class="col-2 me-4">
 					<label for="date" class="form-label">Date</label> <input
@@ -68,7 +79,6 @@
 						th:errorclass="error" th:errors="*{timeEnd}" />
 				</div>
 			</div>
-
 
 			<div class="d-flex flex-row-reverse mb-3 ">
 				<button type="submit" class="btn btn-success btn-lg">Save</button>
