@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,16 +11,19 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
+import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 import ua.foxminded.mykyta.zemlianyi.university.service.CourseService;
 import ua.foxminded.mykyta.zemlianyi.university.service.LectureService;
 import ua.foxminded.mykyta.zemlianyi.university.service.RoomService;
@@ -72,6 +76,43 @@ public class LectureController {
             Lecture lecture = lectureService.mapFormToLecture(lectureForm);
             lectureService.addNew(lecture);
             redirectAttributes.addFlashAttribute("successMessage", "Lecture added successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/admin/lectures";
+    }
+
+    @GetMapping("/admin/edit-lecture/{id}")
+    public String showEditLectureForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        Optional<Lecture> lectureOpt = lectureService.findById(id);
+        List<Course> allCourses = courseService.findAll();
+        List<Room> allRooms = roomService.findAll();
+        if (lectureOpt.isPresent()) {
+            LectureForm form = lectureService.mapLectureToForm(lectureOpt.get());
+            model.addAttribute("lectureForm", form);
+            model.addAttribute("lectureTypes", LectureType.values());
+            model.addAttribute("courseList", allCourses);
+            model.addAttribute("roomList", allRooms);
+            return "edit-lecture";
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
+            return "redirect:/admin/lectures";
+        }
+    }
+
+    @PostMapping("/admin/edit-lecture/{id}")
+    public String updateLecture(@PathVariable Long id, @Valid @ModelAttribute("lectureForm") LectureForm form,
+            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            return "edit-lecture";
+        }
+
+        try {
+            Lecture lecture = lectureService.mapFormToLecture(form);
+            lectureService.update(lecture);
+            redirectAttributes.addFlashAttribute("successMessage", "Lecture updated successfully!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dao.CourseDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.LectureDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
@@ -41,9 +42,32 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public Lecture update(Lecture lecture) {
         ObjectChecker.checkNullAndVerify(lecture);
-        ObjectChecker.checkIfExistsInDb(lecture, lectureDao);
-        logger.info("Updating course - {}", lecture);
-        return lectureDao.save(lecture);
+        Lecture mergedLecture = mergeWithExisting(lecture);
+        logger.info("Updating course - {}", mergedLecture);
+        return lectureDao.save(mergedLecture);
+    }
+
+    private Lecture mergeWithExisting(Lecture lecture) {
+        Optional<Lecture> existingLectureOpt = lectureDao.findById(lecture.getId());
+        if (existingLectureOpt.isPresent()) {
+            Lecture existingLecture = existingLectureOpt.get();
+            existingLecture.setLectureType(lecture.getLectureType());
+            existingLecture.setTimeStart(lecture.getTimeStart());
+            existingLecture.setTimeEnd(lecture.getTimeEnd());
+
+            if (!existingLecture.getCourse().equals(lecture.getCourse())) {
+                logger.info("Old = {}, New = {}", existingLecture.getCourse(), lecture.getCourse());
+                existingLecture.setCourse(lecture.getCourse());
+            }
+            if (!existingLecture.getRoom().equals(lecture.getRoom())) {
+                logger.info("Old = {}, New = {}", existingLecture.getRoom(), lecture.getRoom());
+                existingLecture.setRoom(lecture.getRoom());
+            }
+
+            return existingLecture;
+        } else {
+            throw new IllegalArgumentException(Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
+        }
     }
 
     @Override
@@ -77,6 +101,30 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public Page<Lecture> findAll(Pageable pageable) {
         return lectureDao.findAll(pageable);
+    }
+
+    @Override
+    public Optional<Lecture> findById(Long id) {
+        return lectureDao.findById(id);
+    }
+
+    @Override
+    public LectureForm mapLectureToForm(Lecture lecture) {
+        ObjectChecker.checkNull(lecture);
+        LectureForm form = new LectureForm();
+        form.setId(lecture.getId());
+        form.setLectureType(lecture.getLectureType());
+
+        form.setCourseId(lecture.getCourse() != null ? lecture.getCourse().getId() : null);
+        form.setRoomId(lecture.getRoom() != null ? lecture.getRoom().getId() : null);
+
+        form.setDate(lecture.getTimeStart().toLocalDate());
+
+        form.setTimeStart(lecture.getTimeStart().toLocalTime());
+
+        form.setTimeEnd(lecture.getTimeEnd().toLocalTime());
+
+        return form;
     }
 
     @Override
