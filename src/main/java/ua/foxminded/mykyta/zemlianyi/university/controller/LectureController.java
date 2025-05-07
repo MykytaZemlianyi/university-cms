@@ -1,7 +1,5 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -17,8 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
-import ua.foxminded.mykyta.zemlianyi.university.dto.*;
-import ua.foxminded.mykyta.zemlianyi.university.service.*;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
+import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
+import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
+import ua.foxminded.mykyta.zemlianyi.university.service.CourseService;
+import ua.foxminded.mykyta.zemlianyi.university.service.LectureService;
+import ua.foxminded.mykyta.zemlianyi.university.service.RoomService;
 
 @Controller
 public class LectureController {
@@ -53,7 +57,6 @@ public class LectureController {
         model.addAttribute("courseList", allCourses);
         model.addAttribute("roomList", allRooms);
         model.addAttribute("lectureTypes", LectureType.values());
-        model.addAttribute("currentDate", LocalDate.now());
         return "add-new-lecture";
     }
 
