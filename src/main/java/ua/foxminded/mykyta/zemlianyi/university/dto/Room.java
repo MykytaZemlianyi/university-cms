@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
 
@@ -23,6 +24,7 @@ public class Room implements Verifiable, Dto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "Room number should not be empty")
     @PositiveOrZero(message = "Room number should be positive or zero")
     @Column(name = "room_number")
     private Integer number;
