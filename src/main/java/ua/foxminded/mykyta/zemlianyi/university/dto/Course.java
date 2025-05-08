@@ -58,19 +58,11 @@ public class Course implements Verifiable, Dto {
     }
 
     public void setId(Long id) {
-        if (id != null && id >= 0) {
-            this.id = id;
-        } else {
-            throw new IllegalArgumentException("Invalid ID");
-        }
+        this.id = id;
     }
 
     public void setName(String name) {
-        if (verifyName(name)) {
-            this.name = name;
-        } else {
-            throw new IllegalArgumentException("Invalid name");
-        }
+        this.name = name;
     }
 
     public void setTeacher(Teacher teacher) {
