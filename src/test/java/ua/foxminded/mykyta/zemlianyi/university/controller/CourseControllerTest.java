@@ -57,7 +57,6 @@ class CourseControllerTest {
         Group group = new Group();
         group.setName("AA-11");
 
-        Course course = new Course();
         course.setId(1L);
         course.setName("Math");
         course.setTeacher(teacher);
@@ -87,7 +86,8 @@ class CourseControllerTest {
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showCreateCourseForm_shouldReturnModelWithNewCourse() throws Exception {
         mockMvc.perform(get("/admin/add-new-course")).andExpect(status().isOk())
-                .andExpect(view().name("add-new-course")).andExpect(model().attributeExists("course"));
+                .andExpect(view().name("add-new-course")).andExpect(model().attributeExists("course"))
+                .andExpect(model().attributeExists("teacherList"));
     }
 
     @Test
@@ -101,7 +101,7 @@ class CourseControllerTest {
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
-    void createAdmin_shouldRedirectWithError_whenServiceThrowsException() throws Exception {
+    void createCourse_shouldRedirectWithError_whenServiceThrowsException() throws Exception {
         Course newCourse = new Course();
         newCourse.setName("Computer Science");
 
@@ -155,7 +155,7 @@ class CourseControllerTest {
 
         Course modifiedCourse = new Course();
         modifiedCourse.setId(1L);
-        modifiedCourse.setName("Coumputer Science 2");
+        modifiedCourse.setName("Computer Science 2");
 
         mockMvc.perform(post("/admin/edit-course/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedCourse.getName())).andExpect(status().is3xxRedirection())
