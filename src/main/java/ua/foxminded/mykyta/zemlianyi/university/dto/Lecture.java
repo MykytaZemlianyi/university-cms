@@ -88,6 +88,11 @@ public class Lecture implements Verifiable, Dto {
         this.room = room;
     }
 
+    public void clearRelations() {
+        this.room.removeLecture(this);
+        this.course.removeLecture(this);
+    }
+
     @Override
     public boolean verify() {
         return verifyType() && verifyCourse() && verifyTime();

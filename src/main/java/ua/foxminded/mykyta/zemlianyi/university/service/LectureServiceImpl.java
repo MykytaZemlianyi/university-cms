@@ -17,7 +17,6 @@ import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
-import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
 
 @Service
 public class LectureServiceImpl implements LectureService {
@@ -55,14 +54,9 @@ public class LectureServiceImpl implements LectureService {
             existingLecture.setTimeStart(lecture.getTimeStart());
             existingLecture.setTimeEnd(lecture.getTimeEnd());
 
-            if (!existingLecture.getCourse().equals(lecture.getCourse())) {
-                logger.info("Old = {}, New = {}", existingLecture.getCourse(), lecture.getCourse());
-                existingLecture.setCourse(lecture.getCourse());
-            }
-            if (!existingLecture.getRoom().equals(lecture.getRoom())) {
-                logger.info("Old = {}, New = {}", existingLecture.getRoom(), lecture.getRoom());
-                existingLecture.setRoom(lecture.getRoom());
-            }
+            mergeCourse(existingLecture, lecture);
+
+            mergeRoom(existingLecture, lecture);
 
             return existingLecture;
         } else {
@@ -70,14 +64,59 @@ public class LectureServiceImpl implements LectureService {
         }
     }
 
+    private void mergeCourse(Lecture existingLecture, Lecture updatedLecture) {
+        if (!existingLecture.getCourse().equals(updatedLecture.getCourse())) {
+            existingLecture.getCourse().removeLecture(existingLecture);
+            existingLecture.setCourse(updatedLecture.getCourse());
+            existingLecture.getCourse().addLecture(existingLecture);
+        }
+    }
+
+    private void mergeRoom(Lecture existingLecture, Lecture updatedLecture) {
+        existingLecture.getRoom().removeLecture(existingLecture);
+        existingLecture.setRoom(updatedLecture.getRoom());
+        existingLecture.getRoom().addLecture(existingLecture);
+
+    }
+
     @Override
     public void delete(Lecture lecture) {
         ObjectChecker.checkNullAndVerify(lecture);
         ObjectChecker.checkIfExistsInDb(lecture, lectureDao);
-
+        lecture.clearRelations();
         logger.info("Updating course - {}", lecture);
         lectureDao.delete(lecture);
 
+    }
+
+    @Override
+    public LectureForm mapLectureToForm(Lecture lecture) {
+        ObjectChecker.checkNull(lecture);
+        LectureForm form = new LectureForm();
+        form.setId(lecture.getId());
+        form.setLectureType(lecture.getLectureType());
+
+        form.setCourseId(lecture.getCourse() != null ? lecture.getCourse().getId() : null);
+        form.setRoomId(lecture.getRoom() != null ? lecture.getRoom().getId() : null);
+
+        form.setDate(lecture.getTimeStart().toLocalDate());
+        form.setTimeStart(lecture.getTimeStart().toLocalTime());
+        form.setTimeEnd(lecture.getTimeEnd().toLocalTime());
+
+        return form;
+    }
+
+    public Lecture mapFormToLecture(LectureForm form) {
+        Lecture lecture = new Lecture();
+        lecture.setId(form.getId());
+        lecture.setLectureType(form.getLectureType());
+        lecture.setTimeStart(LocalDateTime.of(form.getDate(), form.getTimeStart()));
+        lecture.setTimeEnd(LocalDateTime.of(form.getDate(), form.getTimeEnd()));
+
+        courseDao.findById(form.getCourseId()).ifPresent(lecture::setCourse);
+        roomDao.findById(form.getRoomId()).ifPresent(lecture::setRoom);
+
+        return lecture;
     }
 
     @Override
@@ -106,64 +145,6 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public Optional<Lecture> findById(Long id) {
         return lectureDao.findById(id);
-    }
-
-    @Override
-    public LectureForm mapLectureToForm(Lecture lecture) {
-        ObjectChecker.checkNull(lecture);
-        LectureForm form = new LectureForm();
-        form.setId(lecture.getId());
-        form.setLectureType(lecture.getLectureType());
-
-        form.setCourseId(lecture.getCourse() != null ? lecture.getCourse().getId() : null);
-        form.setRoomId(lecture.getRoom() != null ? lecture.getRoom().getId() : null);
-
-        form.setDate(lecture.getTimeStart().toLocalDate());
-
-        form.setTimeStart(lecture.getTimeStart().toLocalTime());
-
-        form.setTimeEnd(lecture.getTimeEnd().toLocalTime());
-
-        return form;
-    }
-
-    @Override
-    public Lecture mapFormToLecture(LectureForm form) {
-        ObjectChecker.checkNull(form);
-        Lecture lecture = new Lecture();
-        lecture.setId(form.getId());
-        lecture.setLectureType(form.getLectureType());
-        lecture.setTimeStart(LocalDateTime.of(form.getDate(), form.getTimeStart()));
-        lecture.setTimeEnd(LocalDateTime.of(form.getDate(), form.getTimeEnd()));
-
-        assignCourseForLectureById(lecture, form.getCourseId());
-        assignRoomForLectureById(lecture, form.getRoomId());
-
-        return lecture;
-    }
-
-    private void assignCourseForLectureById(Lecture lecture, Long courseId) {
-        Optional<Course> courseOpt = courseDao.findById(courseId);
-        if (courseOpt.isPresent()) {
-            Course course = courseOpt.get();
-            lecture.setCourse(course);
-            course.getLectures().add(lecture);
-        } else {
-            throw new IllegalArgumentException("Course ID: " + courseId + " assigned to lecture does not exists in DB");
-        }
-
-    }
-
-    private void assignRoomForLectureById(Lecture lecture, Long roomId) {
-        Optional<Room> roomOpt = roomDao.findById(roomId);
-        if (roomOpt.isPresent()) {
-            Room room = roomOpt.get();
-            lecture.setRoom(room);
-            room.addLecture(lecture);
-        } else {
-            throw new IllegalArgumentException("Room ID: " + roomId + " assigned to lecture does not exists in DB");
-        }
-
     }
 
 }

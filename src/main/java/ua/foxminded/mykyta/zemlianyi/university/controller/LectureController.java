@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,6 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
-import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 import ua.foxminded.mykyta.zemlianyi.university.service.CourseService;
 import ua.foxminded.mykyta.zemlianyi.university.service.LectureService;
 import ua.foxminded.mykyta.zemlianyi.university.service.RoomService;
@@ -119,4 +119,19 @@ public class LectureController {
         return "redirect:/admin/lectures";
     }
 
+    @DeleteMapping("/admin/delete-lecture/{id}")
+    public String deleteLecture(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            Optional<Lecture> lecture = lectureService.findById(id);
+            if (lecture.isPresent()) {
+                lectureService.delete(lecture.get());
+                redirectAttributes.addFlashAttribute("successMessage", "Lecture deleted successfully!");
+            } else {
+                redirectAttributes.addFlashAttribute("errorMessage", "Error: Lecture does not exists");
+            }
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+        }
+        return "redirect:/admin/lectures";
+    }
 }

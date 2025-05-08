@@ -83,7 +83,8 @@ public class Room implements Verifiable, Dto {
         }
 
         for (Lecture existingLecture : lectures) {
-            if (existingLecture.isOverlappingWith(lecture)) {
+            if (!Objects.equals(existingLecture.getId(), lecture.getId())
+                    && existingLecture.isOverlappingWith(lecture)) {
                 return false;
             }
         }
