@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,20 +18,28 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import ua.foxminded.mykyta.zemlianyi.university.dao.CourseDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.LectureDao;
+import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
 
-@SpringBootTest(classes = {LectureServiceImpl.class})
+@SpringBootTest(classes = { LectureServiceImpl.class })
 class LectureServiceImplTest {
-    
+
     @MockitoBean
     LectureDao lectureDao;
 
     @MockitoBean
     PasswordEncoder encoder;
-    
+
+    @MockitoBean
+    CourseDao courseDao;
+
+    @MockitoBean
+    RoomDao roomDao;
+
     @Autowired
     LectureServiceImpl lectureService;
 
@@ -96,7 +105,7 @@ class LectureServiceImplTest {
 
     @Test
     void update_shouldUpdateLecture_whenLectureIsValidAndSaved() {
-        when(lectureDao.existsById(1L)).thenReturn(true);
+        when(lectureDao.findById(1L)).thenReturn(Optional.of(lecture));
         lectureService.update(lecture);
         verify(lectureDao).save(lecture);
     }
@@ -126,7 +135,7 @@ class LectureServiceImplTest {
 
     @Test
     void delete_shouldDeleteLecture_when_lectureIsValidAndExistsInDb() {
-        doReturn(true).when(lectureDao).existsById(lecture.getId());
+        doReturn(true).when(lectureDao).existsById(1L);
 
         lectureService.delete(lecture);
 

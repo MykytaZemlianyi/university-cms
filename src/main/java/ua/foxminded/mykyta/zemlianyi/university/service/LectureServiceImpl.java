@@ -66,16 +66,24 @@ public class LectureServiceImpl implements LectureService {
 
     private void mergeCourse(Lecture existingLecture, Lecture updatedLecture) {
         if (!existingLecture.getCourse().equals(updatedLecture.getCourse())) {
-            existingLecture.getCourse().removeLecture(existingLecture);
+            if (existingLecture.getCourse() != null) {
+                existingLecture.getCourse().removeLecture(existingLecture);
+            }
             existingLecture.setCourse(updatedLecture.getCourse());
-            existingLecture.getCourse().addLecture(existingLecture);
+            if (existingLecture.getCourse() != null) {
+                existingLecture.getCourse().addLecture(existingLecture);
+            }
         }
     }
 
     private void mergeRoom(Lecture existingLecture, Lecture updatedLecture) {
-        existingLecture.getRoom().removeLecture(existingLecture);
+        if (existingLecture.getRoom() != null) {
+            existingLecture.getRoom().removeLecture(existingLecture);
+        }
         existingLecture.setRoom(updatedLecture.getRoom());
-        existingLecture.getRoom().addLecture(existingLecture);
+        if (existingLecture.getRoom() != null) {
+            existingLecture.getRoom().addLecture(existingLecture);
+        }
 
     }
 

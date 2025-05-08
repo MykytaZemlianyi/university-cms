@@ -89,8 +89,12 @@ public class Lecture implements Verifiable, Dto {
     }
 
     public void clearRelations() {
-        this.room.removeLecture(this);
-        this.course.removeLecture(this);
+        if (this.room != null) {
+            this.room.removeLecture(this);
+        }
+        if (this.course != null) {
+            this.course.removeLecture(this);
+        }
     }
 
     @Override
