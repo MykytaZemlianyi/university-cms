@@ -26,6 +26,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
 import ua.foxminded.mykyta.zemlianyi.university.service.AdminService;
 
 @Controller
+@RequestMapping("/admins")
 public class AdminController {
     private AdminService adminService;
 
@@ -33,7 +34,7 @@ public class AdminController {
         this.adminService = adminService;
     }
 
-    @GetMapping("/admins")
+    @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getAdmins(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
@@ -48,14 +49,14 @@ public class AdminController {
         return "view-all-admins";
     }
 
-    @GetMapping("/add-new-admin")
+    @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateAdminForm(Model model) {
         model.addAttribute("admin", new Admin());
         return "add-new-admin";
     }
 
-    @PostMapping("/add-admin")
+    @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createAdmin(@Valid @ModelAttribute("admin") Admin admin, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
@@ -74,7 +75,7 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/edit-admin/{id}")
+    @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditAdminForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Admin> admin = adminService.findById(id);
@@ -87,7 +88,7 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/edit-admin/{id}")
+    @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateAdmin(@PathVariable Long id, @Valid @ModelAttribute("admin") Admin updatedAdmin,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -106,7 +107,7 @@ public class AdminController {
         }
     }
 
-    @DeleteMapping("/delete-admin/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {

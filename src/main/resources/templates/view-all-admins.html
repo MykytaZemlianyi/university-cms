@@ -24,7 +24,7 @@
 			th:insert="~{fragments/general_fragments :: operation-status-alert}"></div>
 
 		<div class="d-flex w-75 p-2"
-			th:insert="~{fragments/button_fragments :: create(link='/add-new-admin')}"></div>
+			th:insert="~{fragments/button_fragments :: create(link='/admins/add')}"></div>
 
 		<div th:replace="~{fragments/admin_fragments :: table(${admins})}"></div>
 

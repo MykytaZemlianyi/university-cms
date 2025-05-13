@@ -16,7 +16,7 @@
 				<td class="p-2" th:text="${admin.surname}"></td>
 				<td class="p-2" th:text="${admin.email}"></td>
 				<td class="text-center p-2">
-					<div th:with="editUrl=@{/edit-admin/{id}(id=${admin.id})}">
+					<div th:with="editUrl=@{/admins/edit/{id}(id=${admin.id})}">
 						<div
 							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
 					</div>
