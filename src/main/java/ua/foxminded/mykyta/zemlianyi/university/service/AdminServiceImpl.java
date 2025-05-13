@@ -47,7 +47,7 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
     }
 
     private String choosePassword(String newPassword, String existingPassword) {
-        if (newPassword == null || newPassword.isBlank() || newPassword.equals(existingPassword)) {
+        if (newPassword == null || newPassword.isBlank() || passwordEncoder.matches(newPassword, existingPassword)) {
             return existingPassword;
         } else {
             return passwordEncoder.encode(newPassword);
