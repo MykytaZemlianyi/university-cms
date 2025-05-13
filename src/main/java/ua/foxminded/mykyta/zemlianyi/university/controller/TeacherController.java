@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -24,6 +25,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.*;
 import ua.foxminded.mykyta.zemlianyi.university.service.*;
 
 @Controller
+@RequestMapping("/teachers")
 public class TeacherController {
     private TeacherService teacherService;
     private CourseService courseService;
@@ -33,7 +35,7 @@ public class TeacherController {
         this.courseService = courseService;
     }
 
-    @GetMapping("/teachers")
+    @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getTeachers(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
@@ -48,7 +50,7 @@ public class TeacherController {
         return "view-all-teachers";
     }
 
-    @GetMapping("/add-new-teacher")
+    @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateStudentForm(Model model) {
         List<Course> allCourses = courseService.findAll();
@@ -57,7 +59,7 @@ public class TeacherController {
         return "add-new-teacher";
     }
 
-    @PostMapping("/add-teacher")
+    @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createTeacher(@Valid @ModelAttribute Teacher teacher, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
@@ -75,7 +77,7 @@ public class TeacherController {
         return "redirect:/teachers";
     }
 
-    @GetMapping("/edit-teacher/{id}")
+    @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditTeacherForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Teacher> teacher = teacherService.findById(id);
@@ -90,7 +92,7 @@ public class TeacherController {
         }
     }
 
-    @PostMapping("/edit-teacher/{id}")
+    @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateTeacher(@PathVariable Long id, @Valid @ModelAttribute("teacher") Teacher updatedTeacher,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -108,7 +110,7 @@ public class TeacherController {
         return "redirect:/teachers";
     }
 
-    @DeleteMapping("/delete-teacher/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteTeacher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
