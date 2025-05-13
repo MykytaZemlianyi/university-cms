@@ -27,9 +27,9 @@ public class TeacherServiceImpl extends UserServiceImpl<Teacher> implements Teac
         if (existingTeacherOpt.isPresent()) {
             Teacher existingTeacher = existingTeacherOpt.get();
 
-            existingTeacher.setName(chooseString(newTeacher.getName(), existingTeacher.getName()));
-            existingTeacher.setSurname(chooseString(newTeacher.getSurname(), existingTeacher.getSurname()));
-            existingTeacher.setEmail(chooseString(newTeacher.getEmail(), existingTeacher.getEmail()));
+            existingTeacher.setName(newTeacher.getName());
+            existingTeacher.setSurname(newTeacher.getSurname());
+            existingTeacher.setEmail(newTeacher.getEmail());
             existingTeacher.setPassword(choosePassword(newTeacher.getPassword(), existingTeacher.getPassword()));
 
             existingTeacher.setCourses(newTeacher.getCourses());
@@ -37,14 +37,6 @@ public class TeacherServiceImpl extends UserServiceImpl<Teacher> implements Teac
             return existingTeacher;
         } else {
             throw new IllegalArgumentException(Constants.USER_NOT_FOUND_ERROR);
-        }
-    }
-
-    private String chooseString(String newString, String existingString) {
-        if (newString == null || newString.isBlank() || newString.equals(existingString)) {
-            return existingString;
-        } else {
-            return newString;
         }
     }
 

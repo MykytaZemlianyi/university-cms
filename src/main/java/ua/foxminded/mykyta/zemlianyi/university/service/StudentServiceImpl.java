@@ -27,9 +27,9 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
         if (existingStudentOpt.isPresent()) {
             Student existingStudent = existingStudentOpt.get();
 
-            existingStudent.setName(chooseString(newStudent.getName(), existingStudent.getName()));
-            existingStudent.setSurname(chooseString(newStudent.getSurname(), existingStudent.getSurname()));
-            existingStudent.setEmail(chooseString(newStudent.getEmail(), existingStudent.getEmail()));
+            existingStudent.setName(newStudent.getName());
+            existingStudent.setSurname(newStudent.getSurname());
+            existingStudent.setEmail(newStudent.getEmail());
             existingStudent.setPassword(choosePassword(newStudent.getPassword(), existingStudent.getPassword()));
 
             existingStudent.setGroup(newStudent.getGroup());
@@ -41,16 +41,8 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
         }
     }
 
-    private String chooseString(String newString, String existingString) {
-        if (newString == null || newString.isBlank() || newString.equals(existingString)) {
-            return existingString;
-        } else {
-            return newString;
-        }
-    }
-
     private String choosePassword(String newPassword, String existingPassword) {
-        if (newPassword == null || newPassword.isBlank() ||passwordEncoder.matches(newPassword, existingPassword)) {
+        if (newPassword == null || newPassword.isBlank() || passwordEncoder.matches(newPassword, existingPassword)) {
             return existingPassword;
         } else {
             return passwordEncoder.encode(newPassword);

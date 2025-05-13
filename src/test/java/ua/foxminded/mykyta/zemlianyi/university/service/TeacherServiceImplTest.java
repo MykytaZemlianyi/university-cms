@@ -106,7 +106,7 @@ class TeacherServiceImplTest {
     @Test
     void update_shouldUpdate_whenTeacherIsCorrectAndExistsInDb() {
         doReturn(Optional.of(teacher)).when(teacherDao).findById(teacher.getId());
-
+        doReturn("encryptedPassword").when(encoder).encode(teacher.getPassword());
         teacherService.update(teacher);
 
         verify(teacherDao).save(teacher);

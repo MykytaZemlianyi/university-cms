@@ -105,7 +105,7 @@ class StudentServiceImplTest {
     @Test
     void update_shouldUpdate_whenStudentIsCorrectAndExistsInDb() {
         doReturn(Optional.of(student)).when(studentDao).findById(student.getId());
-
+        doReturn("encodedPassword").when(encoder).encode(student.getPassword());
         studentService.update(student);
 
         verify(studentDao).save(student);

@@ -27,22 +27,14 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
         if (existingAdminOpt.isPresent()) {
             Admin existingAdmin = existingAdminOpt.get();
 
-            existingAdmin.setName(chooseString(newAdmin.getName(), existingAdmin.getName()));
-            existingAdmin.setSurname(chooseString(newAdmin.getSurname(), existingAdmin.getSurname()));
-            existingAdmin.setEmail(chooseString(newAdmin.getEmail(), existingAdmin.getEmail()));
+            existingAdmin.setName(newAdmin.getName());
+            existingAdmin.setSurname(newAdmin.getSurname());
+            existingAdmin.setEmail(newAdmin.getEmail());
             existingAdmin.setPassword(choosePassword(newAdmin.getPassword(), existingAdmin.getPassword()));
 
             return existingAdmin;
         } else {
             throw new IllegalArgumentException(Constants.USER_NOT_FOUND_ERROR);
-        }
-    }
-
-    private String chooseString(String newString, String existingString) {
-        if (newString == null || newString.isBlank() || newString.equals(existingString)) {
-            return existingString;
-        } else {
-            return newString;
         }
     }
 

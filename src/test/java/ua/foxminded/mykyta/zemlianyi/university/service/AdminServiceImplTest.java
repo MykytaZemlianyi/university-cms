@@ -109,7 +109,7 @@ class AdminServiceImplTest {
     @Test
     void update_shouldUpdate_whenAdminIsCorrectAndExistsInDb() {
         doReturn(Optional.of(admin)).when(adminDao).findById(admin.getId());
-
+        doReturn("encodedPassword").when(encoder).encode(admin.getPassword());
         adminService.update(admin);
 
         verify(adminDao).save(admin);
@@ -119,7 +119,7 @@ class AdminServiceImplTest {
     void update_shouldNotEncryptPassword_whenPasswordDidntChanged() {
         String rawPassword = admin.getPassword();
         doReturn(Optional.of(admin)).when(adminDao).findById(admin.getId());
-
+        doReturn(true).when(encoder).matches(rawPassword, rawPassword);
         Admin updatedAdminWithSamePassword = admin;
         updatedAdminWithSamePassword.setName("Different-Name");
 
