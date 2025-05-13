@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,7 +26,6 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
 import ua.foxminded.mykyta.zemlianyi.university.service.AdminService;
 
 @Controller
-@RequestMapping("/admin")
 public class AdminController {
     private AdminService adminService;
 
@@ -34,6 +34,7 @@ public class AdminController {
     }
 
     @GetMapping("/admins")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getAdmins(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -48,12 +49,14 @@ public class AdminController {
     }
 
     @GetMapping("/add-new-admin")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateAdminForm(Model model) {
         model.addAttribute("admin", new Admin());
         return "add-new-admin";
     }
 
     @PostMapping("/add-admin")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createAdmin(@Valid @ModelAttribute("admin") Admin admin, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
@@ -64,14 +67,15 @@ public class AdminController {
         try {
             adminService.addNew(admin);
             redirectAttributes.addFlashAttribute("successMessage", "Admin added successfully!");
-            return "redirect:/admin/admins";
+            return "redirect:/admins";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-            return "redirect:/admin/admins";
+            return "redirect:/admins";
         }
     }
 
     @GetMapping("/edit-admin/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditAdminForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Admin> admin = adminService.findById(id);
         if (admin.isPresent()) {
@@ -79,11 +83,12 @@ public class AdminController {
             return "edit-admin";
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + Constants.USER_NOT_FOUND_ERROR);
-            return "redirect:/admin/admins";
+            return "redirect:/admins";
         }
     }
 
     @PostMapping("/edit-admin/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateAdmin(@PathVariable Long id, @Valid @ModelAttribute("admin") Admin updatedAdmin,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
@@ -94,14 +99,15 @@ public class AdminController {
         try {
             adminService.update(updatedAdmin);
             redirectAttributes.addFlashAttribute("successMessage", "Admin updated successfully!");
-            return "redirect:/admin/admins";
+            return "redirect:/admins";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-            return "redirect:/admin/admins";
+            return "redirect:/admins";
         }
     }
 
     @DeleteMapping("/delete-admin/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             Optional<Admin> admin = adminService.findById(id);
@@ -114,7 +120,7 @@ public class AdminController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/admins";
+        return "redirect:/admins";
     }
 
 }

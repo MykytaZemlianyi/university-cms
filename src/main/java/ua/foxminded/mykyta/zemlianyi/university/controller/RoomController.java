@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,7 +30,8 @@ public class RoomController {
         this.roomService = roomService;
     }
 
-    @GetMapping("/admin/rooms")
+    @GetMapping("/rooms")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getRooms(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -43,13 +45,15 @@ public class RoomController {
         return "view-all-rooms";
     }
 
-    @GetMapping("/admin/add-room")
+    @GetMapping("/add-room")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateRoomForm(Model model) {
         model.addAttribute("room", new Room());
         return "add-new-room";
     }
 
-    @PostMapping("/admin/add-room")
+    @PostMapping("/add-room")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createRoom(@Valid @ModelAttribute Room room, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
@@ -63,10 +67,11 @@ public class RoomController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/rooms";
+        return "redirect:/rooms";
     }
 
-    @GetMapping("/admin/edit-room/{id}")
+    @GetMapping("/edit-room/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditRoomForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Room> room = roomService.findById(id);
         if (room.isPresent()) {
@@ -75,11 +80,12 @@ public class RoomController {
         } else {
             redirectAttributes.addFlashAttribute("errorMessage",
                     "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
-            return "redirect:/admin/rooms";
+            return "redirect:/rooms";
         }
     }
 
-    @PostMapping("/admin/edit-room/{id}")
+    @PostMapping("/edit-room/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateRoom(@PathVariable Long id, @Valid @ModelAttribute("room") Room updatedRoom,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
@@ -93,10 +99,11 @@ public class RoomController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/rooms";
+        return "redirect:/rooms";
     }
 
-    @DeleteMapping("/admin/delete-room/{id}")
+    @DeleteMapping("/delete-room/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteRoom(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             Optional<Room> room = roomService.findById(id);
@@ -109,6 +116,6 @@ public class RoomController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/rooms";
+        return "redirect:/rooms";
     }
 }

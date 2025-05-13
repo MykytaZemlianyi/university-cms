@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,7 +33,8 @@ public class CourseController {
         this.teacherService = teacherService;
     }
 
-    @GetMapping("/admin/courses")
+    @GetMapping("/courses")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getCourses(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -46,7 +48,8 @@ public class CourseController {
         return "view-all-courses";
     }
 
-    @GetMapping("/admin/add-new-course")
+    @GetMapping("/add-new-course")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateCourseForm(Model model) {
         List<Teacher> allTeachers = teacherService.findAll();
         model.addAttribute("course", new Course());
@@ -54,7 +57,8 @@ public class CourseController {
         return "add-new-course";
     }
 
-    @PostMapping("/admin/add-course")
+    @PostMapping("/add-course")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createCourse(@Valid @ModelAttribute Course course, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
@@ -68,10 +72,11 @@ public class CourseController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/courses";
+        return "redirect:/courses";
     }
 
-    @GetMapping("/admin/edit-course/{id}")
+    @GetMapping("/edit-course/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditCourseForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Course> course = courseService.findById(id);
         if (course.isPresent()) {
@@ -82,11 +87,12 @@ public class CourseController {
         } else {
             redirectAttributes.addFlashAttribute("errorMessage",
                     "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
-            return "redirect:/admin/courses";
+            return "redirect:/courses";
         }
     }
 
-    @PostMapping("/admin/edit-course/{id}")
+    @PostMapping("/edit-course/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateCourse(@PathVariable Long id, @Valid @ModelAttribute("course") Course updatedCourse,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
@@ -100,10 +106,11 @@ public class CourseController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/courses";
+        return "redirect:/courses";
     }
 
-    @DeleteMapping("/admin/delete-course/{id}")
+    @DeleteMapping("/delete-course/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteCourse(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             Optional<Course> course = courseService.findById(id);
@@ -116,6 +123,6 @@ public class CourseController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/courses";
+        return "redirect:/courses";
     }
 }

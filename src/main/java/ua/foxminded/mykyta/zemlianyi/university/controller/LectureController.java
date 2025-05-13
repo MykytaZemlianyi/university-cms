@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -40,7 +41,8 @@ public class LectureController {
         this.roomService = roomService;
     }
 
-    @GetMapping("/admin/lectures")
+    @GetMapping("/lectures")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getLectures(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
         Pageable pageable = PageRequest.of(page, size);
@@ -53,7 +55,8 @@ public class LectureController {
         return "view-all-lectures";
     }
 
-    @GetMapping("/admin/add-lecture")
+    @GetMapping("/add-lecture")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateLectureForm(Model model) {
         List<Course> allCourses = courseService.findAll();
         List<Room> allRooms = roomService.findAll();
@@ -64,7 +67,8 @@ public class LectureController {
         return "add-new-lecture";
     }
 
-    @PostMapping("/admin/add-lecture")
+    @PostMapping("/add-lecture")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createLecture(@Valid @ModelAttribute LectureForm lectureForm, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
@@ -79,10 +83,11 @@ public class LectureController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/lectures";
+        return "redirect:/lectures";
     }
 
-    @GetMapping("/admin/edit-lecture/{id}")
+    @GetMapping("/edit-lecture/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditLectureForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Lecture> lectureOpt = lectureService.findById(id);
         if (lectureOpt.isPresent()) {
@@ -97,11 +102,12 @@ public class LectureController {
         } else {
             redirectAttributes.addFlashAttribute("errorMessage",
                     "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
-            return "redirect:/admin/lectures";
+            return "redirect:/lectures";
         }
     }
 
-    @PostMapping("/admin/edit-lecture/{id}")
+    @PostMapping("/edit-lecture/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateLecture(@PathVariable Long id, @Valid @ModelAttribute("lectureForm") LectureForm form,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
@@ -116,10 +122,11 @@ public class LectureController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/lectures";
+        return "redirect:/lectures";
     }
 
-    @DeleteMapping("/admin/delete-lecture/{id}")
+    @DeleteMapping("/delete-lecture/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteLecture(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             Optional<Lecture> lecture = lectureService.findById(id);
@@ -132,6 +139,6 @@ public class LectureController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/lectures";
+        return "redirect:/lectures";
     }
 }

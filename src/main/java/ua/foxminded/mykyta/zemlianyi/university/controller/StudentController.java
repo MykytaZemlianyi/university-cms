@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,7 +35,8 @@ public class StudentController {
         this.groupService = groupService;
     }
 
-    @GetMapping("/admin/students")
+    @GetMapping("/students")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getStudents(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -48,7 +50,8 @@ public class StudentController {
         return "view-all-students";
     }
 
-    @GetMapping("/admin/add-new-student")
+    @GetMapping("/add-new-student")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateStudentForm(Model model) {
         List<Group> allGroups = groupService.findAll();
         model.addAttribute("student", new Student());
@@ -56,7 +59,8 @@ public class StudentController {
         return "add-new-student";
     }
 
-    @PostMapping("/admin/add-student")
+    @PostMapping("/add-student")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createStudent(@Valid @ModelAttribute Student student, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
@@ -70,10 +74,11 @@ public class StudentController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/students";
+        return "redirect:/students";
     }
 
-    @GetMapping("/admin/edit-student/{id}")
+    @GetMapping("/edit-student/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditStudentForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Student> student = studentService.findById(id);
         if (student.isPresent()) {
@@ -83,11 +88,12 @@ public class StudentController {
             return "edit-student";
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + Constants.USER_NOT_FOUND_ERROR);
-            return "redirect:/admin/students";
+            return "redirect:/students";
         }
     }
 
-    @PostMapping("/admin/edit-student/{id}")
+    @PostMapping("/edit-student/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateStudent(@PathVariable Long id, @Valid @ModelAttribute("student") Student updatedStudent,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
@@ -101,10 +107,11 @@ public class StudentController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/students";
+        return "redirect:/students";
     }
 
-    @DeleteMapping("/admin/delete-student/{id}")
+    @DeleteMapping("/delete-student/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteStudent(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             Optional<Student> student = studentService.findById(id);
@@ -117,6 +124,6 @@ public class StudentController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/students";
+        return "redirect:/students";
     }
 }

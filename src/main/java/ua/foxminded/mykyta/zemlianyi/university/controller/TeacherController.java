@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,7 +33,8 @@ public class TeacherController {
         this.courseService = courseService;
     }
 
-    @GetMapping("/admin/teachers")
+    @GetMapping("/teachers")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getTeachers(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -46,7 +48,8 @@ public class TeacherController {
         return "view-all-teachers";
     }
 
-    @GetMapping("/admin/add-new-teacher")
+    @GetMapping("/add-new-teacher")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateStudentForm(Model model) {
         List<Course> allCourses = courseService.findAll();
         model.addAttribute("teacher", new Teacher());
@@ -54,7 +57,8 @@ public class TeacherController {
         return "add-new-teacher";
     }
 
-    @PostMapping("/admin/add-teacher")
+    @PostMapping("/add-teacher")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createTeacher(@Valid @ModelAttribute Teacher teacher, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
@@ -68,10 +72,11 @@ public class TeacherController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/teachers";
+        return "redirect:/teachers";
     }
 
-    @GetMapping("/admin/edit-teacher/{id}")
+    @GetMapping("/edit-teacher/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditTeacherForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Teacher> teacher = teacherService.findById(id);
         if (teacher.isPresent()) {
@@ -81,11 +86,12 @@ public class TeacherController {
             return "edit-teacher";
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + Constants.USER_NOT_FOUND_ERROR);
-            return "redirect:/admin/teachers";
+            return "redirect:/teachers";
         }
     }
 
-    @PostMapping("/admin/edit-teacher/{id}")
+    @PostMapping("/edit-teacher/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateTeacher(@PathVariable Long id, @Valid @ModelAttribute("teacher") Teacher updatedTeacher,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
@@ -99,10 +105,11 @@ public class TeacherController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/teachers";
+        return "redirect:/teachers";
     }
 
-    @DeleteMapping("/admin/delete-teacher/{id}")
+    @DeleteMapping("/delete-teacher/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteTeacher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             Optional<Teacher> teacher = teacherService.findById(id);
@@ -115,6 +122,6 @@ public class TeacherController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/teachers";
+        return "redirect:/teachers";
     }
 }

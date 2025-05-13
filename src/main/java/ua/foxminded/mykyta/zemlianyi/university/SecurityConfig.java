@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +15,7 @@ import ua.foxminded.mykyta.zemlianyi.university.service.CustomUserDetailsService
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
 
@@ -24,9 +26,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth.requestMatchers("/", "/login", "/css/**", "/js/**").permitAll()
-                .requestMatchers("/admin/**").hasAuthority(Constants.ROLE_PREFIX + Constants.ROLE_ADMIN)
-                .requestMatchers("/teacher/**").hasAuthority(Constants.ROLE_PREFIX + Constants.ROLE_TEACHER)
-                .requestMatchers("/student/**").hasAuthority(Constants.ROLE_PREFIX + Constants.ROLE_STUDENT)
                 .anyRequest().authenticated())
                 .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/welcome", true).permitAll())
                 .logout(logout -> logout.invalidateHttpSession(true).clearAuthentication(true).logoutUrl("/logout")

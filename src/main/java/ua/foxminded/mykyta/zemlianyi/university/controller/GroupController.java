@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -34,7 +35,8 @@ public class GroupController {
         this.courseService = courseService;
     }
 
-    @GetMapping("/admin/groups")
+    @GetMapping("/groups")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getGroups(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
         Pageable pageable = PageRequest.of(page, size);
@@ -47,7 +49,8 @@ public class GroupController {
         return "view-all-groups";
     }
 
-    @GetMapping("/admin/add-new-group")
+    @GetMapping("/add-new-group")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateGroupForm(Model model) {
         List<Student> allStudents = studentService.findAll();
         List<Course> allCourses = courseService.findAll();
@@ -57,7 +60,8 @@ public class GroupController {
         return "add-new-group";
     }
 
-    @PostMapping("/admin/add-group")
+    @PostMapping("/add-group")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createGroup(@Valid @ModelAttribute Group group, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
@@ -71,10 +75,11 @@ public class GroupController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/groups";
+        return "redirect:/groups";
     }
 
-    @GetMapping("/admin/edit-group/{id}")
+    @GetMapping("/edit-group/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditGroupForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Group> groupOpt = groupService.findById(id);
         if (groupOpt.isPresent()) {
@@ -87,11 +92,12 @@ public class GroupController {
         } else {
             redirectAttributes.addFlashAttribute("errorMessage",
                     "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
-            return "redirect:/admin/groups";
+            return "redirect:/groups";
         }
     }
 
-    @PostMapping("/admin/edit-group/{id}")
+    @PostMapping("/edit-group/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateGroup(@PathVariable Long id, @Valid @ModelAttribute("group") Group updatedGroup,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
@@ -105,10 +111,11 @@ public class GroupController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/groups";
+        return "redirect:/groups";
     }
 
-    @DeleteMapping("/admin/delete-group/{id}")
+    @DeleteMapping("/delete-group/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteGroup(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             Optional<Group> group = groupService.findById(id);
@@ -121,6 +128,6 @@ public class GroupController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
         }
-        return "redirect:/admin/groups";
+        return "redirect:/groups";
     }
 }
