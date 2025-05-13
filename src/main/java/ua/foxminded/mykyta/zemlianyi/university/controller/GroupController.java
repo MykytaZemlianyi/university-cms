@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -24,6 +25,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.*;
 import ua.foxminded.mykyta.zemlianyi.university.service.*;
 
 @Controller
+@RequestMapping("/groups")
 public class GroupController {
     private GroupService groupService;
     private StudentService studentService;
@@ -35,7 +37,7 @@ public class GroupController {
         this.courseService = courseService;
     }
 
-    @GetMapping("/groups")
+    @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getGroups(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
@@ -49,7 +51,7 @@ public class GroupController {
         return "view-all-groups";
     }
 
-    @GetMapping("/add-new-group")
+    @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateGroupForm(Model model) {
         List<Student> allStudents = studentService.findAll();
@@ -60,7 +62,7 @@ public class GroupController {
         return "add-new-group";
     }
 
-    @PostMapping("/add-group")
+    @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createGroup(@Valid @ModelAttribute Group group, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
@@ -78,7 +80,7 @@ public class GroupController {
         return "redirect:/groups";
     }
 
-    @GetMapping("/edit-group/{id}")
+    @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditGroupForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Group> groupOpt = groupService.findById(id);
@@ -96,7 +98,7 @@ public class GroupController {
         }
     }
 
-    @PostMapping("/edit-group/{id}")
+    @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateGroup(@PathVariable Long id, @Valid @ModelAttribute("group") Group updatedGroup,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -114,7 +116,7 @@ public class GroupController {
         return "redirect:/groups";
     }
 
-    @DeleteMapping("/delete-group/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteGroup(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
