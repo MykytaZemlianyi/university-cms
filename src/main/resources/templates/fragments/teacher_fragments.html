@@ -20,7 +20,7 @@
 					th:text="${course.name}" style="display: block;"></a></td>
 				<td class="text-center p-2">
 					<div
-						th:with="editUrl=@{/admin/edit-teacher/{id}(id=${teacher.id})}">
+						th:with="editUrl=@{/edit-teacher/{id}(id=${teacher.id})}">
 						<div
 							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
 					</div>
