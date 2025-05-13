@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 
-public class LectureForm implements Verifiable {
+public class LectureForm {
 
     private Long id;
 
@@ -82,12 +82,6 @@ public class LectureForm implements Verifiable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    @Override
-    public boolean verify() {
-        // TODO Auto-generated method stub
-        return false;
     }
 
 }
