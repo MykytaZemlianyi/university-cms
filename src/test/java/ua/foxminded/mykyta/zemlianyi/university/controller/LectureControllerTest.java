@@ -106,7 +106,7 @@ class LectureControllerTest {
 
         when(service.findAll(pageable)).thenReturn(lecturePage);
 
-        mockMvc.perform(get("/admin/lectures").param("page", "0").param("size", "5")
+        mockMvc.perform(get("/lectures").param("page", "0").param("size", "5")
                 .with(user("admin@gmail.com").roles("ADMIN"))).andExpect(status().isOk())
                 .andExpect(view().name("view-all-lectures")).andExpect(model().attributeExists("lectures"))
                 .andExpect(model().attributeExists("currentPage")).andExpect(model().attributeExists("totalPages"))
@@ -117,7 +117,7 @@ class LectureControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showCreateLectureForm_shouldReturnModelWithNewLecture() throws Exception {
-        mockMvc.perform(get("/admin/add-lecture")).andExpect(status().isOk()).andExpect(view().name("add-new-lecture"))
+        mockMvc.perform(get("/lectures/add")).andExpect(status().isOk()).andExpect(view().name("add-new-lecture"))
                 .andExpect(model().attributeExists("lectureForm")).andExpect(model().attributeExists("courseList"))
                 .andExpect(model().attributeExists("roomList")).andExpect(model().attributeExists("lectureTypes"));
     }
@@ -125,10 +125,10 @@ class LectureControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void createLecture_shouldRedirectWithSuccess_whenCreatedValidLecture() throws Exception {
-        mockMvc.perform(post("/admin/add-lecture").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/lectures/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("lectureType", "SEMINAR").param("courseId", "1").param("roomId", "1")
                 .param("date", LocalDate.now().toString()).param("timeStart", "10:00").param("timeEnd", "11:00"))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/lectures"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/lectures"))
                 .andExpect(flash().attribute("successMessage", "Lecture added successfully!"));
     }
 
@@ -138,10 +138,10 @@ class LectureControllerTest {
         doReturn(lecture).when(service).mapFormToLecture(Mockito.any(LectureForm.class));
         doThrow(new IllegalArgumentException("Service error")).when(service).addNew(Mockito.any(Lecture.class));
 
-        mockMvc.perform(post("/admin/add-lecture").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/lectures/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("lectureType", "SEMINAR").param("courseId", "1").param("groupId", "1").param("roomId", "1")
                 .param("date", LocalDate.now().toString()).param("timeStart", "10:00").param("timeEnd", "11:00"))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/lectures"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/lectures"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
 
     }
@@ -150,7 +150,7 @@ class LectureControllerTest {
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void createLecture_shouldReturnWithErrors_whenBindingExceptionOccurs() throws Exception {
 
-        mockMvc.perform(post("/admin/add-lecture").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/lectures/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("lectureType", "SEMINAR").param("courseId", "").param("groupId", "").param("roomId", "")
                 .param("date", LocalDate.now().toString()).param("timeStart", LocalTime.now().toString())
                 .param("timeEnd", LocalTime.now().toString())).andExpect(status().isOk())
@@ -166,7 +166,7 @@ class LectureControllerTest {
         when(service.findById(1L)).thenReturn(lectureOpt);
         when(service.mapLectureToForm(lecture)).thenReturn(form);
 
-        mockMvc.perform(get("/admin/edit-lecture/1")).andExpect(status().isOk()).andExpect(view().name("edit-lecture"))
+        mockMvc.perform(get("/lectures/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-lecture"))
                 .andExpect(model().attribute("lectureForm", form));
 
     }
@@ -177,8 +177,8 @@ class LectureControllerTest {
         Optional<Lecture> emptyLectureOpt = Optional.empty();
         when(service.findById(1L)).thenReturn(emptyLectureOpt);
 
-        mockMvc.perform(get("/admin/edit-lecture/1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/lectures"))
+        mockMvc.perform(get("/lectures/edit/1")).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/lectures"))
                 .andExpect(flash().attribute("errorMessage", "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST));
 
     }
@@ -187,11 +187,11 @@ class LectureControllerTest {
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void updateLecture_shouldRedirectWithSuccess_whenInputValidFields() throws Exception {
 
-        mockMvc.perform(post("/admin/edit-lecture/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/lectures/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("lectureType", "SEMINAR").param("courseId", "2").param("groupId", "2").param("roomId", "2")
                 .param("date", LocalDate.now().toString()).param("timeStart", LocalTime.now().toString())
                 .param("timeEnd", LocalTime.now().toString())).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/lectures"))
+                .andExpect(redirectedUrl("/lectures"))
                 .andExpect(flash().attribute("successMessage", "Lecture updated successfully!"));
 
     }
@@ -203,11 +203,11 @@ class LectureControllerTest {
         when(service.mapFormToLecture(Mockito.any(LectureForm.class))).thenReturn(lecture);
         when(service.update(Mockito.any(Lecture.class))).thenThrow(new IllegalArgumentException("Service Error"));
 
-        mockMvc.perform(post("/admin/edit-lecture/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/lectures/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("lectureType", "SEMINAR").param("courseId", "2").param("groupId", "2").param("roomId", "2")
                 .param("date", LocalDate.now().toString()).param("timeStart", LocalTime.now().toString())
                 .param("timeEnd", LocalTime.now().toString())).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/lectures"))
+                .andExpect(redirectedUrl("/lectures"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service Error"));
 
     }
@@ -216,7 +216,7 @@ class LectureControllerTest {
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void updateLecture_shouldReturnWithErrors_whenBindingExceptionOccurs() throws Exception {
 
-        mockMvc.perform(post("/admin/edit-lecture/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/lectures/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("lectureType", "SEMINAR").param("courseId", "").param("groupId", "").param("roomId", "")
                 .param("date", LocalDate.now().toString()).param("timeStart", LocalTime.now().toString())
                 .param("timeEnd", LocalTime.now().toString())).andExpect(status().isOk())
@@ -231,8 +231,8 @@ class LectureControllerTest {
         when(service.findById(1L)).thenReturn(Optional.of(lecture));
 
         mockMvc.perform(
-                delete("/admin/delete-lecture/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/lectures"))
+                delete("/lectures/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/lectures"))
                 .andExpect(flash().attribute("successMessage", "Lecture deleted successfully!"));
     }
 
@@ -242,8 +242,8 @@ class LectureControllerTest {
         when(service.findById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(
-                delete("/admin/delete-lecture/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/lectures"))
+                delete("/lectures/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/lectures"))
                 .andExpect(flash().attribute("errorMessage", "Error: Lecture does not exists"));
     }
 
@@ -253,8 +253,8 @@ class LectureControllerTest {
         when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
         mockMvc.perform(
-                delete("/admin/delete-lecture/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/lectures"))
+                delete("/lectures/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/lectures"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
     }
 }

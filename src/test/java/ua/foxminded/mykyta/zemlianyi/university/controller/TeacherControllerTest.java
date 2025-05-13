@@ -73,7 +73,7 @@ class TeacherControllerTest {
 
         when(service.findAll(pageable)).thenReturn(teachersPage);
 
-        mockMvc.perform(get("/admin/teachers").param("page", "0").param("size", "5")).andExpect(status().isOk())
+        mockMvc.perform(get("/teachers").param("page", "0").param("size", "5")).andExpect(status().isOk())
                 .andExpect(view().name("view-all-teachers")).andExpect(model().attributeExists("teachers"))
                 .andExpect(model().attributeExists("currentPage")).andExpect(model().attributeExists("totalPages"))
                 .andExpect(model().attribute("currentPage", 0)).andExpect(model().attribute("totalPages", 1))
@@ -83,17 +83,17 @@ class TeacherControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showCreateTeacherForm_shouldReturnModelWithNewTeacher() throws Exception {
-        mockMvc.perform(get("/admin/add-new-teacher")).andExpect(status().isOk())
-                .andExpect(view().name("add-new-teacher")).andExpect(model().attributeExists("teacher"));
+        mockMvc.perform(get("/teachers/add")).andExpect(status().isOk()).andExpect(view().name("add-new-teacher"))
+                .andExpect(model().attributeExists("teacher"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void createTeacher_shouldRedirectWithSuccess_whenCreatedValidTeacher() throws Exception {
-        mockMvc.perform(post("/admin/add-teacher").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/teachers/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "Marek").param("surname", "Szepski").param("email", "mszepski@gmail.com")
                 .param("password", "12345").param("group", "1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/teachers"))
+                .andExpect(redirectedUrl("/teachers"))
                 .andExpect(flash().attribute("successMessage", "Teacher added successfully!"));
     }
 
@@ -108,10 +108,10 @@ class TeacherControllerTest {
 
         doThrow(new IllegalArgumentException("Service error")).when(service).addNew(newTeacher);
 
-        mockMvc.perform(post("/admin/add-teacher").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/teachers/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", newTeacher.getName()).param("surname", newTeacher.getSurname())
                 .param("email", newTeacher.getEmail()).param("password", newTeacher.getPassword()))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/teachers"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
 
     }
@@ -125,7 +125,7 @@ class TeacherControllerTest {
         newTeacher.setEmail("mzeml@gmail.com");
         newTeacher.setPassword("12345");
 
-        mockMvc.perform(post("/admin/add-teacher").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/teachers/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", newTeacher.getName()).param("surname", newTeacher.getSurname())
                 .param("email", newTeacher.getEmail()).param("password", newTeacher.getPassword()))
                 .andExpect(status().isOk()).andExpect(view().name("add-new-teacher"))
@@ -139,7 +139,7 @@ class TeacherControllerTest {
         Optional<Teacher> teacherOpt = Optional.of(teacher);
         when(service.findById(1L)).thenReturn(teacherOpt);
 
-        mockMvc.perform(get("/admin/edit-teacher/1")).andExpect(status().isOk()).andExpect(view().name("edit-teacher"))
+        mockMvc.perform(get("/teachers/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-teacher"))
                 .andExpect(model().attribute("teacher", teacher));
 
     }
@@ -150,8 +150,8 @@ class TeacherControllerTest {
         Optional<Teacher> emptyTeacherOpt = Optional.empty();
         when(service.findById(1L)).thenReturn(emptyTeacherOpt);
 
-        mockMvc.perform(get("/admin/edit-teacher/1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/teachers"))
+        mockMvc.perform(get("/teachers/edit/1")).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/teachers"))
                 .andExpect(flash().attribute("errorMessage", "Error: User not found"));
 
     }
@@ -167,10 +167,10 @@ class TeacherControllerTest {
         modifiedTeacher.setEmail("mszepski@gmail.com");
         modifiedTeacher.setPassword("12345");
 
-        mockMvc.perform(post("/admin/edit-teacher/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/teachers/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedTeacher.getName()).param("surname", modifiedTeacher.getSurname())
                 .param("email", modifiedTeacher.getEmail()).param("password", modifiedTeacher.getPassword()))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/teachers"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers"))
                 .andExpect(flash().attribute("successMessage", "Teacher updated successfully!"));
 
         verify(service).update(modifiedTeacher);
@@ -189,10 +189,10 @@ class TeacherControllerTest {
 
         when(service.update(modifiedTeacher)).thenThrow(new IllegalArgumentException("Service Error"));
 
-        mockMvc.perform(post("/admin/edit-teacher/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/teachers/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedTeacher.getName()).param("surname", modifiedTeacher.getSurname())
                 .param("email", modifiedTeacher.getEmail()).param("password", modifiedTeacher.getPassword()))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/teachers"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service Error"));
 
     }
@@ -206,7 +206,7 @@ class TeacherControllerTest {
         modifiedTeacher.setEmail("mzeml@gmail.com");
         modifiedTeacher.setPassword("12345");
 
-        mockMvc.perform(post("/admin/edit-teacher/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/teachers/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedTeacher.getName()).param("surname", modifiedTeacher.getSurname())
                 .param("email", modifiedTeacher.getEmail()).param("password", modifiedTeacher.getPassword()))
                 .andExpect(status().isOk()).andExpect(view().name("edit-teacher"))
@@ -219,9 +219,8 @@ class TeacherControllerTest {
     void deleteTeacher_shouldRedirectWithSuccess_whenTeacherExistsInDb() throws Exception {
         when(service.findById(1L)).thenReturn(Optional.of(teacher));
 
-        mockMvc.perform(
-                delete("/admin/delete-teacher/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/teachers"))
+        mockMvc.perform(delete("/teachers/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers"))
                 .andExpect(flash().attribute("successMessage", "Teacher deleted successfully!"));
     }
 
@@ -230,9 +229,8 @@ class TeacherControllerTest {
     void deleteTeacher_shouldRedirectWithError_whenTeacherDoesNotExistsInDb() throws Exception {
         when(service.findById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(
-                delete("/admin/delete-teacher/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/teachers"))
+        mockMvc.perform(delete("/teachers/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers"))
                 .andExpect(flash().attribute("errorMessage", "Error: Teacher does not exists"));
     }
 
@@ -241,9 +239,8 @@ class TeacherControllerTest {
     void deleteTeacher_shouldRedirectWithError_whenServiceFails() throws Exception {
         when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
-        mockMvc.perform(
-                delete("/admin/delete-teacher/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/teachers"))
+        mockMvc.perform(delete("/teachers/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
     }
 

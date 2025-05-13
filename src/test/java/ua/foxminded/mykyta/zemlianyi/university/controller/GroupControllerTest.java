@@ -78,7 +78,7 @@ class GroupControllerTest {
 
         when(service.findAll(pageable)).thenReturn(groupPage);
 
-        mockMvc.perform(get("/admin/groups").param("page", "0").param("size", "5")).andExpect(status().isOk())
+        mockMvc.perform(get("/groups").param("page", "0").param("size", "5")).andExpect(status().isOk())
                 .andExpect(view().name("view-all-groups")).andExpect(model().attributeExists("groups"))
                 .andExpect(model().attributeExists("currentPage")).andExpect(model().attributeExists("totalPages"))
                 .andExpect(model().attribute("currentPage", 0)).andExpect(model().attribute("totalPages", 1))
@@ -88,7 +88,7 @@ class GroupControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showCreateGroupForm_shouldReturnModelWithNewGroup() throws Exception {
-        mockMvc.perform(get("/admin/add-new-group")).andExpect(status().isOk()).andExpect(view().name("add-new-group"))
+        mockMvc.perform(get("/groups/add")).andExpect(status().isOk()).andExpect(view().name("add-new-group"))
                 .andExpect(model().attributeExists("group")).andExpect(model().attributeExists("studentList"))
                 .andExpect(model().attributeExists("courseList"));
     }
@@ -96,9 +96,9 @@ class GroupControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void createGroup_shouldRedirectWithSuccess_whenCreatedValidGroup() throws Exception {
-        mockMvc.perform(post("/admin/add-group").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/groups/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "AA-11")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/groups"))
+                .andExpect(redirectedUrl("/groups"))
                 .andExpect(flash().attribute("successMessage", "Group added successfully!"));
     }
 
@@ -110,9 +110,9 @@ class GroupControllerTest {
 
         doThrow(new IllegalArgumentException("Service error")).when(service).addNew(newGroup);
 
-        mockMvc.perform(post("/admin/add-group").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/groups/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", newGroup.getName())).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/groups"))
+                .andExpect(redirectedUrl("/groups"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
 
     }
@@ -123,7 +123,7 @@ class GroupControllerTest {
         Group newGroup = new Group();
         newGroup.setName(" ");
 
-        mockMvc.perform(post("/admin/add-group").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/groups/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", newGroup.getName())).andExpect(status().isOk()).andExpect(view().name("add-new-group"))
                 .andExpect(model().attributeHasFieldErrors("group", "name"));
 
@@ -135,7 +135,7 @@ class GroupControllerTest {
         Optional<Group> groupOpt = Optional.of(group);
         when(service.findById(1L)).thenReturn(groupOpt);
 
-        mockMvc.perform(get("/admin/edit-group/1")).andExpect(status().isOk()).andExpect(view().name("edit-group"))
+        mockMvc.perform(get("/groups/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-group"))
                 .andExpect(model().attribute("group", group));
 
     }
@@ -146,8 +146,8 @@ class GroupControllerTest {
         Optional<Group> emptyGroupOpt = Optional.empty();
         when(service.findById(1L)).thenReturn(emptyGroupOpt);
 
-        mockMvc.perform(get("/admin/edit-group/1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/groups"))
+        mockMvc.perform(get("/groups/edit/1")).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/groups"))
                 .andExpect(flash().attribute("errorMessage", "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST));
 
     }
@@ -160,9 +160,9 @@ class GroupControllerTest {
         modifiedGroup.setId(1L);
         modifiedGroup.setName("BB-22");
 
-        mockMvc.perform(post("/admin/edit-group/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/groups/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedGroup.getName())).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/groups"))
+                .andExpect(redirectedUrl("/groups"))
                 .andExpect(flash().attribute("successMessage", "Group updated successfully!"));
 
         verify(service).update(modifiedGroup);
@@ -178,9 +178,9 @@ class GroupControllerTest {
 
         when(service.update(modifiedGroup)).thenThrow(new IllegalArgumentException("Service Error"));
 
-        mockMvc.perform(post("/admin/edit-group/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/groups/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedGroup.getName())).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/groups"))
+                .andExpect(redirectedUrl("/groups"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service Error"));
 
     }
@@ -191,7 +191,7 @@ class GroupControllerTest {
         Group modifiedGroup = new Group();
         modifiedGroup.setName(" ");
 
-        mockMvc.perform(post("/admin/edit-group/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/groups/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedGroup.getName())).andExpect(status().isOk()).andExpect(view().name("edit-group"))
                 .andExpect(model().attributeHasFieldErrors("group", "name"));
 
@@ -202,8 +202,8 @@ class GroupControllerTest {
     void deleteGroup_shouldRedirectWithSuccess_whenGroupExistsInDb() throws Exception {
         when(service.findById(1L)).thenReturn(Optional.of(group));
 
-        mockMvc.perform(delete("/admin/delete-group/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/groups"))
+        mockMvc.perform(delete("/groups/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/groups"))
                 .andExpect(flash().attribute("successMessage", "Group deleted successfully!"));
     }
 
@@ -212,8 +212,8 @@ class GroupControllerTest {
     void deleteGroup_shouldRedirectWithError_whenGroupDoesNotExistsInDb() throws Exception {
         when(service.findById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(delete("/admin/delete-group/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/groups"))
+        mockMvc.perform(delete("/groups/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/groups"))
                 .andExpect(flash().attribute("errorMessage", "Error: Group does not exists"));
     }
 
@@ -222,8 +222,8 @@ class GroupControllerTest {
     void deleteGroup_shouldRedirectWithError_whenServiceFails() throws Exception {
         when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
-        mockMvc.perform(delete("/admin/delete-group/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/groups"))
+        mockMvc.perform(delete("/groups/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/groups"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
     }
 

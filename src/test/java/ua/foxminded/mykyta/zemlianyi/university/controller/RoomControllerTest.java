@@ -64,7 +64,7 @@ class RoomControllerTest {
 
         when(service.findAll(pageable)).thenReturn(roomPage);
 
-        mockMvc.perform(get("/admin/rooms").param("page", "0").param("size", "5")).andExpect(status().isOk())
+        mockMvc.perform(get("/rooms").param("page", "0").param("size", "5")).andExpect(status().isOk())
                 .andExpect(view().name("view-all-rooms")).andExpect(model().attributeExists("rooms"))
                 .andExpect(model().attributeExists("currentPage")).andExpect(model().attributeExists("totalPages"))
                 .andExpect(model().attribute("currentPage", 0)).andExpect(model().attribute("totalPages", 1))
@@ -74,15 +74,15 @@ class RoomControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showCreateRoomForm_shouldReturnModelWithNewRoom() throws Exception {
-        mockMvc.perform(get("/admin/add-room")).andExpect(status().isOk()).andExpect(view().name("add-new-room"))
+        mockMvc.perform(get("/rooms/add")).andExpect(status().isOk()).andExpect(view().name("add-new-room"))
                 .andExpect(model().attributeExists("room"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void createRoom_shouldRedirectWithSuccess_whenCreatedValidRoom() throws Exception {
-        mockMvc.perform(post("/admin/add-room").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("number", "100")).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/rooms"))
+        mockMvc.perform(post("/rooms/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("number", "100")).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/rooms"))
                 .andExpect(flash().attribute("successMessage", "Room added successfully!"));
     }
 
@@ -94,9 +94,9 @@ class RoomControllerTest {
 
         doThrow(new IllegalArgumentException("Service error")).when(service).addNew(newRoom);
 
-        mockMvc.perform(post("/admin/add-room").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/rooms/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("number", newRoom.getNumber().toString())).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/rooms"))
+                .andExpect(redirectedUrl("/rooms"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
 
     }
@@ -107,7 +107,7 @@ class RoomControllerTest {
         Room newRoom = new Room();
         newRoom.setNumber(null);
 
-        mockMvc.perform(post("/admin/add-room").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/rooms/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("number", "")).andExpect(status().isOk()).andExpect(view().name("add-new-room"))
                 .andExpect(model().attributeHasFieldErrors("room", "number"));
 
@@ -119,7 +119,7 @@ class RoomControllerTest {
         Optional<Room> roomOpt = Optional.of(room);
         when(service.findById(1L)).thenReturn(roomOpt);
 
-        mockMvc.perform(get("/admin/edit-room/1")).andExpect(status().isOk()).andExpect(view().name("edit-room"))
+        mockMvc.perform(get("/rooms/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-room"))
                 .andExpect(model().attribute("room", room));
 
     }
@@ -130,8 +130,8 @@ class RoomControllerTest {
         Optional<Room> emptyRoomOpt = Optional.empty();
         when(service.findById(1L)).thenReturn(emptyRoomOpt);
 
-        mockMvc.perform(get("/admin/edit-room/1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/rooms"))
+        mockMvc.perform(get("/rooms/edit/1")).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/rooms"))
                 .andExpect(flash().attribute("errorMessage", "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST));
 
     }
@@ -144,9 +144,9 @@ class RoomControllerTest {
         modifiedRoom.setId(1L);
         modifiedRoom.setNumber(101);
 
-        mockMvc.perform(post("/admin/edit-room/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/rooms/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("number", modifiedRoom.getNumber().toString())).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/rooms"))
+                .andExpect(redirectedUrl("/rooms"))
                 .andExpect(flash().attribute("successMessage", "Room updated successfully!"));
 
         verify(service).update(modifiedRoom);
@@ -162,9 +162,9 @@ class RoomControllerTest {
 
         when(service.update(modifiedRoom)).thenThrow(new IllegalArgumentException("Service Error"));
 
-        mockMvc.perform(post("/admin/edit-room/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/rooms/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("number", modifiedRoom.getNumber().toString())).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/rooms"))
+                .andExpect(redirectedUrl("/rooms"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service Error"));
 
     }
@@ -175,7 +175,7 @@ class RoomControllerTest {
         Room modifiedRoom = new Room();
         modifiedRoom.setNumber(null);
 
-        mockMvc.perform(post("/admin/edit-room/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/rooms/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("number", "")).andExpect(status().isOk()).andExpect(view().name("edit-room"))
                 .andExpect(model().attributeHasFieldErrors("room", "number"));
 
@@ -186,8 +186,8 @@ class RoomControllerTest {
     void deleteRoom_shouldRedirectWithSuccess_whenRoomExistsInDb() throws Exception {
         when(service.findById(1L)).thenReturn(Optional.of(room));
 
-        mockMvc.perform(delete("/admin/delete-room/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/rooms"))
+        mockMvc.perform(delete("/rooms/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/rooms"))
                 .andExpect(flash().attribute("successMessage", "Room deleted successfully!"));
     }
 
@@ -196,8 +196,8 @@ class RoomControllerTest {
     void deleteRoom_shouldRedirectWithError_whenRoomDoesNotExistsInDb() throws Exception {
         when(service.findById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(delete("/admin/delete-room/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/rooms"))
+        mockMvc.perform(delete("/rooms/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/rooms"))
                 .andExpect(flash().attribute("errorMessage", "Error: Room does not exists"));
     }
 
@@ -206,8 +206,8 @@ class RoomControllerTest {
     void deleteRoom_shouldRedirectWithError_whenServiceFails() throws Exception {
         when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
-        mockMvc.perform(delete("/admin/delete-room/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/rooms"))
+        mockMvc.perform(delete("/rooms/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/rooms"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
     }
 

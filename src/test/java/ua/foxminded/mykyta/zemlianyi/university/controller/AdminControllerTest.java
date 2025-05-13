@@ -67,7 +67,7 @@ class AdminControllerTest {
 
         when(service.findAll(pageable)).thenReturn(adminPage);
 
-        mockMvc.perform(get("/admin/admins").param("page", "0").param("size", "5")).andExpect(status().isOk())
+        mockMvc.perform(get("/admins").param("page", "0").param("size", "5")).andExpect(status().isOk())
                 .andExpect(view().name("view-all-admins")).andExpect(model().attributeExists("admins"))
                 .andExpect(model().attributeExists("currentPage")).andExpect(model().attributeExists("totalPages"))
                 .andExpect(model().attribute("currentPage", 0)).andExpect(model().attribute("totalPages", 1))
@@ -77,17 +77,17 @@ class AdminControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showCreateAdminForm_shouldReturnModelWithNewAdmin() throws Exception {
-        mockMvc.perform(get("/admin/add-new-admin")).andExpect(status().isOk()).andExpect(view().name("add-new-admin"))
+        mockMvc.perform(get("/admins/add")).andExpect(status().isOk()).andExpect(view().name("add-new-admin"))
                 .andExpect(model().attributeExists("admin"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void createAdmin_shouldRedirectWithSuccess_whenCreatedValidAdmin() throws Exception {
-        mockMvc.perform(post("/admin/add-admin").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/admins/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "Marek").param("surname", "Szepski").param("email", "mszepski@gmail.com")
                 .param("password", "12345")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/admins"))
+                .andExpect(redirectedUrl("/admins"))
                 .andExpect(flash().attribute("successMessage", "Admin added successfully!"));
     }
 
@@ -102,10 +102,10 @@ class AdminControllerTest {
 
         doThrow(new IllegalArgumentException("Service error")).when(service).addNew(newAdmin);
 
-        mockMvc.perform(post("/admin/add-admin").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/admins/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", newAdmin.getName()).param("surname", newAdmin.getSurname())
                 .param("email", newAdmin.getEmail()).param("password", newAdmin.getPassword()))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/admins"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
 
     }
@@ -119,7 +119,7 @@ class AdminControllerTest {
         newAdmin.setEmail("mzeml@gmail.com");
         newAdmin.setPassword("12345");
 
-        mockMvc.perform(post("/admin/add-admin").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/admins/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", newAdmin.getName()).param("surname", newAdmin.getSurname())
                 .param("email", newAdmin.getEmail()).param("password", newAdmin.getPassword()))
                 .andExpect(status().isOk()).andExpect(view().name("add-new-admin"))
@@ -133,7 +133,7 @@ class AdminControllerTest {
         Optional<Admin> adminOpt = Optional.of(admin);
         when(service.findById(1L)).thenReturn(adminOpt);
 
-        mockMvc.perform(get("/admin/edit-admin/1")).andExpect(status().isOk()).andExpect(view().name("edit-admin"))
+        mockMvc.perform(get("/admins/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-admin"))
                 .andExpect(model().attribute("admin", admin));
 
     }
@@ -144,8 +144,8 @@ class AdminControllerTest {
         Optional<Admin> emptyAdminOpt = Optional.empty();
         when(service.findById(1L)).thenReturn(emptyAdminOpt);
 
-        mockMvc.perform(get("/admin/edit-admin/1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/admins"))
+        mockMvc.perform(get("/admins/edit/1")).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admins"))
                 .andExpect(flash().attribute("errorMessage", "Error: User not found"));
 
     }
@@ -161,10 +161,10 @@ class AdminControllerTest {
         modifiedAdmin.setEmail("mszepski@gmail.com");
         modifiedAdmin.setPassword("12345");
 
-        mockMvc.perform(post("/admin/edit-admin/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/admins/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedAdmin.getName()).param("surname", modifiedAdmin.getSurname())
                 .param("email", modifiedAdmin.getEmail()).param("password", modifiedAdmin.getPassword()))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/admins"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins"))
                 .andExpect(flash().attribute("successMessage", "Admin updated successfully!"));
 
         verify(service).update(modifiedAdmin);
@@ -183,10 +183,10 @@ class AdminControllerTest {
 
         when(service.update(modifiedAdmin)).thenThrow(new IllegalArgumentException("Service Error"));
 
-        mockMvc.perform(post("/admin/edit-admin/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/admins/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedAdmin.getName()).param("surname", modifiedAdmin.getSurname())
                 .param("email", modifiedAdmin.getEmail()).param("password", modifiedAdmin.getPassword()))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/admins"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service Error"));
 
     }
@@ -200,7 +200,7 @@ class AdminControllerTest {
         modifiedAdmin.setEmail("mzeml@gmail.com");
         modifiedAdmin.setPassword("12345");
 
-        mockMvc.perform(post("/admin/edit-admin/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/admins/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedAdmin.getName()).param("surname", modifiedAdmin.getSurname())
                 .param("email", modifiedAdmin.getEmail()).param("password", modifiedAdmin.getPassword()))
                 .andExpect(status().isOk()).andExpect(view().name("edit-admin"))
@@ -213,8 +213,8 @@ class AdminControllerTest {
     void deleteAdmin_shouldRedirectWithSuccess_whenAdminExistsInDb() throws Exception {
         when(service.findById(1L)).thenReturn(Optional.of(admin));
 
-        mockMvc.perform(delete("/admin/delete-admin/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/admins"))
+        mockMvc.perform(delete("/admins/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins"))
                 .andExpect(flash().attribute("successMessage", "Admin deleted successfully!"));
     }
 
@@ -223,8 +223,8 @@ class AdminControllerTest {
     void deleteAdmin_shouldRedirectWithError_whenAdminDoesNotExistsInDb() throws Exception {
         when(service.findById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(delete("/admin/delete-admin/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/admins"))
+        mockMvc.perform(delete("/admins/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins"))
                 .andExpect(flash().attribute("errorMessage", "Error: Admin does not exists"));
     }
 
@@ -233,8 +233,8 @@ class AdminControllerTest {
     void deleteAdmin_shouldRedirectWithError_whenServiceFails() throws Exception {
         when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
-        mockMvc.perform(delete("/admin/delete-admin/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/admins"))
+        mockMvc.perform(delete("/admins/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
     }
 

@@ -75,7 +75,7 @@ class CourseControllerTest {
 
         when(service.findAll(pageable)).thenReturn(coursePage);
 
-        mockMvc.perform(get("/admin/courses").param("page", "0").param("size", "5")).andExpect(status().isOk())
+        mockMvc.perform(get("/courses").param("page", "0").param("size", "5")).andExpect(status().isOk())
                 .andExpect(view().name("view-all-courses")).andExpect(model().attributeExists("courses"))
                 .andExpect(model().attributeExists("currentPage")).andExpect(model().attributeExists("totalPages"))
                 .andExpect(model().attribute("currentPage", 0)).andExpect(model().attribute("totalPages", 1))
@@ -85,7 +85,7 @@ class CourseControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showCreateCourseForm_shouldReturnModelWithNewCourse() throws Exception {
-        mockMvc.perform(get("/admin/add-new-course")).andExpect(status().isOk())
+        mockMvc.perform(get("/courses/add")).andExpect(status().isOk())
                 .andExpect(view().name("add-new-course")).andExpect(model().attributeExists("course"))
                 .andExpect(model().attributeExists("teacherList"));
     }
@@ -93,9 +93,9 @@ class CourseControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void createCourse_shouldRedirectWithSuccess_whenCreatedValidCourse() throws Exception {
-        mockMvc.perform(post("/admin/add-course").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/courses/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "Computer Science")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/courses"))
+                .andExpect(redirectedUrl("/courses"))
                 .andExpect(flash().attribute("successMessage", "Course added successfully!"));
     }
 
@@ -107,9 +107,9 @@ class CourseControllerTest {
 
         doThrow(new IllegalArgumentException("Service error")).when(service).addNew(newCourse);
 
-        mockMvc.perform(post("/admin/add-course").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/courses/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", newCourse.getName())).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/courses"))
+                .andExpect(redirectedUrl("/courses"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
 
     }
@@ -120,7 +120,7 @@ class CourseControllerTest {
         Course newCourse = new Course();
         newCourse.setName(" ");
 
-        mockMvc.perform(post("/admin/add-course").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/courses/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", newCourse.getName())).andExpect(status().isOk()).andExpect(view().name("add-new-course"))
                 .andExpect(model().attributeHasFieldErrors("course", "name"));
 
@@ -132,7 +132,7 @@ class CourseControllerTest {
         Optional<Course> courseOpt = Optional.of(course);
         when(service.findById(1L)).thenReturn(courseOpt);
 
-        mockMvc.perform(get("/admin/edit-course/1")).andExpect(status().isOk()).andExpect(view().name("edit-course"))
+        mockMvc.perform(get("/courses/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-course"))
                 .andExpect(model().attribute("course", course));
 
     }
@@ -143,8 +143,8 @@ class CourseControllerTest {
         Optional<Course> emptyCourseOpt = Optional.empty();
         when(service.findById(1L)).thenReturn(emptyCourseOpt);
 
-        mockMvc.perform(get("/admin/edit-course/1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/courses"))
+        mockMvc.perform(get("/courses/edit/1")).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/courses"))
                 .andExpect(flash().attribute("errorMessage", "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST));
 
     }
@@ -157,9 +157,9 @@ class CourseControllerTest {
         modifiedCourse.setId(1L);
         modifiedCourse.setName("Computer Science 2");
 
-        mockMvc.perform(post("/admin/edit-course/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/courses/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedCourse.getName())).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/courses"))
+                .andExpect(redirectedUrl("/courses"))
                 .andExpect(flash().attribute("successMessage", "Course updated successfully!"));
 
         verify(service).update(modifiedCourse);
@@ -175,9 +175,9 @@ class CourseControllerTest {
 
         when(service.update(modifiedCourse)).thenThrow(new IllegalArgumentException("Service Error"));
 
-        mockMvc.perform(post("/admin/edit-course/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/courses/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedCourse.getName())).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/courses"))
+                .andExpect(redirectedUrl("/courses"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service Error"));
 
     }
@@ -188,7 +188,7 @@ class CourseControllerTest {
         Course modifiedCourse = new Course();
         modifiedCourse.setName(" ");
 
-        mockMvc.perform(post("/admin/edit-course/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/courses/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedCourse.getName())).andExpect(status().isOk())
                 .andExpect(view().name("edit-course")).andExpect(model().attributeHasFieldErrors("course", "name"));
 
@@ -200,8 +200,8 @@ class CourseControllerTest {
         when(service.findById(1L)).thenReturn(Optional.of(course));
 
         mockMvc.perform(
-                delete("/admin/delete-course/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/courses"))
+                delete("/courses/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/courses"))
                 .andExpect(flash().attribute("successMessage", "Course deleted successfully!"));
     }
 
@@ -211,8 +211,8 @@ class CourseControllerTest {
         when(service.findById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(
-                delete("/admin/delete-course/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/courses"))
+                delete("/courses/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/courses"))
                 .andExpect(flash().attribute("errorMessage", "Error: Course does not exists"));
     }
 
@@ -222,8 +222,8 @@ class CourseControllerTest {
         when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
         mockMvc.perform(
-                delete("/admin/delete-course/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/courses"))
+                delete("/courses/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/courses"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
     }
 

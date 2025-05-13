@@ -71,7 +71,7 @@ class StudentControllerTest {
 
         when(service.findAll(pageable)).thenReturn(studentsPage);
 
-        mockMvc.perform(get("/admin/students").param("page", "0").param("size", "5")).andExpect(status().isOk())
+        mockMvc.perform(get("/students").param("page", "0").param("size", "5")).andExpect(status().isOk())
                 .andExpect(view().name("view-all-students")).andExpect(model().attributeExists("students"))
                 .andExpect(model().attributeExists("currentPage")).andExpect(model().attributeExists("totalPages"))
                 .andExpect(model().attribute("currentPage", 0)).andExpect(model().attribute("totalPages", 1))
@@ -81,17 +81,17 @@ class StudentControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showCreateStudentForm_shouldReturnModelWithNewStudent() throws Exception {
-        mockMvc.perform(get("/admin/add-new-student")).andExpect(status().isOk())
+        mockMvc.perform(get("/students/add")).andExpect(status().isOk())
                 .andExpect(view().name("add-new-student")).andExpect(model().attributeExists("student"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void createStudent_shouldRedirectWithSuccess_whenCreatedValidStudent() throws Exception {
-        mockMvc.perform(post("/admin/add-student").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/students/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "Marek").param("surname", "Szepski").param("email", "mszepski@gmail.com")
                 .param("password", "12345").param("group", "1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/students"))
+                .andExpect(redirectedUrl("/students"))
                 .andExpect(flash().attribute("successMessage", "Student added successfully!"));
     }
 
@@ -106,10 +106,10 @@ class StudentControllerTest {
 
         doThrow(new IllegalArgumentException("Service error")).when(service).addNew(newStudent);
 
-        mockMvc.perform(post("/admin/add-student").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/students/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", newStudent.getName()).param("surname", newStudent.getSurname())
                 .param("email", newStudent.getEmail()).param("password", newStudent.getPassword()))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/students"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/students"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
 
     }
@@ -123,7 +123,7 @@ class StudentControllerTest {
         newStudent.setEmail("mzeml@gmail.com");
         newStudent.setPassword("12345");
 
-        mockMvc.perform(post("/admin/add-student").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/students/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", newStudent.getName()).param("surname", newStudent.getSurname())
                 .param("email", newStudent.getEmail()).param("password", newStudent.getPassword()))
                 .andExpect(status().isOk()).andExpect(view().name("add-new-student"))
@@ -137,7 +137,7 @@ class StudentControllerTest {
         Optional<Student> studentOpt = Optional.of(student);
         when(service.findById(1L)).thenReturn(studentOpt);
 
-        mockMvc.perform(get("/admin/edit-student/1")).andExpect(status().isOk()).andExpect(view().name("edit-student"))
+        mockMvc.perform(get("/students/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-student"))
                 .andExpect(model().attribute("student", student));
 
     }
@@ -148,8 +148,8 @@ class StudentControllerTest {
         Optional<Student> emptyStudentOpt = Optional.empty();
         when(service.findById(1L)).thenReturn(emptyStudentOpt);
 
-        mockMvc.perform(get("/admin/edit-student/1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/students"))
+        mockMvc.perform(get("/students/edit/1")).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/students"))
                 .andExpect(flash().attribute("errorMessage", "Error: User not found"));
 
     }
@@ -165,10 +165,10 @@ class StudentControllerTest {
         modifiedStudent.setEmail("mszepski@gmail.com");
         modifiedStudent.setPassword("12345");
 
-        mockMvc.perform(post("/admin/edit-student/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/students/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedStudent.getName()).param("surname", modifiedStudent.getSurname())
                 .param("email", modifiedStudent.getEmail()).param("password", modifiedStudent.getPassword()))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/students"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/students"))
                 .andExpect(flash().attribute("successMessage", "Student updated successfully!"));
 
         verify(service).update(modifiedStudent);
@@ -187,10 +187,10 @@ class StudentControllerTest {
 
         when(service.update(modifiedStudent)).thenThrow(new IllegalArgumentException("Service Error"));
 
-        mockMvc.perform(post("/admin/edit-student/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/students/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedStudent.getName()).param("surname", modifiedStudent.getSurname())
                 .param("email", modifiedStudent.getEmail()).param("password", modifiedStudent.getPassword()))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/students"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/students"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service Error"));
 
     }
@@ -204,7 +204,7 @@ class StudentControllerTest {
         modifiedStudent.setEmail("mzeml@gmail.com");
         modifiedStudent.setPassword("12345");
 
-        mockMvc.perform(post("/admin/edit-student/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+        mockMvc.perform(post("/students/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", modifiedStudent.getName()).param("surname", modifiedStudent.getSurname())
                 .param("email", modifiedStudent.getEmail()).param("password", modifiedStudent.getPassword()))
                 .andExpect(status().isOk()).andExpect(view().name("edit-student"))
@@ -218,8 +218,8 @@ class StudentControllerTest {
         when(service.findById(1L)).thenReturn(Optional.of(student));
 
         mockMvc.perform(
-                delete("/admin/delete-student/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/students"))
+                delete("/students/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/students"))
                 .andExpect(flash().attribute("successMessage", "Student deleted successfully!"));
     }
 
@@ -229,8 +229,8 @@ class StudentControllerTest {
         when(service.findById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(
-                delete("/admin/delete-student/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/students"))
+                delete("/students/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/students"))
                 .andExpect(flash().attribute("errorMessage", "Error: Student does not exists"));
     }
 
@@ -240,8 +240,8 @@ class StudentControllerTest {
         when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
         mockMvc.perform(
-                delete("/admin/delete-student/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admin/students"))
+                delete("/students/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/students"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
     }
 
