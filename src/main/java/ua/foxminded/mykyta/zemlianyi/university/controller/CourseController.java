@@ -74,8 +74,8 @@ public class CourseController {
     @GetMapping("/admin/edit-course/{id}")
     public String showEditCourseForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Course> course = courseService.findById(id);
-        List<Teacher> allTeachers = teacherService.findAll();
         if (course.isPresent()) {
+            List<Teacher> allTeachers = teacherService.findAll();
             model.addAttribute("course", course.get());
             model.addAttribute("teacherList", allTeachers);
             return "edit-course";

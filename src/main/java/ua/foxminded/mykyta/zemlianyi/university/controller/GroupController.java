@@ -77,9 +77,9 @@ public class GroupController {
     @GetMapping("/admin/edit-group/{id}")
     public String showEditGroupForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Group> groupOpt = groupService.findById(id);
-        List<Student> allStudents = studentService.findAll();
-        List<Course> allCourses = courseService.findAll();
         if (groupOpt.isPresent()) {
+            List<Student> allStudents = studentService.findAll();
+            List<Course> allCourses = courseService.findAll();
             model.addAttribute("group", groupOpt.get());
             model.addAttribute("studentList", allStudents);
             model.addAttribute("courseList", allCourses);

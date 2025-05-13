@@ -76,8 +76,8 @@ public class StudentController {
     @GetMapping("/admin/edit-student/{id}")
     public String showEditStudentForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Student> student = studentService.findById(id);
-        List<Group> allGroups = groupService.findAll();
         if (student.isPresent()) {
+            List<Group> allGroups = groupService.findAll();
             model.addAttribute("student", student.get());
             model.addAttribute("groups", allGroups);
             return "edit-student";

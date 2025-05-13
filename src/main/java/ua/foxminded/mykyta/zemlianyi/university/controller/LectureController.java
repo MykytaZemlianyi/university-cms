@@ -85,10 +85,10 @@ public class LectureController {
     @GetMapping("/admin/edit-lecture/{id}")
     public String showEditLectureForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Lecture> lectureOpt = lectureService.findById(id);
-        List<Course> allCourses = courseService.findAll();
-        List<Room> allRooms = roomService.findAll();
         if (lectureOpt.isPresent()) {
             LectureForm form = lectureService.mapLectureToForm(lectureOpt.get());
+            List<Course> allCourses = courseService.findAll();
+            List<Room> allRooms = roomService.findAll();
             model.addAttribute("lectureForm", form);
             model.addAttribute("lectureTypes", LectureType.values());
             model.addAttribute("courseList", allCourses);
