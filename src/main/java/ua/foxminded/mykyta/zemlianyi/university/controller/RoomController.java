@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -23,6 +24,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
 import ua.foxminded.mykyta.zemlianyi.university.service.RoomService;
 
 @Controller
+@RequestMapping("/rooms")
 public class RoomController {
     private RoomService roomService;
 
@@ -30,7 +32,7 @@ public class RoomController {
         this.roomService = roomService;
     }
 
-    @GetMapping("/rooms")
+    @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getRooms(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
@@ -45,14 +47,14 @@ public class RoomController {
         return "view-all-rooms";
     }
 
-    @GetMapping("/add-room")
+    @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateRoomForm(Model model) {
         model.addAttribute("room", new Room());
         return "add-new-room";
     }
 
-    @PostMapping("/add-room")
+    @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createRoom(@Valid @ModelAttribute Room room, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
@@ -70,7 +72,7 @@ public class RoomController {
         return "redirect:/rooms";
     }
 
-    @GetMapping("/edit-room/{id}")
+    @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditRoomForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Room> room = roomService.findById(id);
@@ -84,7 +86,7 @@ public class RoomController {
         }
     }
 
-    @PostMapping("/edit-room/{id}")
+    @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateRoom(@PathVariable Long id, @Valid @ModelAttribute("room") Room updatedRoom,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -102,7 +104,7 @@ public class RoomController {
         return "redirect:/rooms";
     }
 
-    @DeleteMapping("/delete-room/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteRoom(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
