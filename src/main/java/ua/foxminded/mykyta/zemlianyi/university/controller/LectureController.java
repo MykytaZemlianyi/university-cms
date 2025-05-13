@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -30,6 +31,7 @@ import ua.foxminded.mykyta.zemlianyi.university.service.LectureService;
 import ua.foxminded.mykyta.zemlianyi.university.service.RoomService;
 
 @Controller
+@RequestMapping("/lectures")
 public class LectureController {
     private LectureService lectureService;
     private CourseService courseService;
@@ -41,7 +43,7 @@ public class LectureController {
         this.roomService = roomService;
     }
 
-    @GetMapping("/lectures")
+    @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getLectures(@RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
@@ -55,7 +57,7 @@ public class LectureController {
         return "view-all-lectures";
     }
 
-    @GetMapping("/add-lecture")
+    @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateLectureForm(Model model) {
         List<Course> allCourses = courseService.findAll();
@@ -67,7 +69,7 @@ public class LectureController {
         return "add-new-lecture";
     }
 
-    @PostMapping("/add-lecture")
+    @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createLecture(@Valid @ModelAttribute LectureForm lectureForm, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
@@ -86,7 +88,7 @@ public class LectureController {
         return "redirect:/lectures";
     }
 
-    @GetMapping("/edit-lecture/{id}")
+    @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditLectureForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Lecture> lectureOpt = lectureService.findById(id);
@@ -106,7 +108,7 @@ public class LectureController {
         }
     }
 
-    @PostMapping("/edit-lecture/{id}")
+    @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateLecture(@PathVariable Long id, @Valid @ModelAttribute("lectureForm") LectureForm form,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -125,7 +127,7 @@ public class LectureController {
         return "redirect:/lectures";
     }
 
-    @DeleteMapping("/delete-lecture/{id}")
+    @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteLecture(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
