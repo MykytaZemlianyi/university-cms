@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dao.TeacherDao;
@@ -49,13 +50,19 @@ public class TeacherServiceImpl extends UserServiceImpl<Teacher> implements Teac
     }
 
     @Override
+    @Transactional
     public void delete(Teacher user) {
         ObjectChecker.checkNullAndVerify(user);
         ObjectChecker.checkIfExistsInDb(user, dao);
 
-        user.clearCourses();
         logger.info("Deleting {} - {}", user.getClass().getSimpleName(), user);
+        clearRelationsBeforeDeletion(user);
         dao.delete(user);
+    }
+
+    private void clearRelationsBeforeDeletion(Teacher user) {
+        user.clearCourses();
+        update(user);
     }
 
 }

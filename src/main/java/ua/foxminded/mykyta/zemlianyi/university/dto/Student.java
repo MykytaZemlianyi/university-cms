@@ -18,13 +18,7 @@ public class Student extends User {
     }
 
     public void setGroup(Group group) {
-        if (this.group != null) {
-            this.group.getStudents().remove(this);
-        }
         this.group = group;
-        if (group != null) {
-            group.getStudents().add(this);
-        }
     }
 
 }

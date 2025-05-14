@@ -32,7 +32,7 @@ public class Course implements Verifiable, Dto {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id")
+    @JoinColumn(name = "teacher_id", nullable = true)
     private Teacher teacher;
 
     @ManyToMany(mappedBy = "courses")
