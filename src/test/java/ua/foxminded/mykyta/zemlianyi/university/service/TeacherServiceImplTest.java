@@ -186,7 +186,7 @@ class TeacherServiceImplTest {
 
         teacherService.delete(teacher);
 
-        verify(teacherDao).delete(teacher);
+        verify(teacherDao).deleteById(teacher.getId());
     }
 
 }

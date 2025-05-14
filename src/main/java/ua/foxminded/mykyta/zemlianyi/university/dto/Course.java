@@ -3,7 +3,6 @@ package ua.foxminded.mykyta.zemlianyi.university.dto;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
