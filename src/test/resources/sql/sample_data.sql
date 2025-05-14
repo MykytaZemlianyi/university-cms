@@ -5,9 +5,12 @@ INSERT INTO university.courses (course_name, teacher_id) VALUES ('Computer Scien
 
 INSERT INTO university.groups (group_name) VALUES ('AA-11');
 
+INSERT INTO university.groups (group_name) VALUES ('BB-22');
+
 INSERT INTO university.groups_courses(group_id,course_id) VALUES (1,1);
 
 INSERT INTO university.students (name, surname, email, password, group_id) VALUES ('Mykyta', 'Zemlianyi', 'mzemlianyi@gmail.com','mz2004', 1);
+INSERT INTO university.students (name, surname, email, password) VALUES ('Maksym', 'Maksymov', 'mmaksymov@gmail.com','12345');
 
 INSERT INTO university.lectures (lecture_type, course_id) VALUES ('LECTURE', 1);
 

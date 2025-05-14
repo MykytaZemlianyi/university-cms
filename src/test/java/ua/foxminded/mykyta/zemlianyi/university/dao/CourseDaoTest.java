@@ -41,7 +41,7 @@ class CourseDaoTest {
     static class TestContainersConfig {
         @Container
         @ServiceConnection
-        static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16.0");
+        static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17.0");
     }
 
     @BeforeEach

@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dao.UserDao;
@@ -35,6 +36,7 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
         return dao.save(user);
     }
 
+    @Transactional
     public T update(T user) {
         T mergedUser = mergeWithExisting(user);
         ObjectChecker.checkNullAndVerify(mergedUser);
