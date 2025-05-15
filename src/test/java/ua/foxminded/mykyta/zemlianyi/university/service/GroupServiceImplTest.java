@@ -197,6 +197,6 @@ class GroupServiceImplTest {
 
         groupService.delete(group);
 
-        verify(groupDao).delete(group);
+        verify(groupDao).deleteById(group.getId());
     }
 }

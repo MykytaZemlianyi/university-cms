@@ -49,6 +49,7 @@ class GroupIntegrationalTest {
 
     Student studentWithoutGroup = new Student();
     Course courseWithoutGroup = new Course();
+    Course course1 = new Course();
 
     @BeforeEach
     void setUp() {
@@ -64,6 +65,9 @@ class GroupIntegrationalTest {
 
         courseWithoutGroup.setId(2L);
         courseWithoutGroup.setName("Computer Science 2");
+
+        course1.setId(1L);
+        course1.setName("Computer Science");
 
         studentWithoutGroup.setId(2L);
         studentWithoutGroup.setName("Maksym");
@@ -98,6 +102,68 @@ class GroupIntegrationalTest {
         assertArrayEquals(newCourses.toArray(), coursesWithGroupAssigned.toArray());
     }
 
+    @Test
+    void update_shouldRemoveStudents_whenUpdatedGroupDoesNotContainNestedObjects() {
+        Set<Student> newStudents = new HashSet<>();
+
+        group1.setStudents(newStudents);
+
+        service.update(group1);
+
+        assertFalse(studentHasGroupAfterUpdate(student1, group1));
+
+    }
+
+    @Test
+    void update_shouldRemoveCourses_whenUpdatedGroupDoesNotContainNestedObjects() {
+        Set<Course> newCourses = new HashSet<>();
+
+        group1.setCourses(newCourses);
+
+        service.update(group1);
+
+        assertFalse(courseHasGroupAfterUpdate(course1, group1));
+
+    }
+
+    @Test
+    void update_shouldSaveNewStudentsRelations_whenUpdatedGroupContainsNewRelations() {
+        Set<Student> newStudents = new HashSet<>();
+        newStudents.add(student1);
+        newStudents.add(studentWithoutGroup);
+
+        group1.setStudents(newStudents);
+
+        service.update(group1);
+
+        assertTrue(studentHasGroupAfterUpdate(student1, group1));
+        assertTrue(studentHasGroupAfterUpdate(studentWithoutGroup, group1));
+
+    }
+
+    @Test
+    void update_shouldSaveNewCoursesRelations_whenUpdatedGroupContainsNewRelations() {
+
+        Set<Course> newCourses = new HashSet<>();
+        newCourses.add(course1);
+        newCourses.add(courseWithoutGroup);
+
+        group1.setCourses(newCourses);
+
+        service.update(group1);
+
+        assertTrue(courseHasGroupAfterUpdate(course1, group1));
+        assertTrue(courseHasGroupAfterUpdate(courseWithoutGroup, group1));
+    }
+
+    @Test
+    void delete_shouldNotDeleteRelatedStudents_whenGroupDeleted() {
+        service.delete(group1);
+
+        assertFalse(dao.existsById(group1.getId()));
+        assertFalse(studentHasGroupAfterUpdate(student1, group1));
+    }
+
     private boolean studentHasGroupAfterUpdate(Student student, Group group) {
         try {
             return em.createQuery("SELECT s.group FROM Student s WHERE s.id = :studentId", Group.class)
@@ -105,6 +171,15 @@ class GroupIntegrationalTest {
 
         } catch (NoResultException e) {
             System.out.println(e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean courseHasGroupAfterUpdate(Course course, Group group) {
+        try {
+            return em.createQuery("SELECT c.groups FROM Course c WHERE c.id = :courseId", Group.class)
+                    .setParameter("courseId", course.getId()).getResultList().contains(group);
+        } catch (NoResultException e) {
             return false;
         }
     }

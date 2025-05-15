@@ -52,6 +52,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    @Transactional
     public Group update(Group group) {
         ObjectChecker.checkNullAndVerify(group);
         Group mergedGroup = mergeWithExisting(group);
@@ -81,9 +82,8 @@ public class GroupServiceImpl implements GroupService {
     public void delete(Group group) {
         ObjectChecker.checkNullAndVerify(group);
         ObjectChecker.checkIfExistsInDb(group, groupDao);
-        group.clearRelations();
         logger.info("Updating group - {}", group);
-        groupDao.delete(group);
+        groupDao.deleteById(group.getId());
     }
 
     @Override
