@@ -70,7 +70,8 @@ public class Course implements Verifiable, Dto {
 
     public void clearTeacher() {
         if (this.teacher != null) {
-            this.teacher.removeCourse(this);
+            this.teacher.getCourses().remove(this);
+            this.teacher = null;
         }
     }
 
@@ -80,12 +81,12 @@ public class Course implements Verifiable, Dto {
             for (Group oldGroup : new HashSet<>(this.groups)) {
                 oldGroup.getCourses().remove(this);
             }
+            this.groups = newGroups;
 
             for (Group newGroup : newGroups) {
                 newGroup.getCourses().add(this);
             }
         }
-        this.groups = newGroups;
 
     }
 

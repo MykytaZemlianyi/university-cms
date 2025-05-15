@@ -230,6 +230,6 @@ class CourseServiceImplTest {
 
         courseService.delete(course);
 
-        verify(courseDao).delete(course);
+        verify(courseDao).deleteById(course.getId());
     }
 }

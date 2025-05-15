@@ -65,9 +65,8 @@ public class CourseServiceImpl implements CourseService {
     public void delete(Course course) {
         ObjectChecker.checkNullAndVerify(course);
         ObjectChecker.checkIfExistsInDb(course, courseDao);
-        course.clearRelations();
         logger.info("Deleting course - {}", course);
-        courseDao.delete(course);
+        courseDao.deleteById(course.getId());
     }
 
     @Override
