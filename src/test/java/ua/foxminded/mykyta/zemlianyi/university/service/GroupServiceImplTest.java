@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.GroupDao;
+import ua.foxminded.mykyta.zemlianyi.university.dao.StudentDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 
@@ -25,6 +26,8 @@ class GroupServiceImplTest {
 
     @MockitoBean
     GroupDao groupDao;
+    @MockitoBean
+    StudentDao studentDao;
 
     @MockitoBean
     PasswordEncoder encoder;

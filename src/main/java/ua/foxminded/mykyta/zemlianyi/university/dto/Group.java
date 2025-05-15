@@ -30,7 +30,7 @@ public class Group implements Verifiable, Dto {
     @Column(name = "group_name")
     private String name;
 
-    @OneToMany(mappedBy = "group", cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @OneToMany(mappedBy = "group", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private Set<Student> students = new HashSet<>();
 
     @ManyToMany
