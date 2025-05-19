@@ -54,9 +54,11 @@ class LectureDaoTest {
         course2.setId(2L);
         course2.setName("Computer Science 2");
 
-        lecture.setId(1L);
-        lecture.setLectureType(LectureType.LECTURE);
+        lecture.setId(4L);
+        lecture.setLectureType(LectureType.SEMINAR);
         lecture.setCourse(course1);
+        lecture.setTimeStart(LocalDateTime.of(2025, 1, 17, 14, 00));
+        lecture.setTimeEnd(LocalDateTime.of(2025, 1, 17, 15, 30));
 
         course1.addLecture(lecture);
     }
@@ -75,7 +77,7 @@ class LectureDaoTest {
     void findByCourseAndDateBetween_shouldFilterLectures_whenDateIsOneDay() {
 
         Lecture lectureDayTwo = new Lecture();
-        lectureDayTwo.setId(3L);
+        lectureDayTwo.setId(2L);
         lectureDayTwo.setLectureType(LectureType.LECTURE);
         lectureDayTwo.setCourse(course2);
         lectureDayTwo.setTimeStart(LocalDateTime.of(2025, 1, 16, 11, 0));

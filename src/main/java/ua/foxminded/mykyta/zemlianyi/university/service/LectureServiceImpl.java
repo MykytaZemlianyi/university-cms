@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dao.CourseDao;
@@ -32,6 +33,7 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
+    @Transactional
     public Lecture addNew(Lecture lecture) {
         ObjectChecker.checkNullAndVerify(lecture);
         logger.info("Adding new lecture - {}", lecture);
@@ -39,6 +41,7 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
+    @Transactional
     public Lecture update(Lecture lecture) {
         ObjectChecker.checkNullAndVerify(lecture);
         Lecture mergedLecture = mergeWithExisting(lecture);
@@ -91,9 +94,8 @@ public class LectureServiceImpl implements LectureService {
     public void delete(Lecture lecture) {
         ObjectChecker.checkNullAndVerify(lecture);
         ObjectChecker.checkIfExistsInDb(lecture, lectureDao);
-        lecture.clearRelations();
         logger.info("Updating course - {}", lecture);
-        lectureDao.delete(lecture);
+        lectureDao.deleteById(lecture.getId());
 
     }
 

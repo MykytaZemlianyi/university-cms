@@ -139,7 +139,7 @@ class LectureServiceImplTest {
 
         lectureService.delete(lecture);
 
-        verify(lectureDao).delete(lecture);
+        verify(lectureDao).deleteById(lecture.getId());
     }
 
     @Test
