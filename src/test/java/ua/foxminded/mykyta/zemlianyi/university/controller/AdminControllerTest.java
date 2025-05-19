@@ -32,6 +32,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.AdminNotFoundException;
 import ua.foxminded.mykyta.zemlianyi.university.service.AdminService;
 
 @SpringBootTest
@@ -86,8 +87,7 @@ class AdminControllerTest {
     void createAdmin_shouldRedirectWithSuccess_whenCreatedValidAdmin() throws Exception {
         mockMvc.perform(post("/admins/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("name", "Marek").param("surname", "Szepski").param("email", "mszepski@gmail.com")
-                .param("password", "12345")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admins"))
+                .param("password", "12345")).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins"))
                 .andExpect(flash().attribute("successMessage", "Admin added successfully!"));
     }
 
@@ -130,8 +130,7 @@ class AdminControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showEditAdminForm_shouldReturnViewWithAdmin_whenAdminExists() throws Exception {
-        Optional<Admin> adminOpt = Optional.of(admin);
-        when(service.findById(1L)).thenReturn(adminOpt);
+        when(service.getByIdOrThrow(1L)).thenReturn(admin);
 
         mockMvc.perform(get("/admins/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-admin"))
                 .andExpect(model().attribute("admin", admin));
@@ -141,12 +140,11 @@ class AdminControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showEditAdminForm_shouldRedirectWithError_whenServiceFails() throws Exception {
-        Optional<Admin> emptyAdminOpt = Optional.empty();
-        when(service.findById(1L)).thenReturn(emptyAdminOpt);
+        when(service.getByIdOrThrow(1L)).thenThrow(new AdminNotFoundException(1L));
 
         mockMvc.perform(get("/admins/edit/1")).andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/admins"))
-                .andExpect(flash().attribute("errorMessage", "Error: User not found"));
+                .andExpect(flash().attribute("errorMessage", "Error: Admin with ID: 1 not found"));
 
     }
 
@@ -221,17 +219,17 @@ class AdminControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteAdmin_shouldRedirectWithError_whenAdminDoesNotExistsInDb() throws Exception {
-        when(service.findById(1L)).thenReturn(Optional.empty());
+        when(service.getByIdOrThrow(1L)).thenThrow(new AdminNotFoundException(1L));
 
         mockMvc.perform(delete("/admins/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins"))
-                .andExpect(flash().attribute("errorMessage", "Error: Admin does not exists"));
+                .andExpect(flash().attribute("errorMessage", "Error: Admin with ID: 1 not found"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteAdmin_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
         mockMvc.perform(delete("/admins/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins"))

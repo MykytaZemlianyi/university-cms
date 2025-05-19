@@ -26,14 +26,18 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
 
     public T addNew(T user) {
         ObjectChecker.checkNullAndVerify(user);
-        if (dao.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException(user.getEmail() + Constants.USER_SAVE_ERROR_EMAIL_EXISTS);
-        }
+        uniqueEmailOrThrow(user.getEmail());
 
         encodePasswordBeforeSave(user);
 
         logger.info("Adding new {} - {}", user.getClass().getSimpleName(), user);
         return dao.save(user);
+    }
+
+    protected void uniqueEmailOrThrow(String email) {
+        if (dao.existsByEmail(email)) {
+            throw new IllegalArgumentException(email + Constants.USER_SAVE_ERROR_EMAIL_EXISTS);
+        }
     }
 
     @Transactional

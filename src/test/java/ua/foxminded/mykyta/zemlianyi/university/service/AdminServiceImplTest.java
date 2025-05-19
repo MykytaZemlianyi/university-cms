@@ -3,6 +3,7 @@ package ua.foxminded.mykyta.zemlianyi.university.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -19,6 +20,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.AdminDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.AdminDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.AdminNotFoundException;
 
 @SpringBootTest(classes = { AdminServiceImpl.class })
 class AdminServiceImplTest {
@@ -68,7 +71,7 @@ class AdminServiceImplTest {
         adminWithSameEmail.setPassword("123123123");
         doReturn(true).when(adminDao).existsByEmail(adminWithSameEmail.getEmail());
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(AdminDuplicateException.class, () -> {
             adminService.addNew(adminWithSameEmail);
         });
     }
@@ -93,15 +96,15 @@ class AdminServiceImplTest {
     @Test
     void update_shouldThrowIllegalArgumentException_whenAdminIsNotVerified() {
         Admin invalidAdmin = new Admin();
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(AdminNotFoundException.class, () -> {
             adminService.update(invalidAdmin);
         });
     }
 
     @Test
     void update_shouldThrowIllegalArgumentException_whenAdminDoesNotExistsInDb() {
-        doReturn(Optional.empty()).when(adminDao).findById(admin.getId());
-        assertThrows(IllegalArgumentException.class, () -> {
+        doThrow(new AdminNotFoundException(admin.getId())).when(adminDao).findById(admin.getId());
+        assertThrows(AdminNotFoundException.class, () -> {
             adminService.update(admin);
         });
     }

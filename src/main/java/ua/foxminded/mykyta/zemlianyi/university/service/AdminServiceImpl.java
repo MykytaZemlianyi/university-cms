@@ -7,9 +7,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dao.AdminDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.AdminDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.AdminNotFoundException;
 
 @Service
 public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminService {
@@ -17,6 +18,13 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
 
     public AdminServiceImpl(AdminDao adminDao, PasswordEncoder passwordEncoder) {
         super(adminDao, passwordEncoder);
+    }
+
+    @Override
+    protected void uniqueEmailOrThrow(String email) {
+        if (dao.existsByEmail(email)) {
+            throw new AdminDuplicateException(email);
+        }
     }
 
     @Override
@@ -34,7 +42,7 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
 
             return existingAdmin;
         } else {
-            throw new IllegalArgumentException(Constants.USER_NOT_FOUND_ERROR);
+            throw new AdminNotFoundException(newAdmin.getId());
         }
     }
 
@@ -44,6 +52,10 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
         } else {
             return passwordEncoder.encode(newPassword);
         }
+    }
+
+    public Admin getByIdOrThrow(Long id) {
+        return dao.findById(id).orElseThrow(() -> new AdminNotFoundException(id));
     }
 
 }
