@@ -16,8 +16,10 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import jakarta.persistence.EntityManager;
 import ua.foxminded.mykyta.zemlianyi.university.dao.CourseDao;
+import ua.foxminded.mykyta.zemlianyi.university.dao.GroupDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.TeacherDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 import ua.foxminded.mykyta.zemlianyi.university.service.CourseServiceImpl;
 
@@ -39,12 +41,16 @@ class CourseIntegrationalTest {
 
     @Autowired
     TeacherDao teacherDao;
+    @Autowired
+    GroupDao groupDao;
 
     Course course1 = new Course();
     Course course2 = new Course();
 
     Teacher teacher1 = new Teacher();
     Teacher teacher2 = new Teacher();
+
+    Group group1 = new Group();
 
     @BeforeEach
     void setUp() {
@@ -65,6 +71,10 @@ class CourseIntegrationalTest {
         teacher2.setSurname("Prysak");
         teacher2.setEmail("pprysak@gmail.com");
         teacher2.setPassword("12345");
+
+        group1.setId(1L);
+        group1.setName("AA-11");
+
     }
 
     @Test
@@ -109,6 +119,12 @@ class CourseIntegrationalTest {
     void delete_shouldNotDeleteAssignedTeacher_whenCourseDeleted() {
         service.delete(course1);
         assertTrue(teacherDao.existsById(teacher1.getId()));
+    }
+
+    @Test
+    void delete_shouldNotDeleteAssignedGroups_whenCourseDeleted() {
+        service.delete(course1);
+        assertTrue(groupDao.existsById(group1.getId()));
     }
 
     private boolean teacherContainsCourse(Teacher teacher, Course course) {

@@ -148,7 +148,7 @@ class RoomServiceImplTest {
 
         roomService.delete(room);
 
-        verify(roomDao).delete(room);
+        verify(roomDao).deleteById(room.getId());
     }
 
 }
