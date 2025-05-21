@@ -36,6 +36,8 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.AdminNotFoundException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.GroupNotFoundException;
 import ua.foxminded.mykyta.zemlianyi.university.service.GroupService;
 
 @SpringBootTest
@@ -97,8 +99,7 @@ class GroupControllerTest {
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void createGroup_shouldRedirectWithSuccess_whenCreatedValidGroup() throws Exception {
         mockMvc.perform(post("/groups/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("name", "AA-11")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/groups"))
+                .param("name", "AA-11")).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/groups"))
                 .andExpect(flash().attribute("successMessage", "Group added successfully!"));
     }
 
@@ -132,8 +133,7 @@ class GroupControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showEditGroupForm_shouldReturnViewWithGroup_whenGroupExists() throws Exception {
-        Optional<Group> groupOpt = Optional.of(group);
-        when(service.findById(1L)).thenReturn(groupOpt);
+        when(service.getByIdOrThrow(1L)).thenReturn(group);
 
         mockMvc.perform(get("/groups/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-group"))
                 .andExpect(model().attribute("group", group));
@@ -143,12 +143,11 @@ class GroupControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showEditGroupForm_shouldRedirectWithError_whenServiceFails() throws Exception {
-        Optional<Group> emptyGroupOpt = Optional.empty();
-        when(service.findById(1L)).thenReturn(emptyGroupOpt);
+        when(service.getByIdOrThrow(1L)).thenThrow(new GroupNotFoundException(1L));
 
         mockMvc.perform(get("/groups/edit/1")).andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/groups"))
-                .andExpect(flash().attribute("errorMessage", "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST));
+                .andExpect(flash().attribute("errorMessage", "Error: Group with ID: 1 not found"));
 
     }
 
@@ -210,17 +209,17 @@ class GroupControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteGroup_shouldRedirectWithError_whenGroupDoesNotExistsInDb() throws Exception {
-        when(service.findById(1L)).thenReturn(Optional.empty());
+        when(service.getByIdOrThrow(1L)).thenThrow(new GroupNotFoundException(1L));
 
         mockMvc.perform(delete("/groups/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/groups"))
-                .andExpect(flash().attribute("errorMessage", "Error: Group does not exists"));
+                .andExpect(flash().attribute("errorMessage", "Error: Group with ID: 1 not found"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteGroup_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
         mockMvc.perform(delete("/groups/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/groups"))
