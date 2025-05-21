@@ -18,6 +18,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.LectureNotFoundException;
 
 @Service
 public class LectureServiceImpl implements LectureService {
@@ -50,21 +51,17 @@ public class LectureServiceImpl implements LectureService {
     }
 
     private Lecture mergeWithExisting(Lecture lecture) {
-        Optional<Lecture> existingLectureOpt = lectureDao.findById(lecture.getId());
-        if (existingLectureOpt.isPresent()) {
-            Lecture existingLecture = existingLectureOpt.get();
-            existingLecture.setLectureType(lecture.getLectureType());
-            existingLecture.setTimeStart(lecture.getTimeStart());
-            existingLecture.setTimeEnd(lecture.getTimeEnd());
+        Lecture existingLecture = getByIdOrThrow(lecture.getId());
+        existingLecture.setLectureType(lecture.getLectureType());
+        existingLecture.setTimeStart(lecture.getTimeStart());
+        existingLecture.setTimeEnd(lecture.getTimeEnd());
 
-            mergeCourse(existingLecture, lecture);
+        mergeCourse(existingLecture, lecture);
 
-            mergeRoom(existingLecture, lecture);
+        mergeRoom(existingLecture, lecture);
 
-            return existingLecture;
-        } else {
-            throw new IllegalArgumentException(Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
-        }
+        return existingLecture;
+
     }
 
     private void mergeCourse(Lecture existingLecture, Lecture updatedLecture) {
@@ -155,6 +152,11 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public Optional<Lecture> findById(Long id) {
         return lectureDao.findById(id);
+    }
+
+    @Override
+    public Lecture getByIdOrThrow(Long id) {
+        return lectureDao.findById(id).orElseThrow(() -> new LectureNotFoundException(id));
     }
 
 }

@@ -29,4 +29,6 @@ public interface LectureService {
     Optional<Lecture> findById(Long id);
 
     LectureForm mapLectureToForm(Lecture lecture);
+
+    Lecture getByIdOrThrow(Long id);
 }

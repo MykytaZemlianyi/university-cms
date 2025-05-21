@@ -78,34 +78,26 @@ public class LectureController {
             return "add-new-lecture";
         }
 
-        try {
-            Lecture lecture = lectureService.mapFormToLecture(lectureForm);
-            lectureService.addNew(lecture);
-            redirectAttributes.addFlashAttribute("successMessage", "Lecture added successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        Lecture lecture = lectureService.mapFormToLecture(lectureForm);
+        lectureService.addNew(lecture);
+        redirectAttributes.addFlashAttribute("successMessage", "Lecture added successfully!");
+
         return "redirect:/lectures";
     }
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditLectureForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        Optional<Lecture> lectureOpt = lectureService.findById(id);
-        if (lectureOpt.isPresent()) {
-            LectureForm form = lectureService.mapLectureToForm(lectureOpt.get());
-            List<Course> allCourses = courseService.findAll();
-            List<Room> allRooms = roomService.findAll();
-            model.addAttribute("lectureForm", form);
-            model.addAttribute("lectureTypes", LectureType.values());
-            model.addAttribute("courseList", allCourses);
-            model.addAttribute("roomList", allRooms);
-            return "edit-lecture";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
-            return "redirect:/lectures";
-        }
+        Lecture lecture = lectureService.getByIdOrThrow(id);
+        LectureForm form = lectureService.mapLectureToForm(lecture);
+        List<Course> allCourses = courseService.findAll();
+        List<Room> allRooms = roomService.findAll();
+        model.addAttribute("lectureForm", form);
+        model.addAttribute("lectureTypes", LectureType.values());
+        model.addAttribute("courseList", allCourses);
+        model.addAttribute("roomList", allRooms);
+        return "edit-lecture";
+
     }
 
     @PostMapping("/edit/{id}")
@@ -117,30 +109,20 @@ public class LectureController {
             return "edit-lecture";
         }
 
-        try {
-            Lecture lecture = lectureService.mapFormToLecture(form);
-            lectureService.update(lecture);
-            redirectAttributes.addFlashAttribute("successMessage", "Lecture updated successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        Lecture lecture = lectureService.mapFormToLecture(form);
+        lectureService.update(lecture);
+        redirectAttributes.addFlashAttribute("successMessage", "Lecture updated successfully!");
+
         return "redirect:/lectures";
     }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteLecture(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            Optional<Lecture> lecture = lectureService.findById(id);
-            if (lecture.isPresent()) {
-                lectureService.delete(lecture.get());
+            Lecture lecture = lectureService.getByIdOrThrow(id);
+                lectureService.delete(lecture);
                 redirectAttributes.addFlashAttribute("successMessage", "Lecture deleted successfully!");
-            } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Error: Lecture does not exists");
-            }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+          
         return "redirect:/lectures";
     }
 }
