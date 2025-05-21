@@ -1,7 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +19,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
-import ua.foxminded.mykyta.zemlianyi.university.dto.*;
-import ua.foxminded.mykyta.zemlianyi.university.service.*;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
+import ua.foxminded.mykyta.zemlianyi.university.service.CourseService;
+import ua.foxminded.mykyta.zemlianyi.university.service.GroupService;
+import ua.foxminded.mykyta.zemlianyi.university.service.StudentService;
 
 @Controller
 @RequestMapping("/groups")
@@ -71,31 +73,22 @@ public class GroupController {
             return "add-new-group";
         }
 
-        try {
-            groupService.addNew(group);
-            redirectAttributes.addFlashAttribute("successMessage", "Group added successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        groupService.addNew(group);
+        redirectAttributes.addFlashAttribute("successMessage", "Group added successfully!");
+
         return "redirect:/groups";
     }
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditGroupForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        Optional<Group> groupOpt = groupService.findById(id);
-        if (groupOpt.isPresent()) {
-            List<Student> allStudents = studentService.findAll();
-            List<Course> allCourses = courseService.findAll();
-            model.addAttribute("group", groupOpt.get());
-            model.addAttribute("studentList", allStudents);
-            model.addAttribute("courseList", allCourses);
-            return "edit-group";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
-            return "redirect:/groups";
-        }
+        Group group = groupService.getByIdOrThrow(id);
+        List<Student> allStudents = studentService.findAll();
+        List<Course> allCourses = courseService.findAll();
+        model.addAttribute("group", group);
+        model.addAttribute("studentList", allStudents);
+        model.addAttribute("courseList", allCourses);
+        return "edit-group";
     }
 
     @PostMapping("/edit/{id}")
@@ -107,29 +100,19 @@ public class GroupController {
             return "edit-group";
         }
 
-        try {
-            groupService.update(updatedGroup);
-            redirectAttributes.addFlashAttribute("successMessage", "Group updated successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        groupService.update(updatedGroup);
+        redirectAttributes.addFlashAttribute("successMessage", "Group updated successfully!");
         return "redirect:/groups";
     }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteGroup(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            Optional<Group> group = groupService.findById(id);
-            if (group.isPresent()) {
-                groupService.delete(group.get());
-                redirectAttributes.addFlashAttribute("successMessage", "Group deleted successfully!");
-            } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Error: Group does not exists");
-            }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+
+        Group group = groupService.getByIdOrThrow(id);
+        groupService.delete(group);
+        redirectAttributes.addFlashAttribute("successMessage", "Group deleted successfully!");
+
         return "redirect:/groups";
     }
 }

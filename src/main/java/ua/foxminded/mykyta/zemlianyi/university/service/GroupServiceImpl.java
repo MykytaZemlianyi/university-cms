@@ -17,6 +17,8 @@ import ua.foxminded.mykyta.zemlianyi.university.dao.GroupDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.StudentDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.GroupDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.GroupNotFoundException;
 
 @Service
 public class GroupServiceImpl implements GroupService {
@@ -35,7 +37,7 @@ public class GroupServiceImpl implements GroupService {
     public Group addNew(Group group) {
         ObjectChecker.checkNullAndVerify(group);
         if (groupDao.existsByName(group.getName())) {
-            throw new IllegalArgumentException(group.getName() + Constants.GROUP_ADD_NEW_ERROR_EXISTS_BY_NAME);
+            throw new GroupDuplicateException(group.getName());
         }
         logger.info("Adding new group - {}", group);
         getStudentsReferencesBeforeSave(group);
@@ -61,20 +63,14 @@ public class GroupServiceImpl implements GroupService {
 
     private Group mergeWithExisting(Group newGroup) {
         ObjectChecker.checkNull(newGroup);
-        Optional<Group> existingCourseOpt = groupDao.findById(newGroup.getId());
+        Group existingGroup = getByIdOrThrow(newGroup.getId());
 
-        if (existingCourseOpt.isPresent()) {
-            Group existingGroup = existingCourseOpt.get();
+        existingGroup.setName(newGroup.getName());
+        existingGroup.setStudents(newGroup.getStudents());
+        existingGroup.setCourses(newGroup.getCourses());
 
-            existingGroup.setName(newGroup.getName());
-            existingGroup.setStudents(newGroup.getStudents());
-            existingGroup.setCourses(newGroup.getCourses());
+        return existingGroup;
 
-            return existingGroup;
-
-        } else {
-            throw new IllegalArgumentException(Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
-        }
     }
 
     @Override
@@ -107,6 +103,11 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Optional<Group> findById(Long groupId) {
         return groupDao.findById(groupId);
+    }
+
+    @Override
+    public Group getByIdOrThrow(Long id) {
+        return groupDao.findById(id).orElseThrow(() -> new GroupNotFoundException(id));
     }
 
 }

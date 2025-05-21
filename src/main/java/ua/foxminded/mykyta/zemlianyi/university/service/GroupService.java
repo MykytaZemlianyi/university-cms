@@ -23,4 +23,6 @@ public interface GroupService {
     List<Group> findAll();
 
     Optional<Group> findById(Long groupId);
+
+    Group getByIdOrThrow(Long id);
 }
