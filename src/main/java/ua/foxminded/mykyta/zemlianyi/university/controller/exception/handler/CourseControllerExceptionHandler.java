@@ -6,17 +6,17 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ua.foxminded.mykyta.zemlianyi.university.controller.AdminController;
+import ua.foxminded.mykyta.zemlianyi.university.controller.CourseController;
 
-@ControllerAdvice(assignableTypes = AdminController.class)
-public class AdminControllerExceptionHandler {
-    private static Logger logger = LogManager.getLogger(AdminControllerExceptionHandler.class.getName());
+@ControllerAdvice(assignableTypes = CourseController.class)
+public class CourseControllerExceptionHandler {
+    private static Logger logger = LogManager.getLogger(CourseControllerExceptionHandler.class.getName());
 
     @ExceptionHandler(Exception.class)
-    public String handleAdminNotFound(Exception ex, RedirectAttributes redirectAttributes) {
+    public String handleCourseNotFound(Exception ex, RedirectAttributes redirectAttributes) {
         logger.warn(ex.getMessage());
         redirectAttributes.addFlashAttribute("errorMessage", "Error: " + ex.getMessage());
-        return "redirect:/admins";
+        return "redirect:/courses";
     }
 
 }

@@ -27,4 +27,6 @@ public interface CourseService {
 
     Optional<Course> findById(Long id);
 
+    Course getByIdOrThrow(Long id);
+
 }

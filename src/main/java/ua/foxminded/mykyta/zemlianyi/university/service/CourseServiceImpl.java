@@ -15,6 +15,8 @@ import ua.foxminded.mykyta.zemlianyi.university.dao.CourseDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.CourseDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.CourseNotFoundException;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -31,7 +33,7 @@ public class CourseServiceImpl implements CourseService {
     public Course addNew(Course course) {
         ObjectChecker.checkNullAndVerify(course);
         if (courseDao.existsByName(course.getName())) {
-            throw new IllegalArgumentException(course.getName() + Constants.COURSE_ADD_NEW_ERROR_EXISTS_BY_NAME);
+            throw new CourseDuplicateException(course.getName());
         }
 
         logger.info("Adding new course - {}", course.getName());
@@ -103,6 +105,11 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public Optional<Course> findById(Long id) {
         return courseDao.findById(id);
+    }
+
+    @Override
+    public Course getByIdOrThrow(Long id) {
+        return courseDao.findById(id).orElseThrow(() -> new CourseNotFoundException(id));
     }
 
 }

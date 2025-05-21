@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.*;
 import ua.foxminded.mykyta.zemlianyi.university.service.*;
 
@@ -68,29 +67,19 @@ public class CourseController {
             return "add-new-course";
         }
 
-        try {
-            courseService.addNew(course);
-            redirectAttributes.addFlashAttribute("successMessage", "Course added successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        courseService.addNew(course);
+        redirectAttributes.addFlashAttribute("successMessage", "Course added successfully!");
         return "redirect:/courses";
     }
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String showEditCourseForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        Optional<Course> course = courseService.findById(id);
-        if (course.isPresent()) {
-            List<Teacher> allTeachers = teacherService.findAll();
-            model.addAttribute("course", course.get());
-            model.addAttribute("teacherList", allTeachers);
-            return "edit-course";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
-            return "redirect:/courses";
-        }
+    public String showEditCourseForm(@PathVariable Long id, Model model) {
+        Course course = courseService.getByIdOrThrow(id);
+        List<Teacher> allTeachers = teacherService.findAll();
+        model.addAttribute("course", course);
+        model.addAttribute("teacherList", allTeachers);
+        return "edit-course";
     }
 
     @PostMapping("/edit/{id}")
@@ -102,12 +91,8 @@ public class CourseController {
             return "edit-course";
         }
 
-        try {
-            courseService.update(updatedCourse);
-            redirectAttributes.addFlashAttribute("successMessage", "Course updated successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        courseService.update(updatedCourse);
+        redirectAttributes.addFlashAttribute("successMessage", "Course updated successfully!");
         return "redirect:/courses";
     }
 
