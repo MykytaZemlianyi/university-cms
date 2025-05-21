@@ -1,7 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -99,17 +98,10 @@ public class CourseController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteCourse(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            Optional<Course> course = courseService.findById(id);
-            if (course.isPresent()) {
-                courseService.delete(course.get());
-                redirectAttributes.addFlashAttribute("successMessage", "Course deleted successfully!");
-            } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Error: Course does not exists");
-            }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        Course course = courseService.getByIdOrThrow(id);
+        courseService.delete(course);
+        redirectAttributes.addFlashAttribute("successMessage", "Course deleted successfully!");
+
         return "redirect:/courses";
     }
 }
