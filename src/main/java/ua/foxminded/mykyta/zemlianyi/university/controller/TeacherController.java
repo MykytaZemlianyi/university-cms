@@ -68,28 +68,20 @@ public class TeacherController {
             return "add-new-teacher";
         }
 
-        try {
-            teacherService.addNew(teacher);
-            redirectAttributes.addFlashAttribute("successMessage", "Teacher added successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        teacherService.addNew(teacher);
+        redirectAttributes.addFlashAttribute("successMessage", "Teacher added successfully!");
+
         return "redirect:/teachers";
     }
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditTeacherForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        Optional<Teacher> teacher = teacherService.findById(id);
-        if (teacher.isPresent()) {
-            List<Course> allCourses = courseService.findAll();
-            model.addAttribute("teacher", teacher.get());
-            model.addAttribute("courseList", allCourses);
-            return "edit-teacher";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + Constants.USER_NOT_FOUND_ERROR);
-            return "redirect:/teachers";
-        }
+        Teacher teacher = teacherService.getByIdOrThrow(id);
+        List<Course> allCourses = courseService.findAll();
+        model.addAttribute("teacher", teacher);
+        model.addAttribute("courseList", allCourses);
+        return "edit-teacher";
     }
 
     @PostMapping("/edit/{id}")
@@ -101,29 +93,17 @@ public class TeacherController {
             return "edit-teacher";
         }
 
-        try {
-            teacherService.update(updatedTeacher);
-            redirectAttributes.addFlashAttribute("successMessage", "Teacher updated successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        teacherService.update(updatedTeacher);
+        redirectAttributes.addFlashAttribute("successMessage", "Teacher updated successfully!");
         return "redirect:/teachers";
     }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteTeacher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            Optional<Teacher> teacher = teacherService.findById(id);
-            if (teacher.isPresent()) {
-                teacherService.delete(teacher.get());
-                redirectAttributes.addFlashAttribute("successMessage", "Teacher deleted successfully!");
-            } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Error: Teacher does not exists");
-            }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        Teacher teacher = teacherService.getByIdOrThrow(id);
+        teacherService.delete(teacher);
+        redirectAttributes.addFlashAttribute("successMessage", "Teacher deleted successfully!");
         return "redirect:/teachers";
     }
 }

@@ -9,4 +9,6 @@ public interface TeacherService extends UserService<Teacher> {
 
     Page<Teacher> findAll(Pageable pageable);
 
+    Teacher getByIdOrThrow(Long id);
+
 }
