@@ -1,15 +1,13 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
-import java.util.Optional;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dao.StudentDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.StudentNotFoundException;
 
 @Service
 public class StudentServiceImpl extends UserServiceImpl<Student> implements StudentService {
@@ -18,27 +16,28 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
     public StudentServiceImpl(StudentDao studentDao, PasswordEncoder passwordEncoder) {
         super(studentDao, passwordEncoder);
     }
+    
+    
 
     @Override
     protected Student mergeWithExisting(Student newStudent) {
         ObjectChecker.checkNull(newStudent);
-        Optional<Student> existingStudentOpt = dao.findById(newStudent.getId());
+        Student existingStudent = getByIdOrThrow(newStudent.getId());
 
-        if (existingStudentOpt.isPresent()) {
-            Student existingStudent = existingStudentOpt.get();
+        existingStudent.setName(newStudent.getName());
+        existingStudent.setSurname(newStudent.getSurname());
+        existingStudent.setEmail(newStudent.getEmail());
+        existingStudent.setPassword(choosePassword(newStudent.getPassword(), existingStudent.getPassword()));
 
-            existingStudent.setName(newStudent.getName());
-            existingStudent.setSurname(newStudent.getSurname());
-            existingStudent.setEmail(newStudent.getEmail());
-            existingStudent.setPassword(choosePassword(newStudent.getPassword(), existingStudent.getPassword()));
+        existingStudent.setGroup(newStudent.getGroup());
 
-            existingStudent.setGroup(newStudent.getGroup());
+        return existingStudent;
 
-            return existingStudent;
+    }
 
-        } else {
-            throw new IllegalArgumentException(Constants.USER_NOT_FOUND_ERROR);
-        }
+    @Override
+    public Student getByIdOrThrow(Long id) {
+        return dao.findById(id).orElseThrow(() -> new StudentNotFoundException(id));
     }
 
     private String choosePassword(String newPassword, String existingPassword) {
