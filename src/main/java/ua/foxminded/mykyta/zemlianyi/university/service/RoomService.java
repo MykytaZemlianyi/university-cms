@@ -20,4 +20,6 @@ public interface RoomService {
     Optional<Room> findById(Long id);
 
     List<Room> findAll();
+
+    Room getByIdOrThrow(Long id);
 }

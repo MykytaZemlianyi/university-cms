@@ -1,7 +1,5 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
 import ua.foxminded.mykyta.zemlianyi.university.service.RoomService;
 
@@ -63,27 +60,17 @@ public class RoomController {
             return "add-new-room";
         }
 
-        try {
-            roomService.addNew(room);
-            redirectAttributes.addFlashAttribute("successMessage", "Room added successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        roomService.addNew(room);
+        redirectAttributes.addFlashAttribute("successMessage", "Room added successfully!");
         return "redirect:/rooms";
     }
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditRoomForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        Optional<Room> room = roomService.findById(id);
-        if (room.isPresent()) {
-            model.addAttribute("room", room.get());
-            return "edit-room";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage",
-                    "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
-            return "redirect:/rooms";
-        }
+        Room room = roomService.getByIdOrThrow(id);
+        model.addAttribute("room", room);
+        return "edit-room";
     }
 
     @PostMapping("/edit/{id}")
@@ -95,29 +82,17 @@ public class RoomController {
             return "edit-room";
         }
 
-        try {
-            roomService.update(updatedRoom);
-            redirectAttributes.addFlashAttribute("successMessage", "Room updated successfully!");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        roomService.update(updatedRoom);
+        redirectAttributes.addFlashAttribute("successMessage", "Room updated successfully!");
         return "redirect:/rooms";
     }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteRoom(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            Optional<Room> room = roomService.findById(id);
-            if (room.isPresent()) {
-                roomService.delete(room.get());
-                redirectAttributes.addFlashAttribute("successMessage", "Room deleted successfully!");
-            } else {
-                redirectAttributes.addFlashAttribute("errorMessage", "Error: Room does not exists");
-            }
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
-        }
+        Room room = roomService.getByIdOrThrow(id);
+        roomService.delete(room);
+        redirectAttributes.addFlashAttribute("successMessage", "Room deleted successfully!");
         return "redirect:/rooms";
     }
 }

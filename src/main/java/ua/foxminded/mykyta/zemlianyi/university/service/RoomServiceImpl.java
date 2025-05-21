@@ -10,9 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.RoomDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.RoomNotFoundException;
 
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -27,7 +28,7 @@ public class RoomServiceImpl implements RoomService {
     public Room addNew(Room room) {
         ObjectChecker.checkNullAndVerify(room);
         if (roomDao.existsByNumber(room.getNumber())) {
-            throw new IllegalArgumentException(room.getNumber() + Constants.ROOM_ADD_NEW_ERROR_EXISTS_BY_NUMBER);
+            throw new RoomDuplicateException(room.getNumber());
         }
         logger.info("Adding new room - {}", room);
         return roomDao.save(room);
@@ -43,24 +44,17 @@ public class RoomServiceImpl implements RoomService {
 
     private Room mergeWithExisting(Room newRoom) {
         ObjectChecker.checkNull(newRoom);
-        Optional<Room> existingRoomOpt = roomDao.findById(newRoom.getId());
 
-        if (existingRoomOpt.isPresent()) {
-            Room existingRoom = existingRoomOpt.get();
-            if (!Objects.equals(existingRoom.getNumber(), newRoom.getNumber())) {
-                if (roomDao.existsByNumber(newRoom.getNumber())) {
-                    throw new IllegalArgumentException(
-                            newRoom.getNumber() + Constants.ROOM_ADD_NEW_ERROR_EXISTS_BY_NUMBER);
-                } else {
-                    existingRoom.setNumber(newRoom.getNumber());
-                }
+        Room existingRoom = getByIdOrThrow(newRoom.getId());
+        if (!Objects.equals(existingRoom.getNumber(), newRoom.getNumber())) {
+            if (roomDao.existsByNumber(newRoom.getNumber())) {
+                throw new RoomDuplicateException(existingRoom.getNumber());
+            } else {
+                existingRoom.setNumber(newRoom.getNumber());
             }
-
-            return existingRoom;
-
-        } else {
-            throw new IllegalArgumentException(Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
         }
+        return existingRoom;
+
     }
 
     @Override
@@ -84,6 +78,11 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<Room> findAll() {
         return roomDao.findAll();
+    }
+
+    @Override
+    public Room getByIdOrThrow(Long id) {
+        return roomDao.findById(id).orElseThrow(() -> new RoomNotFoundException(id));
     }
 
 }
