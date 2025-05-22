@@ -13,7 +13,7 @@ public class GroupControllerExceptionHandler {
     private static Logger logger = LogManager.getLogger(GroupControllerExceptionHandler.class.getName());
 
     @ExceptionHandler(Exception.class)
-    public String handleGroupNotFound(Exception ex, RedirectAttributes redirectAttributes) {
+    public String handleGroupErrors(Exception ex, RedirectAttributes redirectAttributes) {
         logger.warn(ex.getMessage());
         redirectAttributes.addFlashAttribute("errorMessage", "Error: " + ex.getMessage());
         return "redirect:/groups";

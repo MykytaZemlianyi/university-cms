@@ -13,7 +13,7 @@ public class AdminControllerExceptionHandler {
     private static Logger logger = LogManager.getLogger(AdminControllerExceptionHandler.class.getName());
 
     @ExceptionHandler(Exception.class)
-    public String handleAdminNotFound(Exception ex, RedirectAttributes redirectAttributes) {
+    public String handleAdminErrors(Exception ex, RedirectAttributes redirectAttributes) {
         logger.warn(ex.getMessage());
         redirectAttributes.addFlashAttribute("errorMessage", "Error: " + ex.getMessage());
         return "redirect:/admins";

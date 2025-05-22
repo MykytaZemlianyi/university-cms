@@ -13,7 +13,7 @@ public class StudentControllerExceptionHandler {
     private static Logger logger = LogManager.getLogger(StudentControllerExceptionHandler.class.getName());
 
     @ExceptionHandler(Exception.class)
-    public String handleStudentNotFound(Exception ex, RedirectAttributes redirectAttributes) {
+    public String handleStudentErrors(Exception ex, RedirectAttributes redirectAttributes) {
         logger.warn(ex.getMessage());
         redirectAttributes.addFlashAttribute("errorMessage", "Error: " + ex.getMessage());
         return "redirect:/students";

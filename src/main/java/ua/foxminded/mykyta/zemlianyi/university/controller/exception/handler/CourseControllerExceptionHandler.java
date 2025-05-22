@@ -13,7 +13,7 @@ public class CourseControllerExceptionHandler {
     private static Logger logger = LogManager.getLogger(CourseControllerExceptionHandler.class.getName());
 
     @ExceptionHandler(Exception.class)
-    public String handleCourseNotFound(Exception ex, RedirectAttributes redirectAttributes) {
+    public String handleCourseErrors(Exception ex, RedirectAttributes redirectAttributes) {
         logger.warn(ex.getMessage());
         redirectAttributes.addFlashAttribute("errorMessage", "Error: " + ex.getMessage());
         return "redirect:/courses";
