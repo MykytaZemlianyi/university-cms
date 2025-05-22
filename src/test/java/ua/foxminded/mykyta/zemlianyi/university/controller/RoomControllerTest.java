@@ -15,7 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,8 +30,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.RoomNotFoundException;
 import ua.foxminded.mykyta.zemlianyi.university.service.RoomService;
 
 @SpringBootTest
@@ -107,8 +106,9 @@ class RoomControllerTest {
         Room newRoom = new Room();
         newRoom.setNumber(null);
 
-        mockMvc.perform(post("/rooms/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("number", "")).andExpect(status().isOk()).andExpect(view().name("add-new-room"))
+        mockMvc.perform(
+                post("/rooms/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED).param("number", ""))
+                .andExpect(status().isOk()).andExpect(view().name("add-new-room"))
                 .andExpect(model().attributeHasFieldErrors("room", "number"));
 
     }
@@ -116,8 +116,7 @@ class RoomControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showEditRoomForm_shouldReturnViewWithRoom_whenRoomExists() throws Exception {
-        Optional<Room> roomOpt = Optional.of(room);
-        when(service.findById(1L)).thenReturn(roomOpt);
+        when(service.getByIdOrThrow(1L)).thenReturn(room);
 
         mockMvc.perform(get("/rooms/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-room"))
                 .andExpect(model().attribute("room", room));
@@ -127,12 +126,10 @@ class RoomControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showEditRoomForm_shouldRedirectWithError_whenServiceFails() throws Exception {
-        Optional<Room> emptyRoomOpt = Optional.empty();
-        when(service.findById(1L)).thenReturn(emptyRoomOpt);
+        when(service.getByIdOrThrow(1L)).thenThrow(new RoomNotFoundException(1L));
 
-        mockMvc.perform(get("/rooms/edit/1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/rooms"))
-                .andExpect(flash().attribute("errorMessage", "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST));
+        mockMvc.perform(get("/rooms/edit/1")).andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/rooms"))
+                .andExpect(flash().attribute("errorMessage", "Error: Room with ID: 1 not found"));
 
     }
 
@@ -184,7 +181,7 @@ class RoomControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteRoom_shouldRedirectWithSuccess_whenRoomExistsInDb() throws Exception {
-        when(service.findById(1L)).thenReturn(Optional.of(room));
+        when(service.getByIdOrThrow(1L)).thenReturn(room);
 
         mockMvc.perform(delete("/rooms/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/rooms"))
@@ -194,17 +191,17 @@ class RoomControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteRoom_shouldRedirectWithError_whenRoomDoesNotExistsInDb() throws Exception {
-        when(service.findById(1L)).thenReturn(Optional.empty());
+        when(service.getByIdOrThrow(1L)).thenThrow(new RoomNotFoundException(1L));
 
         mockMvc.perform(delete("/rooms/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/rooms"))
-                .andExpect(flash().attribute("errorMessage", "Error: Room does not exists"));
+                .andExpect(flash().attribute("errorMessage", "Error: Room with ID: 1 not found"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteRoom_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
         mockMvc.perform(delete("/rooms/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/rooms"))
