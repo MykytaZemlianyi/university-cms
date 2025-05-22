@@ -15,7 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,10 +30,10 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.CourseNotFoundException;
 import ua.foxminded.mykyta.zemlianyi.university.service.CourseService;
 
 @SpringBootTest
@@ -85,9 +84,8 @@ class CourseControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showCreateCourseForm_shouldReturnModelWithNewCourse() throws Exception {
-        mockMvc.perform(get("/courses/add")).andExpect(status().isOk())
-                .andExpect(view().name("add-new-course")).andExpect(model().attributeExists("course"))
-                .andExpect(model().attributeExists("teacherList"));
+        mockMvc.perform(get("/courses/add")).andExpect(status().isOk()).andExpect(view().name("add-new-course"))
+                .andExpect(model().attributeExists("course")).andExpect(model().attributeExists("teacherList"));
     }
 
     @Test
@@ -129,8 +127,7 @@ class CourseControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showEditCourseForm_shouldReturnViewWithCourse_whenCourseExists() throws Exception {
-        Optional<Course> courseOpt = Optional.of(course);
-        when(service.findById(1L)).thenReturn(courseOpt);
+        when(service.getByIdOrThrow(1L)).thenReturn(course);
 
         mockMvc.perform(get("/courses/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-course"))
                 .andExpect(model().attribute("course", course));
@@ -140,12 +137,11 @@ class CourseControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showEditCourseForm_shouldRedirectWithError_whenServiceFails() throws Exception {
-        Optional<Course> emptyCourseOpt = Optional.empty();
-        when(service.findById(1L)).thenReturn(emptyCourseOpt);
+        when(service.getByIdOrThrow(1L)).thenThrow(new CourseNotFoundException(1L));
 
         mockMvc.perform(get("/courses/edit/1")).andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/courses"))
-                .andExpect(flash().attribute("errorMessage", "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST));
+                .andExpect(flash().attribute("errorMessage", "Error: Course with ID: 1 not found"));
 
     }
 
@@ -197,10 +193,9 @@ class CourseControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteCourse_shouldRedirectWithSuccess_whenCourseExistsInDb() throws Exception {
-        when(service.findById(1L)).thenReturn(Optional.of(course));
+        when(service.getByIdOrThrow(1L)).thenReturn(course);
 
-        mockMvc.perform(
-                delete("/courses/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        mockMvc.perform(delete("/courses/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/courses"))
                 .andExpect(flash().attribute("successMessage", "Course deleted successfully!"));
     }
@@ -208,21 +203,19 @@ class CourseControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteCourse_shouldRedirectWithError_whenCourseDoesNotExistsInDb() throws Exception {
-        when(service.findById(1L)).thenReturn(Optional.empty());
+        when(service.getByIdOrThrow(1L)).thenThrow(new CourseNotFoundException(1L));
 
-        mockMvc.perform(
-                delete("/courses/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        mockMvc.perform(delete("/courses/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/courses"))
-                .andExpect(flash().attribute("errorMessage", "Error: Course does not exists"));
+                .andExpect(flash().attribute("errorMessage", "Error: Course with ID: 1 not found"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteCourse_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
-        mockMvc.perform(
-                delete("/courses/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        mockMvc.perform(delete("/courses/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/courses"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
     }
