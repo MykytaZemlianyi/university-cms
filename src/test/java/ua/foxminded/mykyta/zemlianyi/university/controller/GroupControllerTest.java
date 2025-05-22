@@ -31,12 +31,10 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
-import ua.foxminded.mykyta.zemlianyi.university.exceptions.AdminNotFoundException;
 import ua.foxminded.mykyta.zemlianyi.university.exceptions.GroupNotFoundException;
 import ua.foxminded.mykyta.zemlianyi.university.service.GroupService;
 
