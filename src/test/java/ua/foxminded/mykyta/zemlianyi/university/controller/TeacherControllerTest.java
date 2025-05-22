@@ -15,7 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.TeacherNotFoundException;
 import ua.foxminded.mykyta.zemlianyi.university.service.TeacherService;
 
 @SpringBootTest
@@ -136,8 +136,7 @@ class TeacherControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showEditTeacherForm_shouldReturnViewWithTeacher_whenTeacherExists() throws Exception {
-        Optional<Teacher> teacherOpt = Optional.of(teacher);
-        when(service.findById(1L)).thenReturn(teacherOpt);
+        when(service.getByIdOrThrow(1L)).thenReturn(teacher);
 
         mockMvc.perform(get("/teachers/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-teacher"))
                 .andExpect(model().attribute("teacher", teacher));
@@ -147,12 +146,11 @@ class TeacherControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showEditTeacherForm_shouldRedirectWithError_whenServiceFails() throws Exception {
-        Optional<Teacher> emptyTeacherOpt = Optional.empty();
-        when(service.findById(1L)).thenReturn(emptyTeacherOpt);
+        when(service.getByIdOrThrow(1L)).thenThrow(new TeacherNotFoundException(1L));
 
         mockMvc.perform(get("/teachers/edit/1")).andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/teachers"))
-                .andExpect(flash().attribute("errorMessage", "Error: User not found"));
+                .andExpect(flash().attribute("errorMessage", "Error: Teacher with ID: 1 not found"));
 
     }
 
@@ -217,7 +215,7 @@ class TeacherControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteTeacher_shouldRedirectWithSuccess_whenTeacherExistsInDb() throws Exception {
-        when(service.findById(1L)).thenReturn(Optional.of(teacher));
+        when(service.getByIdOrThrow(1L)).thenReturn(teacher);
 
         mockMvc.perform(delete("/teachers/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers"))
@@ -227,17 +225,17 @@ class TeacherControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteTeacher_shouldRedirectWithError_whenTeacherDoesNotExistsInDb() throws Exception {
-        when(service.findById(1L)).thenReturn(Optional.empty());
+        when(service.getByIdOrThrow(1L)).thenThrow(new TeacherNotFoundException(1L));
 
         mockMvc.perform(delete("/teachers/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers"))
-                .andExpect(flash().attribute("errorMessage", "Error: Teacher does not exists"));
+                .andExpect(flash().attribute("errorMessage", "Error: Teacher with ID: 1 not found"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteTeacher_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
         mockMvc.perform(delete("/teachers/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers"))
