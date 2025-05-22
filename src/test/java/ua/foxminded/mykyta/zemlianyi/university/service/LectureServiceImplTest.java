@@ -24,6 +24,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.LectureNotFoundException;
 
 @SpringBootTest(classes = { LectureServiceImpl.class })
 class LectureServiceImplTest {
@@ -98,7 +99,7 @@ class LectureServiceImplTest {
     void update_shouldThrowIllegalArgumentException_whenLectureIsNotSavedInDb() {
         when(lectureDao.existsById(1L)).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(LectureNotFoundException.class, () -> {
             lectureService.update(lecture);
         });
     }

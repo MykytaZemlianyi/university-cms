@@ -43,7 +43,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     private Room mergeWithExisting(Room newRoom) {
-        ObjectChecker.checkNull(newRoom);
+        ObjectChecker.checkNullAndId(newRoom);
 
         Room existingRoom = getByIdOrThrow(newRoom.getId());
         if (!Objects.equals(existingRoom.getNumber(), newRoom.getNumber())) {

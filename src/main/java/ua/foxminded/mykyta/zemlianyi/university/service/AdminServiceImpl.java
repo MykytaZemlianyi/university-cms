@@ -29,7 +29,7 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
 
     @Override
     protected Admin mergeWithExisting(Admin newAdmin) {
-        ObjectChecker.checkNull(newAdmin);
+        ObjectChecker.checkNullAndId(newAdmin);
         Optional<Admin> existingAdminOpt = dao.findById(newAdmin.getId());
 
         if (existingAdminOpt.isPresent()) {

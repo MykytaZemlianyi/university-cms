@@ -97,7 +97,7 @@ public class LectureServiceImpl implements LectureService {
 
     @Override
     public LectureForm mapLectureToForm(Lecture lecture) {
-        ObjectChecker.checkNull(lecture);
+        ObjectChecker.checkNullAndId(lecture);
         LectureForm form = new LectureForm();
         form.setId(lecture.getId());
         form.setLectureType(lecture.getLectureType());

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.TeacherDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.TeacherNotFoundException;
 
 @SpringBootTest(classes = { TeacherServiceImpl.class })
 class TeacherServiceImplTest {
@@ -97,8 +99,8 @@ class TeacherServiceImplTest {
 
     @Test
     void update_shouldThrowIllegalArgumentException_whenTeacherDoesNotExistsInDb() {
-        doReturn(Optional.empty()).when(teacherDao).findById(teacher.getId());
-        assertThrows(IllegalArgumentException.class, () -> {
+        when(teacherDao.findById(teacher.getId())).thenReturn(Optional.empty());
+        assertThrows(TeacherNotFoundException.class, () -> {
             teacherService.update(teacher);
         });
     }

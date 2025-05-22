@@ -15,6 +15,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.RoomDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.RoomNotFoundException;
 
 @SpringBootTest(classes = { RoomServiceImpl.class })
 class RoomServiceImplTest {
@@ -51,7 +53,7 @@ class RoomServiceImplTest {
 
         doReturn(true).when(roomDao).existsByNumber(roomWithSameNumber.getNumber());
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(RoomDuplicateException.class, () -> {
             roomService.addNew(roomWithSameNumber);
         });
     }
@@ -90,7 +92,7 @@ class RoomServiceImplTest {
 
         when(roomDao.existsById(1L)).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(RoomNotFoundException.class, () -> {
             roomService.update(untrackedRoom);
         });
     }

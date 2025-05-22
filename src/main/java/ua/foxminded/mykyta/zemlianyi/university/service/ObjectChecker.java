@@ -19,8 +19,8 @@ public class ObjectChecker {
         }
     }
 
-    public static <T extends Verifiable> void checkNull(T object) {
-        if (object == null) {
+    public static <T extends Dto> void checkNullAndId(T object) {
+        if (object == null || object.getId() == null) {
             throw new IllegalArgumentException(Constants.OBJECT_NULL);
         }
     }

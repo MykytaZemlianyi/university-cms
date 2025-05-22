@@ -49,7 +49,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     private Course mergeWithExisting(Course newCourse) {
-        ObjectChecker.checkNull(newCourse);
+        ObjectChecker.checkNullAndId(newCourse);
         Optional<Course> existingCourseOpt = courseDao.findById(newCourse.getId());
 
         if (existingCourseOpt.isPresent()) {

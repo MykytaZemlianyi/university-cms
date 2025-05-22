@@ -62,7 +62,7 @@ public class GroupServiceImpl implements GroupService {
     }
 
     private Group mergeWithExisting(Group newGroup) {
-        ObjectChecker.checkNull(newGroup);
+        ObjectChecker.checkNullAndId(newGroup);
         Group existingGroup = getByIdOrThrow(newGroup.getId());
 
         existingGroup.setName(newGroup.getName());

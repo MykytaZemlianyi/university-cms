@@ -7,6 +7,6 @@ public class RoomDuplicateException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public RoomDuplicateException(Integer number) {
-        super(number + Constants.ROOM_ADD_NEW_ERROR_EXISTS_BY_NUMBER);
+        super(number + Constants.ROOM_DUPLICATE_BY_NUMBER);
     }
 }

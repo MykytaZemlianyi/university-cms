@@ -42,6 +42,7 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
 
     @Transactional
     public T update(T user) {
+        ObjectChecker.checkNullAndId(user);
         T mergedUser = mergeWithExisting(user);
         ObjectChecker.checkNullAndVerify(mergedUser);
         logger.info("Updating {} - {}", mergedUser.getClass().getSimpleName(), user);

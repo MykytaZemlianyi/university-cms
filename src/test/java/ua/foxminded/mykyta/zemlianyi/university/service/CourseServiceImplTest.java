@@ -21,6 +21,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.CourseDuplicateException;
 
 @SpringBootTest(classes = { CourseServiceImpl.class })
 class CourseServiceImplTest {
@@ -57,7 +58,7 @@ class CourseServiceImplTest {
 
         doReturn(true).when(courseDao).existsByName(courseWithSameName.getName());
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(CourseDuplicateException.class, () -> {
             courseService.addNew(courseWithSameName);
         });
     }

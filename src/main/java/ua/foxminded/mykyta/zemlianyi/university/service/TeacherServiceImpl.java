@@ -19,7 +19,7 @@ public class TeacherServiceImpl extends UserServiceImpl<Teacher> implements Teac
 
     @Override
     protected Teacher mergeWithExisting(Teacher newTeacher) {
-        ObjectChecker.checkNull(newTeacher);
+        ObjectChecker.checkNullAndId(newTeacher);
         Teacher existingTeacher = getByIdOrThrow(newTeacher.getId());
 
         existingTeacher.setName(newTeacher.getName());

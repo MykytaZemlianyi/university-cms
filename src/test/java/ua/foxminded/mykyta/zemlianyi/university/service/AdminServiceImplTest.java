@@ -96,7 +96,7 @@ class AdminServiceImplTest {
     @Test
     void update_shouldThrowIllegalArgumentException_whenAdminIsNotVerified() {
         Admin invalidAdmin = new Admin();
-        assertThrows(AdminNotFoundException.class, () -> {
+        assertThrows(IllegalArgumentException.class, () -> {
             adminService.update(invalidAdmin);
         });
     }

@@ -2,7 +2,6 @@ package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
@@ -18,7 +17,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +36,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
@@ -46,6 +43,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.LectureNotFoundException;
 import ua.foxminded.mykyta.zemlianyi.university.service.LectureService;
 
 @SpringBootTest
@@ -106,12 +104,12 @@ class LectureControllerTest {
 
         when(service.findAll(pageable)).thenReturn(lecturePage);
 
-        mockMvc.perform(get("/lectures").param("page", "0").param("size", "5")
-                .with(user("admin@gmail.com").roles("ADMIN"))).andExpect(status().isOk())
-                .andExpect(view().name("view-all-lectures")).andExpect(model().attributeExists("lectures"))
-                .andExpect(model().attributeExists("currentPage")).andExpect(model().attributeExists("totalPages"))
-                .andExpect(model().attribute("currentPage", 0)).andExpect(model().attribute("totalPages", 1))
-                .andExpect(model().attribute("lectures", lecturePage));
+        mockMvc.perform(
+                get("/lectures").param("page", "0").param("size", "5").with(user("admin@gmail.com").roles("ADMIN")))
+                .andExpect(status().isOk()).andExpect(view().name("view-all-lectures"))
+                .andExpect(model().attributeExists("lectures")).andExpect(model().attributeExists("currentPage"))
+                .andExpect(model().attributeExists("totalPages")).andExpect(model().attribute("currentPage", 0))
+                .andExpect(model().attribute("totalPages", 1)).andExpect(model().attribute("lectures", lecturePage));
     }
 
     @Test
@@ -162,8 +160,7 @@ class LectureControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showEditLectureForm_shouldReturnViewWithLecture_whenLectureExists() throws Exception {
-        Optional<Lecture> lectureOpt = Optional.of(lecture);
-        when(service.findById(1L)).thenReturn(lectureOpt);
+        when(service.getByIdOrThrow(1L)).thenReturn(lecture);
         when(service.mapLectureToForm(lecture)).thenReturn(form);
 
         mockMvc.perform(get("/lectures/edit/1")).andExpect(status().isOk()).andExpect(view().name("edit-lecture"))
@@ -174,12 +171,11 @@ class LectureControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showEditLectureForm_shouldRedirectWithError_whenServiceFails() throws Exception {
-        Optional<Lecture> emptyLectureOpt = Optional.empty();
-        when(service.findById(1L)).thenReturn(emptyLectureOpt);
+        when(service.getByIdOrThrow(1L)).thenThrow(new LectureNotFoundException(1L));
 
         mockMvc.perform(get("/lectures/edit/1")).andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/lectures"))
-                .andExpect(flash().attribute("errorMessage", "Error: " + Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST));
+                .andExpect(flash().attribute("errorMessage", "Error: Lecture with ID: 1 not found"));
 
     }
 
@@ -230,8 +226,7 @@ class LectureControllerTest {
     void deleteLecture_shouldRedirectWithSuccess_whenLectureExistsInDb() throws Exception {
         when(service.findById(1L)).thenReturn(Optional.of(lecture));
 
-        mockMvc.perform(
-                delete("/lectures/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        mockMvc.perform(delete("/lectures/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/lectures"))
                 .andExpect(flash().attribute("successMessage", "Lecture deleted successfully!"));
     }
@@ -239,21 +234,19 @@ class LectureControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteLecture_shouldRedirectWithError_whenLectureDoesNotExistsInDb() throws Exception {
-        when(service.findById(1L)).thenReturn(Optional.empty());
+        when(service.getByIdOrThrow(1L)).thenThrow(new LectureNotFoundException(1L));
 
-        mockMvc.perform(
-                delete("/lectures/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        mockMvc.perform(delete("/lectures/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/lectures"))
-                .andExpect(flash().attribute("errorMessage", "Error: Lecture does not exists"));
+                .andExpect(flash().attribute("errorMessage", "Error: Lecture with ID: 1 not found"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteLecture_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.findById(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
 
-        mockMvc.perform(
-                delete("/lectures/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
+        mockMvc.perform(delete("/lectures/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/lectures"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
     }

@@ -7,6 +7,6 @@ public class CourseDuplicateException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public CourseDuplicateException(String name) {
-        super(name + Constants.COURSE_ADD_NEW_ERROR_EXISTS_BY_NAME);
+        super(name + Constants.COURSE_DUPLICATE_BY_NAME);
     }
 }

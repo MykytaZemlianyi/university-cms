@@ -20,6 +20,8 @@ import ua.foxminded.mykyta.zemlianyi.university.dao.GroupDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.StudentDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.GroupDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.GroupNotFoundException;
 
 @SpringBootTest(classes = { GroupServiceImpl.class })
 class GroupServiceImplTest {
@@ -57,7 +59,7 @@ class GroupServiceImplTest {
         groupWithSameName.setName("AA-11");
 
         doReturn(true).when(groupDao).existsByName(groupWithSameName.getName());
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(GroupDuplicateException.class, () -> {
             groupService.addNew(groupWithSameName);
         });
     }
@@ -96,7 +98,7 @@ class GroupServiceImplTest {
 
         when(groupDao.existsById(1L)).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(GroupNotFoundException.class, () -> {
             groupService.update(untrackedGroup);
         });
     }

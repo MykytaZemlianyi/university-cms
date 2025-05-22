@@ -21,7 +21,7 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
 
     @Override
     protected Student mergeWithExisting(Student newStudent) {
-        ObjectChecker.checkNull(newStudent);
+        ObjectChecker.checkNullAndId(newStudent);
         Student existingStudent = getByIdOrThrow(newStudent.getId());
 
         existingStudent.setName(newStudent.getName());
