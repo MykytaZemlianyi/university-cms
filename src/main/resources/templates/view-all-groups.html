@@ -28,7 +28,7 @@
 
 		<div th:replace="~{fragments/group_fragments :: table(${groups})}"></div>
 
-		<div
+		<div th:with="paginationUrl='/groups/view-all?currentPage='"
 			th:insert="~{fragments/general_fragments :: table-pagination(${groups.size},${paginationUrl},${currentPage},${totalPages})}"></div>
 	</div>
 

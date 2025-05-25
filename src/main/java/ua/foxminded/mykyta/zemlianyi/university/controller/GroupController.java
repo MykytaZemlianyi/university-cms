@@ -55,12 +55,19 @@ public class GroupController {
 
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String showCreateGroupForm(Model model) {
-        List<Student> allStudents = studentService.findAll();
-        List<Course> allCourses = courseService.findAll();
+    public String showCreateGroupForm(@RequestParam(defaultValue = "0") Integer studentPage,
+            @RequestParam(defaultValue = "5") Integer studentPageSize,
+            @RequestParam(defaultValue = "0") Integer coursePage,
+            @RequestParam(defaultValue = "5") Integer coursePageSize, Model model) {
+
+        Pageable studentPageable = PageRequest.of(studentPage, studentPageSize);
+        Page<Student> studentPageObj = studentService.findAll(studentPageable);
+        model.addAttribute("studentPage", studentPageObj);
+
+        Pageable coursePageable = PageRequest.of(coursePage, coursePageSize);
+        Page<Course> coursePageObj = courseService.findAll(coursePageable);
         model.addAttribute("group", new Group());
-        model.addAttribute("studentList", allStudents);
-        model.addAttribute("courseList", allCourses);
+        model.addAttribute("coursePage", coursePageObj);
         return "add-new-group";
     }
 
