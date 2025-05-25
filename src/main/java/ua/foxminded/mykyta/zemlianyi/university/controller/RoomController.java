@@ -31,14 +31,14 @@ public class RoomController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String getRooms(@RequestParam(defaultValue = "0") Integer page,
+    public String getRooms(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(currentPage, size);
         Page<Room> rooms = roomService.findAll(pageable);
 
         model.addAttribute("rooms", rooms);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", rooms.hasContent() ? rooms.getTotalPages() : 1);
 
         return "view-all-rooms";

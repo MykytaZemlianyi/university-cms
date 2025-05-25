@@ -1,7 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
@@ -45,13 +43,13 @@ public class LectureController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String getLectures(@RequestParam(defaultValue = "0") Integer page,
+    public String getLectures(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(currentPage, size);
         Page<Lecture> lectures = lectureService.findAll(pageable);
 
         model.addAttribute("lectures", lectures);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", lectures.hasContent() ? lectures.getTotalPages() : 1);
 
         return "view-all-lectures";
@@ -119,10 +117,10 @@ public class LectureController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteLecture(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-            Lecture lecture = lectureService.getByIdOrThrow(id);
-                lectureService.delete(lecture);
-                redirectAttributes.addFlashAttribute("successMessage", "Lecture deleted successfully!");
-          
+        Lecture lecture = lectureService.getByIdOrThrow(id);
+        lectureService.delete(lecture);
+        redirectAttributes.addFlashAttribute("successMessage", "Lecture deleted successfully!");
+
         return "redirect:/lectures";
     }
 }

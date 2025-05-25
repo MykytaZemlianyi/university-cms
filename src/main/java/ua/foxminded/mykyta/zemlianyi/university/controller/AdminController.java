@@ -31,14 +31,14 @@ public class AdminController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String getAdmins(@RequestParam(defaultValue = "0") Integer page,
+    public String getAdmins(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(currentPage, size);
         Page<Admin> admins = adminService.findAll(pageable);
 
         model.addAttribute("admins", admins);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", admins.hasContent() ? admins.getTotalPages() : 1);
 
         return "view-all-admins";

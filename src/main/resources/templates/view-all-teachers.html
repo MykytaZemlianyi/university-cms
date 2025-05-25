@@ -28,7 +28,7 @@
 
 		<div th:replace="~{fragments/teacher_fragments :: table(${teachers})}"></div>
 
-		<div
+		<div th:with="paginationUrl='/teachers?currentPage='"
 			th:insert="~{fragments/general_fragments :: table-pagination(${teachers.size},${paginationUrl},${currentPage},${totalPages})}"></div>
 	</div>
 

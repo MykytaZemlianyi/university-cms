@@ -41,13 +41,13 @@ public class GroupController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String getGroups(@RequestParam(defaultValue = "0") Integer page,
+    public String getGroups(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(currentPage, size);
         Page<Group> groups = groupService.findAll(pageable);
 
         model.addAttribute("groups", groups);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", groups.getTotalPages());
 
         return "view-all-groups";

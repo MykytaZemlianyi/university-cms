@@ -1,7 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
-import ua.foxminded.mykyta.zemlianyi.university.dto.*;
-import ua.foxminded.mykyta.zemlianyi.university.service.*;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.service.CourseService;
+import ua.foxminded.mykyta.zemlianyi.university.service.TeacherService;
 
 @Controller
 @RequestMapping("/teachers")
@@ -37,14 +37,15 @@ public class TeacherController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String getTeachers(@RequestParam(defaultValue = "0") Integer page,
+    public String getTeachers(
+            @RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(currentPage, size);
         Page<Teacher> teachers = teacherService.findAll(pageable);
 
         model.addAttribute("teachers", teachers);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", teachers.hasContent() ? teachers.getTotalPages() : 1);
 
         return "view-all-teachers";

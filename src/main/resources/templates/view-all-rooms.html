@@ -26,7 +26,7 @@
 			th:insert="~{fragments/button_fragments :: create(link='/rooms/add')}"></div>
 
 		<div th:replace="~{fragments/room_fragments :: table(${rooms})}"></div>
-		<div
+		<div th:with="paginationUrl='/rooms?currentPage='"
 			th:insert="~{fragments/general_fragments :: table-pagination(${rooms.size},${paginationUrl},${currentPage},${totalPages})}"></div>
 
 	</div>
