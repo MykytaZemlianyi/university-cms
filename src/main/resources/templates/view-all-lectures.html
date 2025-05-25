@@ -26,8 +26,7 @@
 			th:insert="~{fragments/button_fragments :: create(link='/lectures/add')}"></div>
 
 		<div th:replace="~{fragments/lecture_fragments :: table(${lectures})}"></div>
-		<div
-			th:with="paginationUrl='/lectures?currentPage='"
+		<div th:with="paginationUrl='/lectures?currentPage='"
 			th:insert="~{fragments/general_fragments :: table-pagination(${lectures.size},${paginationUrl},${currentPage},${totalPages})}"></div>
 	</div>
 	<script
