@@ -51,3 +51,15 @@
 		</div>
 	</div>
 </div>
+
+<div th:fragment="courseSelectCheckboxList">
+	<label class="form-label">Courses</label>
+	<div class="form-control" style="max-height: 200px; overflow-y: auto;">
+		<div th:each="course : ${coursePage.content}" class="form-check">
+			<input class="form-check-input" type="checkbox"
+				th:id="'course_' + ${course.id}" th:field="*{courses}"
+				th:value="${course.id}" /> <label class="form-check-label"
+				th:for="'course_' + ${course.id}" th:text="${course.name}"></label>
+		</div>
+	</div>
+</div>

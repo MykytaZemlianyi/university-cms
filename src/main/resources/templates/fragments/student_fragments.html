@@ -91,4 +91,7 @@
 				th:text="${student.name + ' ' + student.surname}"></label>
 		</div>
 	</div>
+	<div
+		th:replace="~{fragments/general_fragments :: js-students-multi-select-pagination(
+        ${studentPage.content}, ${studentPage.number}, ${studentPage.totalPages})}"></div>
 </div>
