@@ -123,4 +123,15 @@ public class GroupController {
         return "redirect:/groups";
     }
 
+    @GetMapping("/studentSelectCheckboxList")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public String getStudentSelectCheckboxList(@RequestParam(defaultValue = "0") Integer currentPage,
+            @RequestParam(defaultValue = "5") Integer size, Model model) {
+        Pageable pageable = PageRequest.of(currentPage, size);
+        Page<Student> studentPage = studentService.findAll(pageable);
+        model.addAttribute("studentPage", studentPage);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", studentPage.getTotalPages());
+        return "fragments/student_fragments :: studentSelectCheckboxList";
+    }
 }

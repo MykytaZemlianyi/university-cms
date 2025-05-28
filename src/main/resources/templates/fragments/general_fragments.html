@@ -29,6 +29,7 @@
 		</li>
 	</ul>
 </nav>
+
 <nav
 	th:fragment="js-students-multi-select-pagination(objectsPool, currentPage, totalPages)"
 	aria-label="Page navigation">
@@ -36,19 +37,20 @@
 		<li class="page-item"
 			th:classappend="${currentPage == 0} ? 'disabled'"><a
 			class="page-link"
-			th:onclick="loadStudents(' + ${currentPage-1} + '); return false;"
+			th:attr="onclick=|storeChecked('students'); loadStudents(${currentPage - 1}); return false;|"
 			aria-label="Previous"> <span aria-hidden="true">«</span>
 		</a></li>
 		<li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
 			class="page-item" th:classappend="${i == currentPage} ? 'active'">
 			<a class="page-link"
-			th:onclick="'loadStudents(' + ${i} + '); return false;'"
+			th:attr="onclick=|storeChecked('students'); loadStudents(${i}); return false;|"
 			th:text="${i + 1}"></a>
+
 		</li>
 		<li class="page-item"
 			th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
 			<a class="page-link"
-			th:onclick="loadStudents(' + ${currentPage+1} + '); return false;"
+			th:attr="onclick=|storeChecked('students'); loadStudents(${currentPage + 1}); return false;|"
 			aria-label="Next"> <span aria-hidden="true">»</span>
 		</a>
 		</li>
