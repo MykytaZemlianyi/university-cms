@@ -80,6 +80,7 @@
 </div>
 
 <div th:fragment="studentSelectCheckboxList">
+	<label class="form-label">Students</label>
 	<div class="form-control mb-3"
 		style="max-height: 200px; overflow-y: auto;">
 		<div th:each="student : ${studentPage.content}" class="form-check">
