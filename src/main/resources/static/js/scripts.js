@@ -16,7 +16,6 @@ function loadCourses(page) {
         });
 }
 
-// Store checked values before AJAX update and restore after
 let checkedStudents = new Set();
 let checkedCourses = new Set();
 

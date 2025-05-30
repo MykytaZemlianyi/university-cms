@@ -66,8 +66,10 @@ public class GroupController {
 
         Pageable coursePageable = PageRequest.of(coursePage, coursePageSize);
         Page<Course> coursePageObj = courseService.findAll(coursePageable);
-        model.addAttribute("group", new Group());
         model.addAttribute("coursePage", coursePageObj);
+
+        model.addAttribute("group", new Group());
+
         return "add-new-group";
     }
 
