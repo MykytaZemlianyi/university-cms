@@ -81,7 +81,6 @@ public class GroupController {
         if (bindingResult.hasErrors()) {
             return "add-new-group";
         }
-
         groupService.addNew(group);
         redirectAttributes.addFlashAttribute("successMessage", "Group added successfully!");
 
