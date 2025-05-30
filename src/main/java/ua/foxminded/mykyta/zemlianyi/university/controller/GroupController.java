@@ -125,15 +125,19 @@ public class GroupController {
         return "redirect:/groups";
     }
 
-    @GetMapping("/studentSelectCheckboxList")
+    @PostMapping("/studentSelectCheckboxList")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String getStudentSelectCheckboxList(@RequestParam(defaultValue = "0") Integer currentPage,
-            @RequestParam(defaultValue = "5") Integer size, Model model) {
+    public String getStudentSelectCheckboxList(@ModelAttribute Group group,
+            @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
+            Model model) {
         Pageable pageable = PageRequest.of(currentPage, size);
         Page<Student> studentPage = studentService.findAll(pageable);
         model.addAttribute("studentPage", studentPage);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", studentPage.getTotalPages());
+
+        model.addAttribute("group", group);
+
         return "fragments/student_fragments :: studentSelectCheckboxList";
     }
 }
