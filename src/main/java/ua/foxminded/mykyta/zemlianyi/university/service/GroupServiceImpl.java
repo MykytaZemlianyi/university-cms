@@ -77,7 +77,7 @@ public class GroupServiceImpl implements GroupService {
         Group existingGroup = getByIdOrThrow(newGroup.getId());
 
         existingGroup.setName(newGroup.getName());
-        existingGroup.setStudents(newGroup.getStudents());
+        existingGroup.assignStudents(newGroup.getStudents());
         existingGroup.setCourses(newGroup.getCourses());
 
         return existingGroup;
