@@ -66,16 +66,7 @@ public class Group implements Verifiable, Dto {
     }
 
     public void setStudents(Set<Student> newStudents) {
-        if (newStudents != null) {
-
-            clearStudents();
-
-            for (Student student : newStudents) {
-                student.setGroup(this);
-            }
-
-            this.students = newStudents;
-        }
+        this.students = newStudents;
     }
 
     public void addStudent(Student student) {

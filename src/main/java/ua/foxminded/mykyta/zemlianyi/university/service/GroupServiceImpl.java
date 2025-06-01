@@ -1,6 +1,5 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,21 +34,33 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public Group addNew(Group group) {
+        Set<Student> students = group.getStudents();
+        Group savedGroup = saveGroupWithoutStudents(group);
+
+        updateStudentsReferences(savedGroup, students);
+        return savedGroup;
+    }
+
+    private void updateStudentsReferences(Group savedGroup, Set<Student> students) {
+        for (Student student : students) {
+            if (student.getId() == null) {
+                throw new IllegalArgumentException("Student ID cannot be null");
+            }
+            Student managedStudent = studentDao.getReferenceById(student.getId());
+            managedStudent.setGroup(savedGroup);
+            savedGroup.getStudents().add(managedStudent);
+        }
+
+    }
+
+    private Group saveGroupWithoutStudents(Group group) {
         ObjectChecker.checkNullAndVerify(group);
         if (groupDao.existsByName(group.getName())) {
             throw new GroupDuplicateException(group.getName());
         }
-        logger.info("Adding new group - {}", group);
-        getStudentsReferencesBeforeSave(group);
+        group.clearStudents();
+        logger.info("Adding new group without students - {}", group);
         return groupDao.save(group);
-    }
-
-    private void getStudentsReferencesBeforeSave(Group group) {
-        Set<Student> managedStudents = new HashSet<>();
-        for (Student student : group.getStudents()) {
-            managedStudents.add(studentDao.getReferenceById(student.getId()));
-        }
-        group.setStudents(managedStudents);
     }
 
     @Override
