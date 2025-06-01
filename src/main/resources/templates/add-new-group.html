@@ -31,11 +31,13 @@
 					th:errorclass="error" th:errors="*{name}" />
 			</div>
 			<div id="students-list" class="mb-3">
-				<div 
+				<div
 					th:replace="~{fragments/student_fragments :: studentSelectCheckboxList}"></div>
 			</div>
 
 			<div class="mb-3">
+				<div id="selectedStudentsHiddenInputs" th:object="${group}"></div>
+
 				<div id="courses-list" class="mb-3">
 					<div
 						th:replace="~{fragments/course_fragments :: courseSelectCheckboxList}"></div>

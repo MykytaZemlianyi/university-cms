@@ -1,6 +1,8 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -60,14 +62,7 @@ public class GroupController {
             @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer coursePageSize, Model model) {
 
-        Pageable studentPageable = PageRequest.of(studentPage, studentPageSize);
-        Page<Student> studentPageObj = studentService.findAll(studentPageable);
-        model.addAttribute("studentPage", studentPageObj);
-
-        Pageable coursePageable = PageRequest.of(coursePage, coursePageSize);
-        Page<Course> coursePageObj = courseService.findAll(coursePageable);
-        model.addAttribute("coursePage", coursePageObj);
-
+        prepareGroupFormModel(model, studentPage, studentPageSize, coursePage, coursePageSize);
         model.addAttribute("group", new Group());
 
         return "add-new-group";
@@ -76,9 +71,14 @@ public class GroupController {
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createGroup(@Valid @ModelAttribute Group group, BindingResult bindingResult,
+            @RequestParam(defaultValue = "0") Integer studentPage,
+            @RequestParam(defaultValue = "5") Integer studentPageSize,
+            @RequestParam(defaultValue = "0") Integer coursePage,
+            @RequestParam(defaultValue = "5") Integer coursePageSize, Model model,
             RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
+            prepareGroupFormModel(model, studentPage, studentPageSize, coursePage, coursePageSize);
             return "add-new-group";
         }
         groupService.addNew(group);
@@ -113,6 +113,20 @@ public class GroupController {
         return "redirect:/groups";
     }
 
+    private void prepareGroupFormModel(Model model, Integer studentPage, Integer studentPageSize, Integer coursePage,
+            int coursePageSize) {
+        model.addAttribute("selectedStudentIds", Collections.emptySet());
+
+        Pageable studentPageable = PageRequest.of(studentPage, studentPageSize);
+        Page<Student> studentPageObj = studentService.findAll(studentPageable);
+        model.addAttribute("studentPage", studentPageObj);
+
+        Pageable coursePageable = PageRequest.of(coursePage, coursePageSize);
+        Page<Course> coursePageObj = courseService.findAll(coursePageable);
+        model.addAttribute("coursePage", coursePageObj);
+
+    }
+
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteGroup(@PathVariable Long id, RedirectAttributes redirectAttributes) {
@@ -128,15 +142,22 @@ public class GroupController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getStudentSelectCheckboxList(@ModelAttribute Group group,
             @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
-            Model model) {
+            @RequestParam(required = false) Set<Long> selectedStudentIds, Model model) {
+
+        if (selectedStudentIds == null) {
+            selectedStudentIds = Collections.emptySet();
+        }
+
         Pageable pageable = PageRequest.of(currentPage, size);
         Page<Student> studentPage = studentService.findAll(pageable);
+
         model.addAttribute("studentPage", studentPage);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", studentPage.getTotalPages());
-
+        model.addAttribute("selectedStudentIds", selectedStudentIds);
         model.addAttribute("group", group);
 
         return "fragments/student_fragments :: studentSelectCheckboxList";
     }
+
 }
