@@ -116,6 +116,7 @@ public class GroupController {
     private void prepareGroupFormModel(Model model, Integer studentPage, Integer studentPageSize, Integer coursePage,
             int coursePageSize) {
         model.addAttribute("selectedStudentIds", Collections.emptySet());
+        model.addAttribute("selectedCourseIds", Collections.emptySet());
 
         Pageable studentPageable = PageRequest.of(studentPage, studentPageSize);
         Page<Student> studentPageObj = studentService.findAll(studentPageable);
@@ -158,6 +159,28 @@ public class GroupController {
         model.addAttribute("group", group);
 
         return "fragments/student_fragments :: studentSelectCheckboxList";
+    }
+
+    @PostMapping("/courseSelectCheckboxList")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public String getCourseSelectCheckboxList(@ModelAttribute Group group,
+            @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
+            @RequestParam(required = false) Set<Long> selectedCourseIds, Model model) {
+
+        if (selectedCourseIds == null) {
+            selectedCourseIds = Collections.emptySet();
+        }
+
+        Pageable pageable = PageRequest.of(currentPage, size);
+        Page<Course> coursePage = courseService.findAll(pageable);
+
+        model.addAttribute("coursePage", coursePage);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", coursePage.getTotalPages());
+        model.addAttribute("selectedCourseIds", selectedCourseIds);
+        model.addAttribute("group", group);
+
+        return "fragments/course_fragments :: courseSelectCheckboxList";
     }
 
 }
