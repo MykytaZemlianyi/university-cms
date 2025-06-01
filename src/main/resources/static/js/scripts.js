@@ -28,6 +28,7 @@ document.getElementById('groupForm').addEventListener('submit', function() {
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = 'students';
+        input.setAttribute('th:field', '*{students}');
         input.value = id;
         studentContainer.appendChild(input);
     });
@@ -38,6 +39,7 @@ document.getElementById('groupForm').addEventListener('submit', function() {
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = 'courses';
+        input.setAttribute('th:field', '*{courses}');
         input.value = id;
         courseContainer.appendChild(input);
     });
