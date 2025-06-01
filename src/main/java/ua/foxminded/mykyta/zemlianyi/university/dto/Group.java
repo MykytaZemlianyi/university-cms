@@ -82,9 +82,6 @@ public class Group implements Verifiable, Dto {
     }
 
     public void clearStudents() {
-        for (Student student : new HashSet<>(students)) {
-            student.setGroup(null);
-        }
         this.students = new HashSet<>();
     }
 
