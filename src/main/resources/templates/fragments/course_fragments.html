@@ -52,22 +52,24 @@
 	</div>
 </div>
 
-<div th:fragment="courseSelectCheckboxList">
+<div
+	th:fragment="courseSelectCheckboxList (coursePage, selectedCourses)">
 	<label class="form-label">Courses</label>
 	<div class="form-control mb-3"
 		style="max-height: 200px; overflow-y: auto;">
 		<div th:each="course : ${coursePage.content}" class="form-check">
 			<input class="form-check-input" type="checkbox" name="courses"
 				th:id="'course_' + ${course.id}" th:value="${course.id}"
-				th:checked="${#lists.contains(group.courses, course)}" /> <label
-				class="form-check-label" th:for="'course_' + ${course.id}"
+				th:checked="${selectedCourseIds != null and selectedCourseIds.contains(course.id)}" />
+			<label class="form-check-label" th:for="'course_' + ${course.id}"
 				th:text="${course.name}"></label>
 		</div>
 	</div>
 	<div class="d-flex justify-content-center mb-3"
 		th:insert="~{fragments/course_fragments :: js-courses-multi-select-pagination(
-        ${coursePage.content}, ${coursePage.number}, ${coursePage.totalPages})}"></div>
+         ${coursePage.content}, ${coursePage.number}, ${coursePage.totalPages})}"></div>
 </div>
+
 
 <nav
 	th:fragment="js-courses-multi-select-pagination(objectsPool, currentPage, totalPages)"

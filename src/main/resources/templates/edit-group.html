@@ -48,7 +48,10 @@
 			</div>
 			<div id="courses-list" class="mb-3">
 				<div
-					th:insert="~{fragments/course_fragments :: courseSelectCheckboxList}"></div>
+					th:insert="~{fragments/course_fragments :: courseSelectCheckboxList(
+                    coursePage=${coursePage}, 
+                    selectedCourses=${group.courses})}">
+				</div>
 			</div>
 
 			<div class="d-flex flex-row-reverse mb-3 ">
