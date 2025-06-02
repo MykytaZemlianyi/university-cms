@@ -43,13 +43,13 @@ public class LectureController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String getLectures(@RequestParam(defaultValue = "0") Integer page,
+    public String getLectures(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(currentPage, size);
         Page<Lecture> lectures = lectureService.findAll(pageable);
 
         model.addAttribute("lectures", lectures);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", lectures.hasContent() ? lectures.getTotalPages() : 1);
 
         return "view-all-lectures";

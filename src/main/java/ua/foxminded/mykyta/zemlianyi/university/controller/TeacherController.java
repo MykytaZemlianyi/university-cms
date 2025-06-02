@@ -1,7 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
-import ua.foxminded.mykyta.zemlianyi.university.dto.*;
-import ua.foxminded.mykyta.zemlianyi.university.service.*;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.service.CourseService;
+import ua.foxminded.mykyta.zemlianyi.university.service.TeacherService;
 
 @Controller
 @RequestMapping("/teachers")
@@ -37,14 +38,14 @@ public class TeacherController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String getTeachers(@RequestParam(defaultValue = "0") Integer page,
+    public String getTeachers(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(currentPage, size);
         Page<Teacher> teachers = teacherService.findAll(pageable);
 
         model.addAttribute("teachers", teachers);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", teachers.hasContent() ? teachers.getTotalPages() : 1);
 
         return "view-all-teachers";
@@ -52,22 +53,24 @@ public class TeacherController {
 
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String showCreateStudentForm(Model model) {
-        List<Course> allCourses = courseService.findAll();
+    public String showCreateTeacherForm(Model model, @RequestParam(defaultValue = "0") Integer coursePage,
+            @RequestParam(defaultValue = "5") Integer coursePageSize) {
+        prepareTeacherFormModel(model, coursePage, coursePageSize);
         model.addAttribute("teacher", new Teacher());
-        model.addAttribute("courseList", allCourses);
         return "add-new-teacher";
     }
 
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String createTeacher(@Valid @ModelAttribute Teacher teacher, BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+    public String createTeacher(@Valid @ModelAttribute Teacher teacher, Model model, BindingResult bindingResult,
+            RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer coursePage,
+            @RequestParam(defaultValue = "5") Integer coursePageSize) {
 
         if (bindingResult.hasErrors()) {
+            prepareTeacherFormModel(model, coursePage, coursePageSize);
             return "add-new-teacher";
         }
-
+        addSelectedIdsToModel(model);
         teacherService.addNew(teacher);
         redirectAttributes.addFlashAttribute("successMessage", "Teacher added successfully!");
 
@@ -76,26 +79,45 @@ public class TeacherController {
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String showEditTeacherForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String showEditTeacherForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes,
+            @RequestParam(defaultValue = "0") Integer coursePage,
+            @RequestParam(defaultValue = "5") Integer coursePageSize) {
+
         Teacher teacher = teacherService.getByIdOrThrow(id);
-        List<Course> allCourses = courseService.findAll();
         model.addAttribute("teacher", teacher);
-        model.addAttribute("courseList", allCourses);
+
+        prepareTeacherFormModel(model, coursePage, coursePageSize);
         return "edit-teacher";
     }
 
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateTeacher(@PathVariable Long id, @Valid @ModelAttribute("teacher") Teacher updatedTeacher,
-            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model,
+            @RequestParam(defaultValue = "0") Integer coursePage,
+            @RequestParam(defaultValue = "5") Integer coursePageSize) {
 
         if (bindingResult.hasErrors()) {
+            prepareTeacherFormModel(model, coursePage, coursePageSize);
             return "edit-teacher";
         }
-
+        addSelectedIdsToModel(model);
         teacherService.update(updatedTeacher);
         redirectAttributes.addFlashAttribute("successMessage", "Teacher updated successfully!");
         return "redirect:/teachers";
+    }
+
+    private void prepareTeacherFormModel(Model model, @RequestParam(defaultValue = "0") Integer coursePage,
+            @RequestParam(defaultValue = "5") Integer coursePageSize) {
+        addSelectedIdsToModel(model);
+
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<Course> coursePageObj = courseService.findAll(pageable);
+        model.addAttribute("coursePage", coursePageObj);
+    }
+
+    private void addSelectedIdsToModel(Model model) {
+        model.addAttribute("selectedCourseIds", Collections.emptySet());
     }
 
     @DeleteMapping("/delete/{id}")

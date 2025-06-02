@@ -35,14 +35,14 @@ public class CourseController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String getCourses(@RequestParam(defaultValue = "0") Integer page,
+    public String getCourses(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(currentPage, size);
         Page<Course> courses = courseService.findAll(pageable);
 
         model.addAttribute("courses", courses);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", courses.hasContent() ? courses.getTotalPages() : 1);
 
         return "view-all-courses";

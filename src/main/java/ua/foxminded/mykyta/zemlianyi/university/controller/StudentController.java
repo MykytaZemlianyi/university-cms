@@ -37,14 +37,14 @@ public class StudentController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String getStudents(@RequestParam(defaultValue = "0") Integer page,
+    public String getStudents(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(currentPage, size);
         Page<Student> students = studentService.findAll(pageable);
 
         model.addAttribute("students", students);
-        model.addAttribute("currentPage", page);
+        model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", students.hasContent() ? students.getTotalPages() : 1);
 
         return "view-all-students";

@@ -89,8 +89,8 @@ class GroupControllerTest {
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showCreateGroupForm_shouldReturnModelWithNewGroup() throws Exception {
         mockMvc.perform(get("/groups/add")).andExpect(status().isOk()).andExpect(view().name("add-new-group"))
-                .andExpect(model().attributeExists("group")).andExpect(model().attributeExists("studentList"))
-                .andExpect(model().attributeExists("courseList"));
+                .andExpect(model().attributeExists("group")).andExpect(model().attributeExists("studentPage"))
+                .andExpect(model().attributeExists("coursePage"));
     }
 
     @Test
