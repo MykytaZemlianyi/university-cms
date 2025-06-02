@@ -1,7 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -70,12 +69,11 @@ public class GroupController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String createGroup(@Valid @ModelAttribute Group group, BindingResult bindingResult,
-            @RequestParam(defaultValue = "0") Integer studentPage,
+    public String createGroup(@Valid @ModelAttribute Group group, BindingResult bindingResult, Model model,
+            RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer studentPage,
             @RequestParam(defaultValue = "5") Integer studentPageSize,
             @RequestParam(defaultValue = "0") Integer coursePage,
-            @RequestParam(defaultValue = "5") Integer coursePageSize, Model model,
-            RedirectAttributes redirectAttributes) {
+            @RequestParam(defaultValue = "5") Integer coursePageSize) {
 
         if (bindingResult.hasErrors()) {
             prepareGroupFormModel(model, studentPage, studentPageSize, coursePage, coursePageSize);
@@ -89,22 +87,30 @@ public class GroupController {
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String showEditGroupForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String showEditGroupForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes,
+            @RequestParam(defaultValue = "0") Integer studentPage,
+            @RequestParam(defaultValue = "5") Integer studentPageSize,
+            @RequestParam(defaultValue = "0") Integer coursePage,
+            @RequestParam(defaultValue = "5") Integer coursePageSize) {
+
         Group group = groupService.getByIdOrThrow(id);
-        List<Student> allStudents = studentService.findAll();
-        List<Course> allCourses = courseService.findAll();
         model.addAttribute("group", group);
-        model.addAttribute("studentList", allStudents);
-        model.addAttribute("courseList", allCourses);
+
+        prepareGroupFormModel(model, studentPage, studentPageSize, coursePage, coursePageSize);
         return "edit-group";
     }
 
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateGroup(@PathVariable Long id, @Valid @ModelAttribute("group") Group updatedGroup,
-            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-
+            BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model,
+            @RequestParam(defaultValue = "0") Integer studentPage,
+            @RequestParam(defaultValue = "5") Integer studentPageSize,
+            @RequestParam(defaultValue = "0") Integer coursePage,
+            @RequestParam(defaultValue = "5") Integer coursePageSize) {
+        addSelectedIdsToModel(model);
         if (bindingResult.hasErrors()) {
+            prepareGroupFormModel(model, studentPage, studentPageSize, coursePage, coursePageSize);
             return "edit-group";
         }
 
@@ -115,8 +121,7 @@ public class GroupController {
 
     private void prepareGroupFormModel(Model model, Integer studentPage, Integer studentPageSize, Integer coursePage,
             int coursePageSize) {
-        model.addAttribute("selectedStudentIds", Collections.emptySet());
-        model.addAttribute("selectedCourseIds", Collections.emptySet());
+        addSelectedIdsToModel(model);
 
         Pageable studentPageable = PageRequest.of(studentPage, studentPageSize);
         Page<Student> studentPageObj = studentService.findAll(studentPageable);
@@ -126,6 +131,11 @@ public class GroupController {
         Page<Course> coursePageObj = courseService.findAll(coursePageable);
         model.addAttribute("coursePage", coursePageObj);
 
+    }
+
+    private void addSelectedIdsToModel(Model model) {
+        model.addAttribute("selectedStudentIds", Collections.emptySet());
+        model.addAttribute("selectedCourseIds", Collections.emptySet());
     }
 
     @DeleteMapping("/delete/{id}")

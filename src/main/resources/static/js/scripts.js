@@ -1,6 +1,14 @@
 const selectedStudentIds = new Set();
 const selectedCourseIds = new Set();
 
+document.querySelectorAll('#selectedStudentsHiddenInputs input[name="students"]').forEach(input => {
+    selectedStudentIds.add(input.value);
+});
+document.querySelectorAll('#selectedCoursesHiddenInputs input[name="courses"]').forEach(input => {
+    selectedCourseIds.add(input.value);
+});
+
+
 document.addEventListener('change', function(e) {
     if (e.target.name === 'students') {
         const id = e.target.value;
@@ -21,34 +29,37 @@ document.addEventListener('change', function(e) {
 });
 
 document.getElementById('groupForm').addEventListener('submit', function() {
-    // Clear previous hidden inputs for students
+    updateSelectedStudentHiddenInputs();
+    console.log('Students to submit:', Array.from(selectedStudentIds));
+    updateSelectedCourseHiddenInputs();
+    console.log('Courses to submit:', Array.from(selectedCourseIds));
+});
+
+function saveCurrentlyCheckedStudents() {
+    document.querySelectorAll('input[name="students"]:checked').forEach(cb => {
+        selectedStudentIds.add(cb.value);
+    });
+}
+
+function updateSelectedStudentHiddenInputs() {
     const studentContainer = document.getElementById('selectedStudentsHiddenInputs');
+    if (!studentContainer) {
+        console.error('Element with id "selectedStudentsHiddenInputs" not found');
+        return;
+    }
     studentContainer.innerHTML = '';
     selectedStudentIds.forEach(id => {
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = 'students';
-        input.setAttribute('th:field', '*{students}');
         input.value = id;
         studentContainer.appendChild(input);
     });
-    // Clear previous hidden inputs for courses
-    const courseContainer = document.getElementById('selectedCoursesHiddenInputs');
-    courseContainer.innerHTML = '';
-    selectedCourseIds.forEach(id => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'courses';
-        input.setAttribute('th:field', '*{courses}');
-        input.value = id;
-        courseContainer.appendChild(input);
-    });
-
-    console.log('Students to submit:', Array.from(selectedStudentIds));
-    console.log('Courses to submit:', Array.from(selectedCourseIds));
-});
+}
 
 function loadStudents(page, size = 5) {
+    saveCurrentlyCheckedStudents();
+
     const form = document.getElementById('groupForm');
     const formData = new FormData(form);
 
@@ -69,19 +80,42 @@ function loadStudents(page, size = 5) {
         .then(html => {
             document.getElementById('students-list').innerHTML = html;
 
-
-            document.querySelectorAll(`input[name="students"]`).forEach(cb => {
-                if (selectedStudentIds.has(cb.value)) {
-                    cb.checked = true;
-                }
+            document.querySelectorAll('input[name="students"]').forEach(cb => {
+                cb.checked = selectedStudentIds.has(cb.value);
             });
+
+            updateSelectedStudentHiddenInputs();
         })
         .catch(error => {
             console.error('Error loading students:', error);
         });
 }
 
+function saveCurrentlyCheckedCourses() {
+    document.querySelectorAll('input[name="courses"]:checked').forEach(cb => {
+        selectedCourseIds.add(cb.value);
+    });
+}
+
+function updateSelectedCourseHiddenInputs() {
+    const courseContainer = document.getElementById('selectedCoursesHiddenInputs');
+    if (!courseContainer) {
+        console.error('Element with id "selectedCoursesHiddenInputs" not found');
+        return;
+    }
+    courseContainer.innerHTML = '';
+    selectedCourseIds.forEach(id => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'courses';
+        input.value = id;
+        courseContainer.appendChild(input);
+    });
+}
+
 function loadCourses(page, size = 5) {
+    saveCurrentlyCheckedCourses();
+
     const form = document.getElementById('groupForm');
     const formData = new FormData(form);
 
@@ -102,13 +136,14 @@ function loadCourses(page, size = 5) {
         .then(html => {
             document.getElementById('courses-list').innerHTML = html;
 
-            document.querySelectorAll(`input[name="courses"]`).forEach(cb => {
-                if (selectedCourseIds.has(cb.value)) {
-                    cb.checked = true;
-                }
+            document.querySelectorAll('input[name="courses"]').forEach(cb => {
+                cb.checked = selectedCourseIds.has(cb.value);
             });
+
+            updateSelectedCourseHiddenInputs();
         })
         .catch(error => {
             console.error('Error loading courses:', error);
         });
 }
+

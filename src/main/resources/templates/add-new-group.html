@@ -34,13 +34,13 @@
 			<div id="selectedStudentsHiddenInputs" th:object="${group}"></div>
 			<div id="students-list" class="mb-3">
 				<div
-					th:replace="~{fragments/student_fragments :: studentSelectCheckboxList}"></div>
+					th:insert="~{fragments/student_fragments :: studentSelectCheckboxList}"></div>
 			</div>
 
-				<div id="selectedCoursesHiddenInputs" th:object="${group}"></div>
+			<div id="selectedCoursesHiddenInputs" th:object="${group}"></div>
 			<div id="courses-list" class="mb-3">
 				<div
-					th:replace="~{fragments/course_fragments :: courseSelectCheckboxList}"></div>
+					th:insert="~{fragments/course_fragments :: courseSelectCheckboxList}"></div>
 			</div>
 
 			<div class="d-flex flex-row-reverse mb-3 ">

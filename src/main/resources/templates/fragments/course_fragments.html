@@ -59,7 +59,7 @@
 		<div th:each="course : ${coursePage.content}" class="form-check">
 			<input class="form-check-input" type="checkbox" name="courses"
 				th:id="'course_' + ${course.id}" th:value="${course.id}"
-				th:checked="${selectedCourseIds.contains(course.id)}" /> <label
+				th:checked="${#lists.contains(group.courses, course)}" /> <label
 				class="form-check-label" th:for="'course_' + ${course.id}"
 				th:text="${course.name}"></label>
 		</div>
