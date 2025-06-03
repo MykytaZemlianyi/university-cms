@@ -148,49 +148,4 @@ public class GroupController {
 
         return "redirect:/groups";
     }
-
-    @PostMapping("/studentSelectCheckboxList")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String getStudentSelectCheckboxList(@ModelAttribute Group group,
-            @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
-            @RequestParam(required = false) Set<Long> selectedStudentIds, Model model) {
-
-        if (selectedStudentIds == null) {
-            selectedStudentIds = Collections.emptySet();
-        }
-
-        Pageable pageable = PageRequest.of(currentPage, size);
-        Page<Student> studentPage = studentService.findAll(pageable);
-
-        model.addAttribute("studentPage", studentPage);
-        model.addAttribute("currentPage", currentPage);
-        model.addAttribute("totalPages", studentPage.getTotalPages());
-        model.addAttribute("selectedStudentIds", selectedStudentIds);
-        model.addAttribute("group", group);
-
-        return "fragments/student_fragments :: studentSelectCheckboxList";
-    }
-
-    @PostMapping("/courseSelectCheckboxList")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String getCourseSelectCheckboxList(@ModelAttribute Group group,
-            @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
-            @RequestParam(required = false) Set<Long> selectedCourseIds, Model model) {
-
-        if (selectedCourseIds == null) {
-            selectedCourseIds = Collections.emptySet();
-        }
-
-        Pageable pageable = PageRequest.of(currentPage, size);
-        Page<Course> coursePage = courseService.findAll(pageable);
-
-        model.addAttribute("coursePage", coursePage);
-        model.addAttribute("currentPage", currentPage);
-        model.addAttribute("totalPages", coursePage.getTotalPages());
-        model.addAttribute("selectedCourseIds", selectedCourseIds);
-        model.addAttribute("group", group);
-
-        return "fragments/course_fragments :: courseSelectCheckboxList";
-    }
-
 }

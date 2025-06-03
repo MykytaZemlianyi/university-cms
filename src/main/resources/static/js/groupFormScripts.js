@@ -67,7 +67,7 @@ function loadStudents(page, size = 5) {
     formData.append('size', size);
     selectedStudentIds.forEach(id => formData.append('selectedStudentIds', id));
 
-    fetch('/groups/studentSelectCheckboxList', {
+    fetch('/students/studentSelectCheckboxList', {
         method: 'POST',
         body: formData
     })
@@ -123,7 +123,7 @@ function loadCourses(page, size = 5) {
     formData.append('size', size);
     selectedCourseIds.forEach(id => formData.append('selectedCourseIds', id));
 
-    fetch('/groups/courseSelectCheckboxList', {
+    fetch('/courses/courseSelectCheckboxList', {
         method: 'POST',
         body: formData
     })

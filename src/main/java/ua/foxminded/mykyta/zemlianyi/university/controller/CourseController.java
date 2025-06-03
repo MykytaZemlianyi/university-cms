@@ -1,6 +1,8 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -103,5 +105,27 @@ public class CourseController {
         redirectAttributes.addFlashAttribute("successMessage", "Course deleted successfully!");
 
         return "redirect:/courses";
+    }
+
+    @PostMapping("/courseSelectCheckboxList")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public String getCourseSelectCheckboxList(@ModelAttribute Group group,
+            @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
+            @RequestParam(required = false) Set<Long> selectedCourseIds, Model model) {
+
+        if (selectedCourseIds == null) {
+            selectedCourseIds = Collections.emptySet();
+        }
+
+        Pageable pageable = PageRequest.of(currentPage, size);
+        Page<Course> coursePage = courseService.findAll(pageable);
+
+        model.addAttribute("coursePage", coursePage);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", coursePage.getTotalPages());
+        model.addAttribute("selectedCourseIds", selectedCourseIds);
+        model.addAttribute("group", group);
+
+        return "fragments/course_fragments :: courseSelectCheckboxList";
     }
 }

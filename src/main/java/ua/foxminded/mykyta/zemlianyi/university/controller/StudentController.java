@@ -1,6 +1,8 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -104,5 +106,27 @@ public class StudentController {
         studentService.delete(student);
         redirectAttributes.addFlashAttribute("successMessage", "Student deleted successfully!");
         return "redirect:/students";
+    }
+
+    @PostMapping("/studentSelectCheckboxList")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public String getStudentSelectCheckboxList(@ModelAttribute Group group,
+            @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
+            @RequestParam(required = false) Set<Long> selectedStudentIds, Model model) {
+
+        if (selectedStudentIds == null) {
+            selectedStudentIds = Collections.emptySet();
+        }
+
+        Pageable pageable = PageRequest.of(currentPage, size);
+        Page<Student> studentPage = studentService.findAll(pageable);
+
+        model.addAttribute("studentPage", studentPage);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", studentPage.getTotalPages());
+        model.addAttribute("selectedStudentIds", selectedStudentIds);
+        model.addAttribute("group", group);
+
+        return "fragments/student_fragments :: studentSelectCheckboxList";
     }
 }
