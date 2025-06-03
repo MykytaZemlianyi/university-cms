@@ -113,6 +113,7 @@ public class LectureServiceImpl implements LectureService {
     }
 
     public Lecture mapFormToLecture(LectureForm form) {
+        ObjectChecker.checkNullAndId(form);
         Lecture lecture = new Lecture();
         lecture.setId(form.getId());
         lecture.setLectureType(form.getLectureType());
