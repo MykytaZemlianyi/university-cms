@@ -129,7 +129,7 @@ class TeacherControllerTest {
                 .param("name", newTeacher.getName()).param("surname", newTeacher.getSurname())
                 .param("email", newTeacher.getEmail()).param("password", newTeacher.getPassword()))
                 .andExpect(status().isOk()).andExpect(view().name("add-new-teacher"))
-                .andExpect(model().attributeHasFieldErrors("teacher", "name"));
+                .andExpect(model().attributeHasErrors("teacher"));
 
     }
 

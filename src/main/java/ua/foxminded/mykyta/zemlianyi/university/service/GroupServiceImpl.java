@@ -34,6 +34,7 @@ public class GroupServiceImpl implements GroupService {
     @Override
     @Transactional
     public Group addNew(Group group) {
+        ObjectChecker.checkNullAndVerify(group);
         Set<Student> students = group.getStudents();
         Group savedGroup = saveGroupWithoutStudents(group);
 

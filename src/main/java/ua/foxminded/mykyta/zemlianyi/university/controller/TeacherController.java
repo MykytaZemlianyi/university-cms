@@ -62,7 +62,7 @@ public class TeacherController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String createTeacher(@Valid @ModelAttribute Teacher teacher, Model model, BindingResult bindingResult,
+    public String createTeacher(@Valid @ModelAttribute Teacher teacher, BindingResult bindingResult, Model model,
             RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
 
