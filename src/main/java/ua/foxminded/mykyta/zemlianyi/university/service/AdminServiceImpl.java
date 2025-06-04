@@ -1,7 +1,5 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
-import java.util.Optional;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,20 +28,14 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
     @Override
     protected Admin mergeWithExisting(Admin newAdmin) {
         ObjectChecker.checkNullAndId(newAdmin);
-        Optional<Admin> existingAdminOpt = dao.findById(newAdmin.getId());
+        Admin existingAdmin = getByIdOrThrow(newAdmin.getId());
 
-        if (existingAdminOpt.isPresent()) {
-            Admin existingAdmin = existingAdminOpt.get();
+        existingAdmin.setName(newAdmin.getName());
+        existingAdmin.setSurname(newAdmin.getSurname());
+        existingAdmin.setEmail(newAdmin.getEmail());
+        existingAdmin.setPassword(choosePassword(newAdmin.getPassword(), existingAdmin.getPassword()));
 
-            existingAdmin.setName(newAdmin.getName());
-            existingAdmin.setSurname(newAdmin.getSurname());
-            existingAdmin.setEmail(newAdmin.getEmail());
-            existingAdmin.setPassword(choosePassword(newAdmin.getPassword(), existingAdmin.getPassword()));
-
-            return existingAdmin;
-        } else {
-            throw new AdminNotFoundException(newAdmin.getId());
-        }
+        return existingAdmin;
     }
 
     private String choosePassword(String newPassword, String existingPassword) {

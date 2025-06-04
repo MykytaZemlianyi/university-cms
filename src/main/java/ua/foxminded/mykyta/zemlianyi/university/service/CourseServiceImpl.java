@@ -50,19 +50,13 @@ public class CourseServiceImpl implements CourseService {
 
     private Course mergeWithExisting(Course newCourse) {
         ObjectChecker.checkNullAndId(newCourse);
-        Optional<Course> existingCourseOpt = courseDao.findById(newCourse.getId());
+        Course existingCourse = getByIdOrThrow(newCourse.getId());
 
-        if (existingCourseOpt.isPresent()) {
-            Course existingCourse = existingCourseOpt.get();
+        existingCourse.setName(newCourse.getName());
+        existingCourse.setTeacher(newCourse.getTeacher());
 
-            existingCourse.setName(newCourse.getName());
-            existingCourse.setTeacher(newCourse.getTeacher());
+        return existingCourse;
 
-            return existingCourse;
-
-        } else {
-            throw new IllegalArgumentException(Constants.OBJECT_UPDATE_FAIL_DOES_NOT_EXIST);
-        }
     }
 
     @Override
