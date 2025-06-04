@@ -147,8 +147,8 @@ class StudentControllerTest {
         when(service.getByIdOrThrow(1L)).thenThrow(new StudentNotFoundException(1L));
 
         mockMvc.perform(get("/students/edit/1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/students"))
-                .andExpect(flash().attribute("errorMessage", "Error: Student with ID: 1 not found"));
+                .andExpect(redirectedUrl("/students")).andExpect(flash().attribute("errorMessage",
+                        "Error: 1 | Student with this ID does not exist in database"));
 
     }
 
@@ -223,17 +223,17 @@ class StudentControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteStudent_shouldRedirectWithError_whenStudentDoesNotExistsInDb() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new StudentNotFoundException(1L));
+        doThrow(new StudentNotFoundException(1L)).when(service).deleteByIdOrThrow(1L);
 
         mockMvc.perform(delete("/students/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/students"))
-                .andExpect(flash().attribute("errorMessage", "Error: Student with ID: 1 not found"));
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/students")).andExpect(flash()
+                        .attribute("errorMessage", "Error: 1 | Student with this ID does not exist in database"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteStudent_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        doThrow(new IllegalArgumentException("Service error")).when(service).deleteByIdOrThrow(1L);
 
         mockMvc.perform(delete("/students/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/students"))

@@ -67,9 +67,6 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
         delete(user);
     }
 
-    @Override
-    public abstract T getByIdOrThrow(Long id);
-
     public T changePassword(T user) {
         ObjectChecker.checkNullAndVerify(user);
 

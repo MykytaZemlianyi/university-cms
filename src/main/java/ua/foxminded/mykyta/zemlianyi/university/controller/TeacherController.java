@@ -1,7 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -123,8 +122,7 @@ public class TeacherController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteTeacher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Teacher teacher = teacherService.getByIdOrThrow(id);
-        teacherService.delete(teacher);
+        teacherService.deleteByIdOrThrow(id);
         redirectAttributes.addFlashAttribute("successMessage", "Teacher deleted successfully!");
         return "redirect:/teachers";
     }

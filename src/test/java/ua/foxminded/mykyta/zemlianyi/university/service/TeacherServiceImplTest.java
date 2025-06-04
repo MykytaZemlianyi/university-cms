@@ -18,6 +18,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.TeacherDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.TeacherDuplicateException;
 import ua.foxminded.mykyta.zemlianyi.university.exceptions.TeacherNotFoundException;
 
 @SpringBootTest(classes = { TeacherServiceImpl.class })
@@ -69,7 +70,7 @@ class TeacherServiceImplTest {
         teacherWithSameEmail.setPassword("securePass123");
         doReturn(true).when(teacherDao).existsByEmail(teacherWithSameEmail.getEmail());
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(TeacherDuplicateException.class, () -> {
             teacherService.addNew(teacherWithSameEmail);
         });
     }

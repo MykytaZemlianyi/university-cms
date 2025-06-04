@@ -143,8 +143,8 @@ class AdminControllerTest {
         when(service.getByIdOrThrow(1L)).thenThrow(new AdminNotFoundException(1L));
 
         mockMvc.perform(get("/admins/edit/1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admins"))
-                .andExpect(flash().attribute("errorMessage", "Error: Admin with ID: 1 not found"));
+                .andExpect(redirectedUrl("/admins")).andExpect(
+                        flash().attribute("errorMessage", "Error: 1 | Admin with this ID does not exist in database"));
 
     }
 
@@ -219,21 +219,21 @@ class AdminControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteAdmin_shouldRedirectWithError_whenAdminDoesNotExistsInDb() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new AdminNotFoundException(1L));
+        doThrow(new AdminNotFoundException(1L)).when(service).deleteByIdOrThrow(1L);
 
         mockMvc.perform(delete("/admins/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins"))
-                .andExpect(flash().attribute("errorMessage", "Error: Admin with ID: 1 not found"));
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins")).andExpect(
+                        flash().attribute("errorMessage", "Error: 1 | Admin with this ID does not exist in database"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteAdmin_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        doThrow(new IllegalArgumentException("Service Error")).when(service).deleteByIdOrThrow(1L);
 
         mockMvc.perform(delete("/admins/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins"))
-                .andExpect(flash().attribute("errorMessage", "Error: Service error"));
+                .andExpect(flash().attribute("errorMessage", "Error: Service Error"));
     }
 
 }

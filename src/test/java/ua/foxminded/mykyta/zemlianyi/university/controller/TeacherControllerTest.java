@@ -149,8 +149,8 @@ class TeacherControllerTest {
         when(service.getByIdOrThrow(1L)).thenThrow(new TeacherNotFoundException(1L));
 
         mockMvc.perform(get("/teachers/edit/1")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/teachers"))
-                .andExpect(flash().attribute("errorMessage", "Error: Teacher with ID: 1 not found"));
+                .andExpect(redirectedUrl("/teachers")).andExpect(flash().attribute("errorMessage",
+                        "Error: 1 | Teacher with this ID does not exist in database"));
 
     }
 
@@ -225,17 +225,17 @@ class TeacherControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteTeacher_shouldRedirectWithError_whenTeacherDoesNotExistsInDb() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new TeacherNotFoundException(1L));
+        doThrow(new TeacherNotFoundException(1L)).when(service).deleteByIdOrThrow(1L);
 
         mockMvc.perform(delete("/teachers/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers"))
-                .andExpect(flash().attribute("errorMessage", "Error: Teacher with ID: 1 not found"));
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers")).andExpect(flash()
+                        .attribute("errorMessage", "Error: 1 | Teacher with this ID does not exist in database"));
     }
 
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteTeacher_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        doThrow(new IllegalArgumentException("Service error")).when(service).deleteByIdOrThrow(1L);
 
         mockMvc.perform(delete("/teachers/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers"))
