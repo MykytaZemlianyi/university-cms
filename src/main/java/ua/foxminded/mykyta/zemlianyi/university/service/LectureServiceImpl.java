@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.annotation.Resource;
 import ua.foxminded.mykyta.zemlianyi.university.dao.CourseDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.LectureDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
@@ -27,9 +26,6 @@ public class LectureServiceImpl implements LectureService {
     private CourseDao courseDao;
     private RoomDao roomDao;
 
-    @Resource
-    LectureServiceImpl self;
-
     public LectureServiceImpl(LectureDao lectureDao, CourseDao courseDao, RoomDao roomDao) {
         this.lectureDao = lectureDao;
         this.courseDao = courseDao;
@@ -39,30 +35,40 @@ public class LectureServiceImpl implements LectureService {
     @Override
     @Transactional
     public Lecture addNew(Lecture lecture) {
+        return saveLecture(lecture);
+    }
+
+    @Override
+    @Transactional
+    public Lecture addNewFromForm(LectureForm form) {
+        Lecture lecture = mapFormToLecture(form);
+        return saveLecture(lecture);
+    }
+
+    private Lecture saveLecture(Lecture lecture) {
         ObjectChecker.checkNullAndVerify(lecture);
         logger.info("Adding new lecture - {}", lecture);
         return lectureDao.save(lecture);
     }
 
     @Override
-    public Lecture addNewFromForm(LectureForm form) {
-        Lecture lecture = mapFormToLecture(form);
-        return self.addNew(lecture);
+    @Transactional
+    public Lecture update(Lecture lecture) {
+        return updateLecture(lecture);
     }
 
     @Override
     @Transactional
-    public Lecture update(Lecture lecture) {
+    public Lecture updateFromForm(LectureForm form) {
+        Lecture lecture = mapFormToLecture(form);
+        return updateLecture(lecture);
+    }
+
+    private Lecture updateLecture(Lecture lecture) {
         ObjectChecker.checkNullAndVerify(lecture);
         Lecture mergedLecture = mergeWithExisting(lecture);
         logger.info("Updating course - {}", mergedLecture);
         return lectureDao.save(mergedLecture);
-    }
-
-    @Override
-    public Lecture updateFromForm(LectureForm form) {
-        Lecture lecture = mapFormToLecture(form);
-        return self.update(lecture);
     }
 
     private Lecture mergeWithExisting(Lecture lecture) {
