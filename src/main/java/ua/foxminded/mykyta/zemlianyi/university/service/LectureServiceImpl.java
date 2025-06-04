@@ -45,7 +45,7 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
-    public Lecture addNew(LectureForm form) {
+    public Lecture addNewFromForm(LectureForm form) {
         Lecture lecture = mapFormToLecture(form);
         return self.addNew(lecture);
     }
@@ -60,7 +60,7 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
-    public Lecture update(LectureForm form) {
+    public Lecture updateFromForm(LectureForm form) {
         Lecture lecture = mapFormToLecture(form);
         return self.update(lecture);
     }

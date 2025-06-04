@@ -70,7 +70,7 @@ class LectureServiceImplTest {
     @Test
     void addNew_shouldThrowIllegarArgumentException_whenLectureNull() {
         assertThrows(IllegalArgumentException.class, () -> {
-            lectureService.addNew(null);
+            lectureService.addNewFromForm(null);
         });
     }
 
@@ -91,7 +91,7 @@ class LectureServiceImplTest {
     @Test
     void update_shouldThrowIllegalArgumentException_whenLectureNull() {
         assertThrows(IllegalArgumentException.class, () -> {
-            lectureService.update(null);
+            lectureService.updateFromForm(null);
         });
     }
 

@@ -14,11 +14,11 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
 public interface LectureService {
     Lecture addNew(Lecture lecture);
 
-    Lecture addNew(LectureForm form);
+    Lecture addNewFromForm(LectureForm form);
 
     Lecture update(Lecture lecture);
 
-    Lecture update(LectureForm form);
+    Lecture updateFromForm(LectureForm form);
 
     List<Lecture> findForCourse(Course course);
 

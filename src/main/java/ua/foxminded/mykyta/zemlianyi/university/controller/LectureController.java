@@ -76,7 +76,7 @@ public class LectureController {
             return "add-new-lecture";
         }
 
-        lectureService.addNew(form);
+        lectureService.addNewFromForm(form);
         redirectAttributes.addFlashAttribute("successMessage", "Lecture added successfully!");
 
         return "redirect:/lectures";
@@ -106,7 +106,7 @@ public class LectureController {
             return "edit-lecture";
         }
 
-        lectureService.update(form);
+        lectureService.updateFromForm(form);
         redirectAttributes.addFlashAttribute("successMessage", "Lecture updated successfully!");
 
         return "redirect:/lectures";
