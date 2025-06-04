@@ -100,8 +100,7 @@ public class CourseController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteCourse(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Course course = courseService.getByIdOrThrow(id);
-        courseService.delete(course);
+        courseService.deleteOrThrow(id);
         redirectAttributes.addFlashAttribute("successMessage", "Course deleted successfully!");
 
         return "redirect:/courses";

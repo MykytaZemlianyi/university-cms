@@ -102,7 +102,7 @@ public class StudentController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteStudent(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        studentService.deleteByIdOrThrow(id);
+        studentService.deleteOrThrow(id);
         redirectAttributes.addFlashAttribute("successMessage", "Student deleted successfully!");
         return "redirect:/students";
     }

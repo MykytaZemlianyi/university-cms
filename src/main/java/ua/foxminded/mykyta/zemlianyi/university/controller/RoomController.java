@@ -90,8 +90,7 @@ public class RoomController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteRoom(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Room room = roomService.getByIdOrThrow(id);
-        roomService.delete(room);
+        roomService.deleteByIdOrThrow(id);
         redirectAttributes.addFlashAttribute("successMessage", "Room deleted successfully!");
         return "redirect:/rooms";
     }

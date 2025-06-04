@@ -74,6 +74,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public void deleteOrThrow(Long id) {
+        Course course = getByIdOrThrow(id);
+        logger.info("Deleting course - {}", course);
+        courseDao.delete(course);
+    }
+
+    @Override
     public Page<Course> findAll(Pageable pageable) {
         return courseDao.findAll(pageable);
     }

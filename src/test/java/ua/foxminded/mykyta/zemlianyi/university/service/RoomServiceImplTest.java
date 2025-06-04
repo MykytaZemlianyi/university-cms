@@ -118,7 +118,7 @@ class RoomServiceImplTest {
     @Test
     void delete_shouldThrowIllegalArgumentException_when_roomIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
-            roomService.delete(null);
+            roomService.deleteById(null);
         });
     }
 
@@ -126,7 +126,7 @@ class RoomServiceImplTest {
     void delete_shouldThrowIllegalArgumentException_when_roomIsInvalid() {
         Room invalidRoom = new Room();
         assertThrows(IllegalArgumentException.class, () -> {
-            roomService.delete(invalidRoom);
+            roomService.deleteById(invalidRoom);
         });
     }
 
@@ -137,7 +137,7 @@ class RoomServiceImplTest {
 
         doReturn(false).when(roomDao).existsById(room.getId());
         assertThrows(IllegalArgumentException.class, () -> {
-            roomService.delete(room);
+            roomService.deleteById(room);
         });
     }
 
@@ -148,7 +148,7 @@ class RoomServiceImplTest {
 
         doReturn(true).when(roomDao).existsById(room.getId());
 
-        roomService.delete(room);
+        roomService.deleteById(room);
 
         verify(roomDao).deleteById(room.getId());
     }

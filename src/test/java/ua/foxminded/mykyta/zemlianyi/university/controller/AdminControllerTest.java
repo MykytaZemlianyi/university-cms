@@ -219,7 +219,7 @@ class AdminControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteAdmin_shouldRedirectWithError_whenAdminDoesNotExistsInDb() throws Exception {
-        doThrow(new AdminNotFoundException(1L)).when(service).deleteByIdOrThrow(1L);
+        doThrow(new AdminNotFoundException(1L)).when(service).deleteOrThrow(1L);
 
         mockMvc.perform(delete("/admins/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins")).andExpect(
@@ -229,7 +229,7 @@ class AdminControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteAdmin_shouldRedirectWithError_whenServiceFails() throws Exception {
-        doThrow(new IllegalArgumentException("Service Error")).when(service).deleteByIdOrThrow(1L);
+        doThrow(new IllegalArgumentException("Service Error")).when(service).deleteOrThrow(1L);
 
         mockMvc.perform(delete("/admins/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/admins"))

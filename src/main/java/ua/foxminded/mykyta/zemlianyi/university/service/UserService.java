@@ -12,7 +12,7 @@ public interface UserService<T extends User> {
 
     public void delete(T user);
 
-    public void deleteByIdOrThrow(Long id);
+    public void deleteOrThrow(Long id);
 
     public T changePassword(T user);
 

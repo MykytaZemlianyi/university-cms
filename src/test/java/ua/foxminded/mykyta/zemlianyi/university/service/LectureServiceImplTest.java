@@ -122,7 +122,7 @@ class LectureServiceImplTest {
     @Test
     void delete_shouldThrowIllegalArgumentException_when_lectureIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
-            lectureService.delete(null);
+            lectureService.deleteById(null);
         });
     }
 
@@ -130,7 +130,7 @@ class LectureServiceImplTest {
     void delete_shouldThrowIllegalArgumentException_when_lectureIsInvalid() {
         Lecture invalidLecture = new Lecture();
         assertThrows(IllegalArgumentException.class, () -> {
-            lectureService.delete(invalidLecture);
+            lectureService.deleteById(invalidLecture);
         });
     }
 
@@ -138,7 +138,7 @@ class LectureServiceImplTest {
     void delete_shouldThrowIllegalArgumentException_when_lectureIsNotSavedInDb() {
         doReturn(false).when(lectureDao).existsById(lecture.getId());
         assertThrows(IllegalArgumentException.class, () -> {
-            lectureService.delete(lecture);
+            lectureService.deleteById(lecture);
         });
     }
 
@@ -146,7 +146,7 @@ class LectureServiceImplTest {
     void delete_shouldDeleteLecture_when_lectureIsValidAndExistsInDb() {
         doReturn(true).when(lectureDao).existsById(1L);
 
-        lectureService.delete(lecture);
+        lectureService.deleteById(lecture);
 
         verify(lectureDao).deleteById(lecture.getId());
     }

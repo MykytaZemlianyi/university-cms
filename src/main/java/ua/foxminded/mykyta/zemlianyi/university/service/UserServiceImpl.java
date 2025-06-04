@@ -62,9 +62,10 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
     }
 
     @Override
-    public void deleteByIdOrThrow(Long id) {
+    public void deleteOrThrow(Long id) {
         T user = getByIdOrThrow(id);
-        delete(user);
+        logger.info("Deleting {} - {}", user.getClass().getSimpleName(), user);
+        dao.delete(user);
     }
 
     public T changePassword(T user) {

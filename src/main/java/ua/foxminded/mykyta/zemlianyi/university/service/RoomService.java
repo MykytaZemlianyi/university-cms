@@ -13,7 +13,7 @@ public interface RoomService {
 
     Room update(Room room);
 
-    void delete(Room room);
+    void deleteById(Room room);
 
     Page<Room> findAll(Pageable pageable);
 
@@ -22,4 +22,6 @@ public interface RoomService {
     List<Room> findAll();
 
     Room getByIdOrThrow(Long id);
+
+    void deleteByIdOrThrow(Long id);
 }

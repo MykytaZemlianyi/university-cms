@@ -140,9 +140,7 @@ public class GroupController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteGroup(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-
-        Group group = groupService.getByIdOrThrow(id);
-        groupService.delete(group);
+        groupService.deleteOrThrow(id);
         redirectAttributes.addFlashAttribute("successMessage", "Group deleted successfully!");
 
         return "redirect:/groups";

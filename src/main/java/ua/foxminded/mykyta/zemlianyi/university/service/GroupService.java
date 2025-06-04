@@ -25,4 +25,6 @@ public interface GroupService {
     Optional<Group> findById(Long groupId);
 
     Group getByIdOrThrow(Long id);
+
+    void deleteOrThrow(Long id);
 }

@@ -203,7 +203,7 @@ class CourseControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteCourse_shouldRedirectWithError_whenCourseDoesNotExistsInDb() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new CourseNotFoundException(1L));
+        doThrow(new CourseNotFoundException(1L)).when(service).deleteOrThrow(1L);
 
         mockMvc.perform(delete("/courses/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/courses"))
@@ -213,7 +213,7 @@ class CourseControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteCourse_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        doThrow(new IllegalArgumentException("Service error")).when(service).deleteOrThrow(1L);
 
         mockMvc.perform(delete("/courses/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/courses"))

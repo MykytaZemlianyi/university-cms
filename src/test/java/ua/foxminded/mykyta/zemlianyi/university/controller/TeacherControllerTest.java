@@ -225,7 +225,7 @@ class TeacherControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteTeacher_shouldRedirectWithError_whenTeacherDoesNotExistsInDb() throws Exception {
-        doThrow(new TeacherNotFoundException(1L)).when(service).deleteByIdOrThrow(1L);
+        doThrow(new TeacherNotFoundException(1L)).when(service).deleteOrThrow(1L);
 
         mockMvc.perform(delete("/teachers/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers")).andExpect(flash()
@@ -235,7 +235,7 @@ class TeacherControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteTeacher_shouldRedirectWithError_whenServiceFails() throws Exception {
-        doThrow(new IllegalArgumentException("Service error")).when(service).deleteByIdOrThrow(1L);
+        doThrow(new IllegalArgumentException("Service error")).when(service).deleteOrThrow(1L);
 
         mockMvc.perform(delete("/teachers/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/teachers"))

@@ -117,8 +117,7 @@ public class LectureController {
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteLecture(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Lecture lecture = lectureService.getByIdOrThrow(id);
-        lectureService.delete(lecture);
+        lectureService.deleteByIdOrThrow(id);
         redirectAttributes.addFlashAttribute("successMessage", "Lecture deleted successfully!");
 
         return "redirect:/lectures";

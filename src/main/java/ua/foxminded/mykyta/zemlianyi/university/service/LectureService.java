@@ -20,7 +20,7 @@ public interface LectureService {
 
     List<Lecture> findForCourseInTimeInterval(Course course, LocalDateTime timeStart, LocalDateTime timeEnd);
 
-    void delete(Lecture lecture);
+    void deleteById(Lecture lecture);
 
     Page<Lecture> findAll(Pageable pageable);
 
@@ -31,4 +31,6 @@ public interface LectureService {
     LectureForm mapLectureToForm(Lecture lecture);
 
     Lecture getByIdOrThrow(Long id);
+
+    void deleteByIdOrThrow(Long id);
 }

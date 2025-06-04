@@ -191,7 +191,7 @@ class RoomControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteRoom_shouldRedirectWithError_whenRoomDoesNotExistsInDb() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new RoomNotFoundException(1L));
+        doThrow(new RoomNotFoundException(1L)).when(service).deleteByIdOrThrow(1L);
 
         mockMvc.perform(delete("/rooms/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/rooms"))
@@ -201,7 +201,7 @@ class RoomControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteRoom_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        doThrow(new IllegalArgumentException("Service error")).when(service).deleteByIdOrThrow(1L);
 
         mockMvc.perform(delete("/rooms/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/rooms"))

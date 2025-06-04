@@ -25,6 +25,8 @@ public interface CourseService {
 
     void delete(Course course);
 
+    void deleteOrThrow(Long id);
+
     Optional<Course> findById(Long id);
 
     Course getByIdOrThrow(Long id);

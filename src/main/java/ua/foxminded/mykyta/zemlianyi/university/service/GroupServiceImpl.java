@@ -94,6 +94,13 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
+    public void deleteOrThrow(Long id) {
+        Group group = getByIdOrThrow(id);
+        logger.info("Deleting group - {}", group);
+        groupDao.delete(group);
+    }
+
+    @Override
     public Group findForStudent(Student student) {
         if (student == null || student.getId() == null) {
             throw new IllegalArgumentException("Student" + Constants.USER_INVALID);

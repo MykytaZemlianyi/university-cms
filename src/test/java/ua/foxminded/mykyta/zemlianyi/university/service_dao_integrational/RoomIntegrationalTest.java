@@ -48,7 +48,7 @@ class RoomIntegrationalTest {
 
     @Test
     void delete_shouldNotDeledAssociatedEntitiesFromDb() {
-        service.delete(room);
+        service.deleteById(room);
 
         assertFalse(dao.existsById(room.getId()));
         assertTrue(lectureDao.existsById(lecture.getId()));

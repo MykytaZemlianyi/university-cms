@@ -234,7 +234,7 @@ class LectureControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteLecture_shouldRedirectWithError_whenLectureDoesNotExistsInDb() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new LectureNotFoundException(1L));
+        doThrow(new LectureNotFoundException(1L)).when(service).deleteByIdOrThrow(1L);
 
         mockMvc.perform(delete("/lectures/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/lectures"))
@@ -244,7 +244,7 @@ class LectureControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteLecture_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        doThrow(new IllegalArgumentException("Service error")).when(service).deleteByIdOrThrow(1L);
 
         mockMvc.perform(delete("/lectures/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/lectures"))

@@ -58,11 +58,18 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public void delete(Room room) {
+    public void deleteById(Room room) {
         ObjectChecker.checkNullAndVerify(room);
         ObjectChecker.checkIfExistsInDb(room, roomDao);
         logger.info("Deleting room - {}", room);
         roomDao.deleteById(room.getId());
+    }
+
+    @Override
+    public void deleteByIdOrThrow(Long id) {
+        Room room = getByIdOrThrow(id);
+        logger.info("Deleting room - {}", room);
+        roomDao.deleteById(id);
     }
 
     @Override

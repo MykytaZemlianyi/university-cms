@@ -87,12 +87,19 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
-    public void delete(Lecture lecture) {
+    public void deleteById(Lecture lecture) {
         ObjectChecker.checkNullAndVerify(lecture);
         ObjectChecker.checkIfExistsInDb(lecture, lectureDao);
         logger.info("Updating course - {}", lecture);
         lectureDao.deleteById(lecture.getId());
 
+    }
+
+    @Override
+    public void deleteByIdOrThrow(Long id) {
+        Lecture lecture = getByIdOrThrow(id);
+        logger.info("Deleting lecture - {}", lecture);
+        lectureDao.deleteById(id);
     }
 
     @Override

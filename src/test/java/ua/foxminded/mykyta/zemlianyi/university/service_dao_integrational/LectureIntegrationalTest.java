@@ -100,7 +100,7 @@ class LectureIntegrationalTest {
     @Test
     void delete_shouldNotDeleteAssociatedRelations_whenLectureDeleted() {
         Lecture lectureWithCourseAndRoom = dao.findById(4L).get();
-        service.delete(lectureWithCourseAndRoom);
+        service.deleteById(lectureWithCourseAndRoom);
 
         assertFalse(dao.existsById(lectureWithCourseAndRoom.getId()));
         assertTrue(roomDao.existsById(room.getId()));

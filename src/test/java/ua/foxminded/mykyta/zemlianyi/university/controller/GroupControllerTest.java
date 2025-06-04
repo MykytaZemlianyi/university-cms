@@ -207,7 +207,7 @@ class GroupControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteGroup_shouldRedirectWithError_whenGroupDoesNotExistsInDb() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new GroupNotFoundException(1L));
+        doThrow(new GroupNotFoundException(1L)).when(service).deleteOrThrow(1L);
 
         mockMvc.perform(delete("/groups/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/groups"))
@@ -217,7 +217,7 @@ class GroupControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void deleteGroup_shouldRedirectWithError_whenServiceFails() throws Exception {
-        when(service.getByIdOrThrow(1L)).thenThrow(new IllegalArgumentException("Service error"));
+        doThrow(new IllegalArgumentException("Service error")).when(service).deleteOrThrow(1L);
 
         mockMvc.perform(delete("/groups/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/groups"))
