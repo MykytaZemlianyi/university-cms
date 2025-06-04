@@ -54,10 +54,15 @@ public class StudentController {
 
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String showCreateStudentForm(Model model) {
-        List<Group> allGroups = groupService.findAll();
+    public String showCreateStudentForm(Model model, @RequestParam(defaultValue = "0") Integer groupPage,
+            @RequestParam(defaultValue = "5") Integer groupSize, @RequestParam(required = false) Long selectedGroupId) {
+
+        Pageable pageable = PageRequest.of(groupPage, groupSize);
+        Page<Group> groupPageObj = groupService.findAll(pageable);
+
         model.addAttribute("student", new Student());
-        model.addAttribute("groups", allGroups);
+        model.addAttribute("groupPage", groupPageObj);
+        model.addAttribute("selectedGroupId", null);
         return "add-new-student";
     }
 

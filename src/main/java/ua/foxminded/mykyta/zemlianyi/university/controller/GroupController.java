@@ -145,4 +145,16 @@ public class GroupController {
 
         return "redirect:/groups";
     }
+
+    @PostMapping("/groupSelectRadioList")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public String getGroupRadioList(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size, @RequestParam(required = false) Long selectedGroupId,
+            Model model) {
+        Page<Group> groupPage = groupService.findAll(PageRequest.of(page, size));
+        model.addAttribute("groupPage", groupPage);
+        model.addAttribute("selectedGroupId", selectedGroupId);
+        return "fragments/group_fragments :: groupSelectRadioList";
+    }
+
 }
