@@ -22,6 +22,7 @@ import ua.foxminded.mykyta.zemlianyi.university.service.AdminService;
 
 @Controller
 @RequestMapping("/admins")
+@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 public class AdminController {
     private AdminService adminService;
 
@@ -30,7 +31,6 @@ public class AdminController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getAdmins(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -45,14 +45,12 @@ public class AdminController {
     }
 
     @GetMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateAdminForm(Model model) {
         model.addAttribute("admin", new Admin());
         return "add-new-admin";
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createAdmin(@Valid @ModelAttribute("admin") Admin admin, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
@@ -67,7 +65,6 @@ public class AdminController {
     }
 
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showEditAdminForm(@PathVariable Long id, Model model) {
         Admin admin = adminService.getByIdOrThrow(id);
         model.addAttribute("admin", admin);
@@ -75,7 +72,6 @@ public class AdminController {
     }
 
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateAdmin(@PathVariable Long id, @Valid @ModelAttribute("admin") Admin updatedAdmin,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
@@ -89,7 +85,6 @@ public class AdminController {
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         Admin admin = adminService.getByIdOrThrow(id);
         adminService.delete(admin);
