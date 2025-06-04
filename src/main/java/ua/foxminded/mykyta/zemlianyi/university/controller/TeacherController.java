@@ -106,11 +106,10 @@ public class TeacherController {
         return "redirect:/teachers";
     }
 
-    private void prepareTeacherFormModel(Model model, @RequestParam(defaultValue = "0") Integer coursePage,
-            @RequestParam(defaultValue = "5") Integer coursePageSize) {
+    private void prepareTeacherFormModel(Model model, Integer coursePage, Integer coursePageSize) {
         addSelectedIdsToModel(model);
 
-        Pageable pageable = PageRequest.of(0, 5);
+        Pageable pageable = PageRequest.of(coursePage, coursePageSize);
         Page<Course> coursePageObj = courseService.findAll(pageable);
         model.addAttribute("coursePage", coursePageObj);
     }
