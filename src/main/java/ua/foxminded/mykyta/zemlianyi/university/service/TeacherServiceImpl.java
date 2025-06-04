@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.TeacherDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.TeacherDuplicateException;
 import ua.foxminded.mykyta.zemlianyi.university.exceptions.TeacherNotFoundException;
 
 @Service
@@ -54,6 +55,13 @@ public class TeacherServiceImpl extends UserServiceImpl<Teacher> implements Teac
     public Teacher getByIdOrThrow(Long id) {
 
         return dao.findById(id).orElseThrow(() -> new TeacherNotFoundException(id));
+    }
+
+    @Override
+    protected void uniqueEmailOrThrow(String email) {
+        if (dao.existsByEmail(email)) {
+            throw new TeacherDuplicateException(email);
+        }
     }
 
 }

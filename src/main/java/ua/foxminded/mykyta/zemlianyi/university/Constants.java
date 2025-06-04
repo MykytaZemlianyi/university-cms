@@ -28,7 +28,8 @@ public class Constants {
 
     public static final String USER_INVALID = " is invalid";
     public static final String USER_PASSWORD_CHANGE_ERROR = " doesn't exists in database - unable to change password";
-    public static final String USER_SAVE_ERROR_EMAIL_EXISTS = " - user with this email already exists";
+    public static final String USER_DUPLICATE_BY_EMAIL_ERROR = " with this email already exists";
+    public static final String USER_NOT_FOUND_BY_ID_ERROR = " with this ID does not exist in database";
     public static final String USER_NOT_FOUND_ERROR = "User not found";
 
     public static final String ROOM_LECTURE_OVERLAP_ERROR = "Lecture time is overlapping with existing lecture records";

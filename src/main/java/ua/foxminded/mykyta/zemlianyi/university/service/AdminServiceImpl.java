@@ -54,6 +54,7 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
         }
     }
 
+    @Override
     public Admin getByIdOrThrow(Long id) {
         return dao.findById(id).orElseThrow(() -> new AdminNotFoundException(id));
     }

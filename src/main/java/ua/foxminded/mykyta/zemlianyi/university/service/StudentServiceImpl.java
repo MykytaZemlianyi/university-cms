@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.StudentDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.StudentDuplicateException;
 import ua.foxminded.mykyta.zemlianyi.university.exceptions.StudentNotFoundException;
 
 @Service
@@ -16,8 +17,6 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
     public StudentServiceImpl(StudentDao studentDao, PasswordEncoder passwordEncoder) {
         super(studentDao, passwordEncoder);
     }
-    
-    
 
     @Override
     protected Student mergeWithExisting(Student newStudent) {
@@ -45,6 +44,13 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
             return existingPassword;
         } else {
             return passwordEncoder.encode(newPassword);
+        }
+    }
+
+    @Override
+    protected void uniqueEmailOrThrow(String email) {
+        if (dao.existsByEmail(email)) {
+            throw new StudentDuplicateException(email);
         }
     }
 

@@ -12,9 +12,13 @@ public interface UserService<T extends User> {
 
     public void delete(T user);
 
+    public void deleteByIdOrThrow(Long id);
+
     public T changePassword(T user);
 
     public Optional<T> findById(Long id);
+
+    public T getByIdOrThrow(Long id);
 
     List<T> findAll();
 }

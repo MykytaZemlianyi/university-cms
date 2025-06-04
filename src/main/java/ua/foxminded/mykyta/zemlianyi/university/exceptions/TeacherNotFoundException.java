@@ -1,9 +1,9 @@
 package ua.foxminded.mykyta.zemlianyi.university.exceptions;
 
-public class TeacherNotFoundException extends RuntimeException {
+public class TeacherNotFoundException extends UserNotFoundException {
     private static final long serialVersionUID = 1L;
 
     public TeacherNotFoundException(Long id) {
-        super("Teacher with ID: " + id + " not found");
+        super("Teacher", id);
     }
 }

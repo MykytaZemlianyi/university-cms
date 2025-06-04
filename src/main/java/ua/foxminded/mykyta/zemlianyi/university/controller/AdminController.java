@@ -86,8 +86,7 @@ public class AdminController {
 
     @DeleteMapping("/delete/{id}")
     public String deleteAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        Admin admin = adminService.getByIdOrThrow(id);
-        adminService.delete(admin);
+        adminService.deleteByIdOrThrow(id);
         redirectAttributes.addFlashAttribute("successMessage", "Admin deleted successfully!");
         return "redirect:/admins";
     }

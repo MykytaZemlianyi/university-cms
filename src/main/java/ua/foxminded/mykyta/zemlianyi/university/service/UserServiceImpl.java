@@ -34,11 +34,7 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
         return dao.save(user);
     }
 
-    protected void uniqueEmailOrThrow(String email) {
-        if (dao.existsByEmail(email)) {
-            throw new IllegalArgumentException(email + Constants.USER_SAVE_ERROR_EMAIL_EXISTS);
-        }
-    }
+    protected abstract void uniqueEmailOrThrow(String email);
 
     @Transactional
     public T update(T user) {
@@ -64,6 +60,15 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
         logger.info("Deleting {} - {}", user.getClass().getSimpleName(), user);
         dao.delete(user);
     }
+
+    @Override
+    public void deleteByIdOrThrow(Long id) {
+        T user = getByIdOrThrow(id);
+        delete(user);
+    }
+
+    @Override
+    public abstract T getByIdOrThrow(Long id);
 
     public T changePassword(T user) {
         ObjectChecker.checkNullAndVerify(user);
