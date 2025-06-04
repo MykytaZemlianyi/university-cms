@@ -14,7 +14,11 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
 public interface LectureService {
     Lecture addNew(Lecture lecture);
 
+    Lecture addNew(LectureForm form);
+
     Lecture update(Lecture lecture);
+
+    Lecture update(LectureForm form);
 
     List<Lecture> findForCourse(Course course);
 
@@ -33,4 +37,5 @@ public interface LectureService {
     Lecture getByIdOrThrow(Long id);
 
     void deleteByIdOrThrow(Long id);
+
 }

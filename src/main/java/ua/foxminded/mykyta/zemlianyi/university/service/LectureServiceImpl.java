@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.annotation.Resource;
 import ua.foxminded.mykyta.zemlianyi.university.dao.CourseDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.LectureDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
@@ -25,6 +26,9 @@ public class LectureServiceImpl implements LectureService {
     private LectureDao lectureDao;
     private CourseDao courseDao;
     private RoomDao roomDao;
+
+    @Resource
+    LectureServiceImpl self;
 
     public LectureServiceImpl(LectureDao lectureDao, CourseDao courseDao, RoomDao roomDao) {
         this.lectureDao = lectureDao;
@@ -41,12 +45,24 @@ public class LectureServiceImpl implements LectureService {
     }
 
     @Override
+    public Lecture addNew(LectureForm form) {
+        Lecture lecture = mapFormToLecture(form);
+        return self.addNew(lecture);
+    }
+
+    @Override
     @Transactional
     public Lecture update(Lecture lecture) {
         ObjectChecker.checkNullAndVerify(lecture);
         Lecture mergedLecture = mergeWithExisting(lecture);
         logger.info("Updating course - {}", mergedLecture);
         return lectureDao.save(mergedLecture);
+    }
+
+    @Override
+    public Lecture update(LectureForm form) {
+        Lecture lecture = mapFormToLecture(form);
+        return self.update(lecture);
     }
 
     private Lecture mergeWithExisting(Lecture lecture) {

@@ -69,15 +69,14 @@ public class LectureController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String createLecture(@Valid @ModelAttribute LectureForm lectureForm, BindingResult bindingResult,
+    public String createLecture(@Valid @ModelAttribute LectureForm form, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             return "add-new-lecture";
         }
 
-        Lecture lecture = lectureService.mapFormToLecture(lectureForm);
-        lectureService.addNew(lecture);
+        lectureService.addNew(form);
         redirectAttributes.addFlashAttribute("successMessage", "Lecture added successfully!");
 
         return "redirect:/lectures";
@@ -107,8 +106,7 @@ public class LectureController {
             return "edit-lecture";
         }
 
-        Lecture lecture = lectureService.mapFormToLecture(form);
-        lectureService.update(lecture);
+        lectureService.update(form);
         redirectAttributes.addFlashAttribute("successMessage", "Lecture updated successfully!");
 
         return "redirect:/lectures";
