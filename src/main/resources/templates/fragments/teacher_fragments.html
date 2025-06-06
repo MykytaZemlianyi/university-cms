@@ -58,3 +58,53 @@
 		</div>
 	</div>
 </nav>
+
+<div th:fragment="teacherSelectRadioList(teacherPage)">
+	<label class="form-label">Teacher</label>
+	<div class="form-control mb-3"
+		style="max-height: 250px; overflow-y: auto;">
+
+		<input class="form-check-input" type="radio" th:id="empty"
+			name="teacherRadio" th:value="''"
+			th:checked="${selectedTeacherId == null}"
+			onchange="$('#selectedTeacherId').val('');" /> <label
+			class="form-check-label" th:for="empty">None</label>
+
+
+		<div th:each="teacher : ${teacherPage.content}" class="form-check">
+			<input class="form-check-input" type="radio"
+				th:id="'teacher_' + ${teacher.id}" name="teacherRadio"
+				th:value="${teacher.id}"
+				th:checked="${selectedTeacherId != null and selectedTeacherId == teacher.id}"
+				onchange="$('#selectedTeacherId').val(this.value);" /> <label
+				class="form-check-label" th:for="'teacher_' + ${teacher.id}"
+				th:text="${teacher.name} + ' ' + ${teacher.surname}"></label>
+		</div>
+	</div>
+
+	<div
+		th:insert="~{fragments/teacher_fragments :: js-teachers-pagination(
+        teacherPage=${teacherPage})}"></div>
+</div>
+
+<nav th:fragment="js-teachers-pagination(teacherPage)">
+	<ul class="pagination justify-content-center">
+		<li class="page-item"
+			th:classappend="${teacherPage.first} ? 'disabled'"><a
+			class="page-link" href="#"
+			th:onclick="|loadTeachers(${teacherPage.number - 1}); return false;|">«</a>
+		</li>
+
+		<li th:each="i : ${#numbers.sequence(0, teacherPage.totalPages - 1)}"
+			class="page-item"
+			th:classappend="${i == teacherPage.number} ? 'active'"><a
+			class="page-link" href="#" th:text="${i + 1}"
+			th:onclick="|loadTeachers(${i}); return false;|"></a></li>
+
+		<li class="page-item"
+			th:classappend="${teacherPage.last} ? 'disabled'"><a
+			class="page-link" href="#"
+			th:onclick="|loadTeachers(${teacherPage.number + 1}); return false;|">»</a>
+		</li>
+	</ul>
+</nav>

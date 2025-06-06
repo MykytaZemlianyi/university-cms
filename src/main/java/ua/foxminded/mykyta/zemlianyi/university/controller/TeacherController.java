@@ -125,4 +125,15 @@ public class TeacherController {
         redirectAttributes.addFlashAttribute("successMessage", "Teacher deleted successfully!");
         return "redirect:/teachers";
     }
+    
+    @PostMapping("/teacherSelectRadioList")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public String getTeacherRadioList(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size, @RequestParam(required = false) Long selectedTeacherId,
+            Model model) {
+        Page<Teacher> teacherPage = teacherService.findAll(PageRequest.of(page, size));
+        model.addAttribute("teacherPage", teacherPage);
+        model.addAttribute("selectedTeacherId", selectedTeacherId);
+        return "fragments/teacher_fragments :: teacherSelectRadioList";
+    }
 }

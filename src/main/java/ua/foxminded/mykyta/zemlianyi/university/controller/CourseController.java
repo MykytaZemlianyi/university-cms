@@ -52,19 +52,21 @@ public class CourseController {
 
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String showCreateCourseForm(Model model) {
-        List<Teacher> allTeachers = teacherService.findAll();
-        model.addAttribute("course", new Course());
-        model.addAttribute("teacherList", allTeachers);
+    public String showCreateCourseForm(@RequestParam(defaultValue = "0") Integer teacherPage,
+            @RequestParam(defaultValue = "5") Integer teacherSize, Model model) {
+
+        prepareModelForCourseForm(model, new Course(), PageRequest.of(teacherPage, teacherSize));
         return "add-new-course";
     }
 
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createCourse(@Valid @ModelAttribute Course course, BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer teacherPage,
+            @RequestParam(defaultValue = "5") Integer teacherSize, Model model) {
 
         if (bindingResult.hasErrors()) {
+            prepareModelForCourseForm(model, course, PageRequest.of(teacherPage, teacherSize));
             return "add-new-course";
         }
 
@@ -75,20 +77,23 @@ public class CourseController {
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String showEditCourseForm(@PathVariable Long id, Model model) {
+    public String showEditCourseForm(@PathVariable Long id, Model model,
+            @RequestParam(defaultValue = "0") Integer teacherPage,
+            @RequestParam(defaultValue = "5") Integer teacherSize) {
         Course course = courseService.getByIdOrThrow(id);
-        List<Teacher> allTeachers = teacherService.findAll();
-        model.addAttribute("course", course);
-        model.addAttribute("teacherList", allTeachers);
+        prepareModelForCourseForm(model, course, PageRequest.of(teacherPage, teacherSize));
         return "edit-course";
     }
 
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateCourse(@PathVariable Long id, @Valid @ModelAttribute("course") Course updatedCourse,
-            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult, RedirectAttributes redirectAttributes,
+            @RequestParam(defaultValue = "0") Integer teacherPage,
+            @RequestParam(defaultValue = "5") Integer teacherSize, Model model) {
 
         if (bindingResult.hasErrors()) {
+            prepareModelForCourseForm(model, updatedCourse, PageRequest.of(teacherPage, teacherSize));
             return "edit-course";
         }
 
@@ -104,6 +109,13 @@ public class CourseController {
         redirectAttributes.addFlashAttribute("successMessage", "Course deleted successfully!");
 
         return "redirect:/courses";
+    }
+
+    private void prepareModelForCourseForm(Model model, Course course, Pageable pageable) {
+        Page<Teacher> teacherPage = teacherService.findAll(pageable);
+        model.addAttribute("course", course);
+        model.addAttribute("teacherPage", teacherPage);
+        model.addAttribute("selectedTeacherId", course.getTeacher() != null ? course.getTeacher().getId() : null);
     }
 
     @PostMapping("/courseSelectCheckboxList")

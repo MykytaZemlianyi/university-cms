@@ -53,7 +53,12 @@ public class CourseServiceImpl implements CourseService {
         Course existingCourse = getByIdOrThrow(newCourse.getId());
 
         existingCourse.setName(newCourse.getName());
-        existingCourse.setTeacher(newCourse.getTeacher());
+
+        if (newCourse.getTeacher() != null && newCourse.getTeacher().getId() != null) {
+            existingCourse.setTeacher(newCourse.getTeacher());
+        } else {
+            existingCourse.setTeacher(null);
+        }
 
         return existingCourse;
 

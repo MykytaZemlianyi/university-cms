@@ -54,9 +54,9 @@ public class StudentController {
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateStudentForm(Model model, @RequestParam(defaultValue = "0") Integer groupPage,
-            @RequestParam(defaultValue = "5") Integer groupSize) {
+            @RequestParam(defaultValue = "5") Integer groupPageSize) {
 
-        prepareModelForStudentForm(model, new Student(), PageRequest.of(groupPage, groupSize));
+        prepareModelForStudentForm(model, new Student(), PageRequest.of(groupPage, groupPageSize));
         return "add-new-student";
     }
 
