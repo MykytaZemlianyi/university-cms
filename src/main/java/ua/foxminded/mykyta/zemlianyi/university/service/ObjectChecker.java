@@ -20,7 +20,13 @@ public class ObjectChecker {
     }
 
     public static <T extends Dto> void checkNullAndId(T object) {
-        if (object == null || object.getId() == null) {
+        checkNull(object);
+        if (object.getId() == null) {
+            throw new IllegalArgumentException(Constants.OBJECT_ID_NULL);
+        }
+    }
+    public static <T extends Dto> void checkNull(T object) {
+        if (object == null) {
             throw new IllegalArgumentException(Constants.OBJECT_NULL);
         }
     }

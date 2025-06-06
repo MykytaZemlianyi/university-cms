@@ -94,4 +94,15 @@ public class RoomController {
         redirectAttributes.addFlashAttribute("successMessage", "Room deleted successfully!");
         return "redirect:/rooms";
     }
+    
+    @PostMapping("/roomSelectRadioList")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public String getRoomRadioList(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size, @RequestParam(required = false) Long selectedRoomId,
+            Model model) {
+        Page<Room> roomPage = roomService.findAll(PageRequest.of(page, size));
+        model.addAttribute("roomPage", roomPage);
+        model.addAttribute("selectedRoomId", selectedRoomId);
+        return "fragments/room_fragments :: roomSelectRadioList";
+    }
 }

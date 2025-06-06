@@ -142,15 +142,24 @@ public class LectureServiceImpl implements LectureService {
     }
 
     public Lecture mapFormToLecture(LectureForm form) {
-        ObjectChecker.checkNullAndId(form);
+        ObjectChecker.checkNull(form);
         Lecture lecture = new Lecture();
         lecture.setId(form.getId());
         lecture.setLectureType(form.getLectureType());
         lecture.setTimeStart(LocalDateTime.of(form.getDate(), form.getTimeStart()));
         lecture.setTimeEnd(LocalDateTime.of(form.getDate(), form.getTimeEnd()));
 
-        courseDao.findById(form.getCourseId()).ifPresent(lecture::setCourse);
-        roomDao.findById(form.getRoomId()).ifPresent(lecture::setRoom);
+        if (form.getCourseId() != null) {
+            courseDao.findById(form.getCourseId()).ifPresent(lecture::setCourse);
+        } else {
+            lecture.setCourse(null);
+        }
+
+        if (form.getRoomId() != null) {
+            roomDao.findById(form.getRoomId()).ifPresent(lecture::setRoom);
+        } else {
+            lecture.setRoom(null);
+        }
 
         return lecture;
     }

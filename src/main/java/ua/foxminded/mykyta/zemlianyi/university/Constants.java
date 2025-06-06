@@ -42,6 +42,7 @@ public class Constants {
 
     public static final String OBJECT_INVALID_MSG = "Object is invalid - ";
     public static final String OBJECT_NULL = "Object is null";
+    public static final String OBJECT_ID_NULL = "Object's ID is null";
     public static final String OBJECT_UPDATE_FAIL_DOES_NOT_EXIST = "Error during object update - object was not saved in the database earlier - ";
     public static final String COURSE_DUPLICATE_BY_NAME = " - course with the same name already exists";
     public static final String GROUP_DUPLICATE_BY_NAME = " - group with the same name already exists";

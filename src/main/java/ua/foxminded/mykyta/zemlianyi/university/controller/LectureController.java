@@ -1,7 +1,5 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -57,22 +55,24 @@ public class LectureController {
 
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String showCreateLectureForm(Model model) {
-        List<Course> allCourses = courseService.findAll();
-        List<Room> allRooms = roomService.findAll();
-        model.addAttribute("lectureForm", new LectureForm());
-        model.addAttribute("courseList", allCourses);
-        model.addAttribute("roomList", allRooms);
-        model.addAttribute("lectureTypes", LectureType.values());
+    public String showCreateLectureForm(Model model, @RequestParam(defaultValue = "0") Integer coursePage,
+            @RequestParam(defaultValue = "5") Integer courseSize, @RequestParam(defaultValue = "0") Integer roomPage,
+            @RequestParam(defaultValue = "5") Integer roomSize) {
+        prepareModelForLectureForm(model, new LectureForm(), PageRequest.of(coursePage, courseSize),
+                PageRequest.of(roomPage, roomSize));
         return "add-new-lecture";
     }
 
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createLecture(@Valid @ModelAttribute LectureForm form, BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer coursePage,
+            @RequestParam(defaultValue = "5") Integer courseSize, @RequestParam(defaultValue = "0") Integer roomPage,
+            @RequestParam(defaultValue = "5") Integer roomSize, Model model) {
 
         if (bindingResult.hasErrors()) {
+            prepareModelForLectureForm(model, form, PageRequest.of(coursePage, courseSize),
+                    PageRequest.of(roomPage, roomSize));
             return "add-new-lecture";
         }
 
@@ -84,15 +84,13 @@ public class LectureController {
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String showEditLectureForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String showEditLectureForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes,
+            @RequestParam(defaultValue = "0") Integer coursePage, @RequestParam(defaultValue = "5") Integer courseSize,
+            @RequestParam(defaultValue = "0") Integer roomPage, @RequestParam(defaultValue = "5") Integer roomSize) {
         Lecture lecture = lectureService.getByIdOrThrow(id);
         LectureForm form = lectureService.mapLectureToForm(lecture);
-        List<Course> allCourses = courseService.findAll();
-        List<Room> allRooms = roomService.findAll();
-        model.addAttribute("lectureForm", form);
-        model.addAttribute("lectureTypes", LectureType.values());
-        model.addAttribute("courseList", allCourses);
-        model.addAttribute("roomList", allRooms);
+        prepareModelForLectureForm(model, form, PageRequest.of(coursePage, courseSize),
+                PageRequest.of(roomPage, roomSize));
         return "edit-lecture";
 
     }
@@ -100,9 +98,13 @@ public class LectureController {
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateLecture(@PathVariable Long id, @Valid @ModelAttribute("lectureForm") LectureForm form,
-            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model,
+            @RequestParam(defaultValue = "0") Integer coursePage, @RequestParam(defaultValue = "5") Integer courseSize,
+            @RequestParam(defaultValue = "0") Integer roomPage, @RequestParam(defaultValue = "5") Integer roomSize) {
 
         if (bindingResult.hasErrors()) {
+            prepareModelForLectureForm(model, form, PageRequest.of(coursePage, courseSize),
+                    PageRequest.of(roomPage, roomSize));
             return "edit-lecture";
         }
 
@@ -110,6 +112,19 @@ public class LectureController {
         redirectAttributes.addFlashAttribute("successMessage", "Lecture updated successfully!");
 
         return "redirect:/lectures";
+    }
+
+    private void prepareModelForLectureForm(Model model, LectureForm form, Pageable coursePageable,
+            Pageable roomPageable) {
+        Page<Course> coursesPageObj = courseService.findAll(coursePageable);
+        Page<Room> roomsPageObj = roomService.findAll(roomPageable);
+
+        model.addAttribute("lectureForm", form);
+        model.addAttribute("lectureTypes", LectureType.values());
+        model.addAttribute("coursePage", coursesPageObj);
+        model.addAttribute("roomPage", roomsPageObj);
+        model.addAttribute("selectedCourseId", form.getCourseId());
+        model.addAttribute("selectedRoomId", form.getRoomId());
     }
 
     @DeleteMapping("/delete/{id}")

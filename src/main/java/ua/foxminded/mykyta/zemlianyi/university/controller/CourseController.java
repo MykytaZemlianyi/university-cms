@@ -141,4 +141,15 @@ public class CourseController {
 
         return "fragments/course_fragments :: courseSelectCheckboxList";
     }
+    
+    @PostMapping("/courseSelectRadioList")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    public String getCourseRadioList(@RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size, @RequestParam(required = false) Long selectedCourseId,
+            Model model) {
+        Page<Course> coursePage = courseService.findAll(PageRequest.of(page, size));
+        model.addAttribute("coursePage", coursePage);
+        model.addAttribute("selectedCourseId", selectedCourseId);
+        return "fragments/course_fragments :: courseSelectRadioList";
+    }
 }
