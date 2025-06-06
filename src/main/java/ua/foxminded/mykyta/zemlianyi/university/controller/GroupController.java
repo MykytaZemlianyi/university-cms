@@ -60,7 +60,8 @@ public class GroupController {
             @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer coursePageSize, Model model) {
 
-        prepareGroupFormModel(model, studentPage, studentPageSize, coursePage, coursePageSize);
+        prepareGroupFormModel(model, PageRequest.of(studentPage, studentPageSize),
+                PageRequest.of(coursePage, coursePageSize));
         model.addAttribute("group", new Group());
 
         return "add-new-group";
@@ -75,7 +76,8 @@ public class GroupController {
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
 
         if (bindingResult.hasErrors()) {
-            prepareGroupFormModel(model, studentPage, studentPageSize, coursePage, coursePageSize);
+            prepareGroupFormModel(model, PageRequest.of(studentPage, studentPageSize),
+                    PageRequest.of(coursePage, coursePageSize));
             return "add-new-group";
         }
         groupService.addNew(group);
@@ -95,7 +97,8 @@ public class GroupController {
         Group group = groupService.getByIdOrThrow(id);
         model.addAttribute("group", group);
 
-        prepareGroupFormModel(model, studentPage, studentPageSize, coursePage, coursePageSize);
+        prepareGroupFormModel(model, PageRequest.of(studentPage, studentPageSize),
+                PageRequest.of(coursePage, coursePageSize));
         return "edit-group";
     }
 
@@ -109,7 +112,8 @@ public class GroupController {
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
         addSelectedIdsToModel(model);
         if (bindingResult.hasErrors()) {
-            prepareGroupFormModel(model, studentPage, studentPageSize, coursePage, coursePageSize);
+            prepareGroupFormModel(model, PageRequest.of(studentPage, studentPageSize),
+                    PageRequest.of(coursePage, coursePageSize));
             return "edit-group";
         }
 
@@ -118,15 +122,12 @@ public class GroupController {
         return "redirect:/groups";
     }
 
-    private void prepareGroupFormModel(Model model, Integer studentPage, Integer studentPageSize, Integer coursePage,
-            int coursePageSize) {
+    private void prepareGroupFormModel(Model model, Pageable studentPageable, Pageable coursePageable) {
         addSelectedIdsToModel(model);
 
-        Pageable studentPageable = PageRequest.of(studentPage, studentPageSize);
         Page<Student> studentPageObj = studentService.findAll(studentPageable);
         model.addAttribute("studentPage", studentPageObj);
 
-        Pageable coursePageable = PageRequest.of(coursePage, coursePageSize);
         Page<Course> coursePageObj = courseService.findAll(coursePageable);
         model.addAttribute("coursePage", coursePageObj);
 

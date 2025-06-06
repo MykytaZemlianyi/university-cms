@@ -28,7 +28,11 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
         existingStudent.setEmail(newStudent.getEmail());
         existingStudent.setPassword(choosePassword(newStudent.getPassword(), existingStudent.getPassword()));
 
-        existingStudent.setGroup(newStudent.getGroup());
+        if (newStudent.getGroup().getId() == null) {
+            existingStudent.setGroup(null);
+        } else {
+            existingStudent.setGroup(newStudent.getGroup());
+        }
 
         return existingStudent;
 

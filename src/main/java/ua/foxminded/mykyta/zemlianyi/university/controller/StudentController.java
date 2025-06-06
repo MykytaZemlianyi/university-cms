@@ -1,7 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -55,23 +54,20 @@ public class StudentController {
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateStudentForm(Model model, @RequestParam(defaultValue = "0") Integer groupPage,
-            @RequestParam(defaultValue = "5") Integer groupSize, @RequestParam(required = false) Long selectedGroupId) {
+            @RequestParam(defaultValue = "5") Integer groupSize) {
 
-        Pageable pageable = PageRequest.of(groupPage, groupSize);
-        Page<Group> groupPageObj = groupService.findAll(pageable);
-
-        model.addAttribute("student", new Student());
-        model.addAttribute("groupPage", groupPageObj);
-        model.addAttribute("selectedGroupId", null);
+        prepareModelForStudentForm(model, new Student(), PageRequest.of(groupPage, groupSize));
         return "add-new-student";
     }
 
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createStudent(@Valid @ModelAttribute Student student, BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes, Model model, @RequestParam(defaultValue = "0") Integer groupPage,
+            @RequestParam(defaultValue = "5") Integer groupSize) {
 
         if (bindingResult.hasErrors()) {
+            prepareModelForStudentForm(model, student, PageRequest.of(groupPage, groupSize));
             return "add-new-student";
         }
 
@@ -82,26 +78,35 @@ public class StudentController {
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
-    public String showEditStudentForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+    public String showEditStudentForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes,
+            @RequestParam(defaultValue = "0") Integer groupPage, @RequestParam(defaultValue = "5") Integer groupSize,
+            @RequestParam(required = false) Long selectedGroupId) {
         Student student = studentService.getByIdOrThrow(id);
-        List<Group> allGroups = groupService.findAll();
-        model.addAttribute("student", student);
-        model.addAttribute("groups", allGroups);
+        prepareModelForStudentForm(model, student, PageRequest.of(groupPage, groupSize));
         return "edit-student";
     }
 
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String updateStudent(@PathVariable Long id, @Valid @ModelAttribute("student") Student updatedStudent,
-            BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+            BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model,
+            @RequestParam(defaultValue = "0") Integer groupPage, @RequestParam(defaultValue = "5") Integer groupSize) {
 
         if (bindingResult.hasErrors()) {
+            prepareModelForStudentForm(model, updatedStudent, PageRequest.of(groupPage, groupSize));
             return "edit-student";
         }
 
         studentService.update(updatedStudent);
         redirectAttributes.addFlashAttribute("successMessage", "Student updated successfully!");
         return "redirect:/students";
+    }
+
+    private void prepareModelForStudentForm(Model model, Student student, Pageable pageable) {
+        Page<Group> groupPageObj = groupService.findAll(pageable);
+        model.addAttribute("groupPage", groupPageObj);
+        model.addAttribute("student", student);
+        model.addAttribute("selectedGroupId", student.getGroup() != null ? student.getGroup().getId() : null);
     }
 
     @DeleteMapping("/delete/{id}")
