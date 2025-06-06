@@ -50,12 +50,24 @@ public class TeacherController {
         return "view-all-teachers";
     }
 
+    private void prepareTeacherFormModel(Model model, Teacher teacher, Pageable pageable) {
+
+        Page<Course> coursePageObj = courseService.findAll(pageable);
+        model.addAttribute("coursePage", coursePageObj);
+        model.addAttribute("teacher", teacher);
+
+        if (teacher.getCourses() != null) {
+            model.addAttribute("selectedCourseIds", teacher.getCourses().stream().map(Course::getId).toList());
+        } else {
+            model.addAttribute("selectedCourseIds", Collections.emptySet());
+        }
+    }
+
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateTeacherForm(Model model, @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
-        prepareTeacherFormModel(model, coursePage, coursePageSize);
-        model.addAttribute("teacher", new Teacher());
+        prepareTeacherFormModel(model, new Teacher(), PageRequest.of(coursePage, coursePageSize));
         return "add-new-teacher";
     }
 
@@ -66,10 +78,9 @@ public class TeacherController {
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
 
         if (bindingResult.hasErrors()) {
-            prepareTeacherFormModel(model, coursePage, coursePageSize);
+            prepareTeacherFormModel(model, teacher, PageRequest.of(coursePage, coursePageSize));
             return "add-new-teacher";
         }
-        addSelectedIdsToModel(model);
         teacherService.addNew(teacher);
         redirectAttributes.addFlashAttribute("successMessage", "Teacher added successfully!");
 
@@ -83,9 +94,7 @@ public class TeacherController {
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
 
         Teacher teacher = teacherService.getByIdOrThrow(id);
-        model.addAttribute("teacher", teacher);
-
-        prepareTeacherFormModel(model, coursePage, coursePageSize);
+        prepareTeacherFormModel(model, teacher, PageRequest.of(coursePage, coursePageSize));
         return "edit-teacher";
     }
 
@@ -97,25 +106,12 @@ public class TeacherController {
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
 
         if (bindingResult.hasErrors()) {
-            prepareTeacherFormModel(model, coursePage, coursePageSize);
+            prepareTeacherFormModel(model, updatedTeacher, PageRequest.of(coursePage, coursePageSize));
             return "edit-teacher";
         }
-        addSelectedIdsToModel(model);
         teacherService.update(updatedTeacher);
         redirectAttributes.addFlashAttribute("successMessage", "Teacher updated successfully!");
         return "redirect:/teachers";
-    }
-
-    private void prepareTeacherFormModel(Model model, Integer coursePage, Integer coursePageSize) {
-        addSelectedIdsToModel(model);
-
-        Pageable pageable = PageRequest.of(coursePage, coursePageSize);
-        Page<Course> coursePageObj = courseService.findAll(pageable);
-        model.addAttribute("coursePage", coursePageObj);
-    }
-
-    private void addSelectedIdsToModel(Model model) {
-        model.addAttribute("selectedCourseIds", Collections.emptySet());
     }
 
     @DeleteMapping("/delete/{id}")
@@ -125,7 +121,7 @@ public class TeacherController {
         redirectAttributes.addFlashAttribute("successMessage", "Teacher deleted successfully!");
         return "redirect:/teachers";
     }
-    
+
     @PostMapping("/teacherSelectRadioList")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getTeacherRadioList(@RequestParam(defaultValue = "0") int page,
