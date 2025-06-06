@@ -11,7 +11,7 @@
 				<th scope="col" class="p-2">Course</th>
 				<th scope="col" class="p-2">Teacher</th>
 				<th scope="col" class="p-2">Groups</th>
-				<th scope="col" class="p-2">Tools</th>
+				<th scope="col" class="p-2" sec:authorize="hasRole('ADMIN')">Tools</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -36,9 +36,8 @@
 				<td class="p-2"><a th:each="group : ${lecture.course?.groups}"
 					th:text="${group.name}" style="display: block;"></a></td>
 
-				<td class="text-center p-2">
-					<div
-						th:with="editUrl=@{/lectures/edit/{id}(id=${lecture.id})}">
+				<td class="text-center p-2" sec:authorize="hasRole('ADMIN')">
+					<div th:with="editUrl=@{/lectures/edit/{id}(id=${lecture.id})}">
 						<div
 							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
 					</div>

@@ -6,7 +6,7 @@
 				<th scope="col" class="p-2">Name</th>
 				<th scope="col" class="p-2">Students</th>
 				<th scope="col" class="p-2">Courses</th>
-				<th scope="col" class="p-2">Tools</th>
+				<th scope="col" class="p-2" sec:authorize="hasRole('ADMIN')">Tools</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -29,7 +29,7 @@
 					<div
 						th:replace="~{fragments/course_fragments :: modal(group=${group})}"></div>
 				</td>
-				<td class="text-center p-2">
+				<td class="text-center p-2" sec:authorize="hasRole('ADMIN')">
 					<div th:with="editUrl=@{/groups/edit/{id}(id=${group.id})}">
 						<div
 							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
