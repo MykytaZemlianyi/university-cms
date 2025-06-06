@@ -38,7 +38,7 @@ public class CourseController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER')")
     public String getCourses(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -141,7 +141,7 @@ public class CourseController {
 
         return "fragments/course_fragments :: courseSelectCheckboxList";
     }
-    
+
     @PostMapping("/courseSelectRadioList")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String getCourseRadioList(@RequestParam(defaultValue = "0") int page,
