@@ -13,9 +13,21 @@ public class ObjectChecker {
         throw new IllegalArgumentException("Utility class");
     }
 
-    public static <T extends Verifiable> void check(T object) {
+    public static <T extends Verifiable> void checkNullAndVerify(T object) {
         if (object == null || !object.verify()) {
             throw new IllegalArgumentException(Constants.OBJECT_INVALID_MSG + object);
+        }
+    }
+
+    public static <T extends Dto> void checkNullAndId(T object) {
+        checkNull(object);
+        if (object.getId() == null) {
+            throw new IllegalArgumentException(Constants.OBJECT_ID_NULL);
+        }
+    }
+    public static <T extends Dto> void checkNull(T object) {
+        if (object == null) {
+            throw new IllegalArgumentException(Constants.OBJECT_NULL);
         }
     }
 

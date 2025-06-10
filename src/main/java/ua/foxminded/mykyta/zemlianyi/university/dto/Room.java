@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,6 +11,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import ua.foxminded.mykyta.zemlianyi.university.Constants;
 
 @Entity
@@ -21,9 +22,13 @@ public class Room implements Verifiable, Dto {
     @Column(name = "room_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotNull(message = "Room number should not be empty")
+    @PositiveOrZero(message = "Room number should be positive or zero")
     @Column(name = "room_number")
     private Integer number;
-    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "room")
     private Set<Lecture> lectures = new HashSet<>();
 
     public Long getId() {
@@ -66,13 +71,21 @@ public class Room implements Verifiable, Dto {
         }
     }
 
+    public void clearLectures() {
+        for (Lecture lecture : new HashSet<>(this.lectures)) {
+            lecture.setRoom(null);
+        }
+        this.lectures = new HashSet<>();
+    }
+
     public boolean isAvailable(Lecture lecture) {
         if (lecture == null || !lecture.verify()) {
             throw new IllegalArgumentException(Constants.LECTURE_INVALID);
         }
 
         for (Lecture existingLecture : lectures) {
-            if (existingLecture.isOverlappingWith(lecture)) {
+            if (!Objects.equals(existingLecture.getId(), lecture.getId())
+                    && existingLecture.isOverlappingWith(lecture)) {
                 return false;
             }
         }

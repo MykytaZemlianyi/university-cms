@@ -1,8 +1,10 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -11,18 +13,25 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.StudentDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.StudentDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.StudentNotFoundException;
 
-@SpringBootTest
+@SpringBootTest(classes = { StudentServiceImpl.class })
 class StudentServiceImplTest {
+
     @MockitoBean
     StudentDao studentDao;
 
+    @MockitoBean
+    PasswordEncoder encoder;
+
     @Autowired
-    StudentService studentService;
+    StudentServiceImpl studentService;
 
     Student student = new Student();
 
@@ -60,7 +69,7 @@ class StudentServiceImplTest {
         studentWithSameEmail.setPassword("password123");
         doReturn(true).when(studentDao).existsByEmail(studentWithSameEmail.getEmail());
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(StudentDuplicateException.class, () -> {
             studentService.addNew(studentWithSameEmail);
         });
     }
@@ -90,16 +99,17 @@ class StudentServiceImplTest {
 
     @Test
     void update_shouldThrowIllegalArgumentException_whenStudentDoesNotExistsInDb() {
-        doReturn(false).when(studentDao).existsById(student.getId());
-        assertThrows(IllegalArgumentException.class, () -> {
+        when(studentDao.findById(student.getId())).thenReturn(Optional.empty());
+
+        assertThrows(StudentNotFoundException.class, () -> {
             studentService.update(student);
         });
     }
 
     @Test
     void update_shouldUpdate_whenStudentIsCorrectAndExistsInDb() {
-        doReturn(true).when(studentDao).existsById(student.getId());
-
+        doReturn(Optional.of(student)).when(studentDao).findById(student.getId());
+        doReturn("encodedPassword").when(encoder).encode(student.getPassword());
         studentService.update(student);
 
         verify(studentDao).save(student);

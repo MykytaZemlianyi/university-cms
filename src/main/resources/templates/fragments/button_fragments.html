@@ -1,13 +1,21 @@
-<div th:fragment="edit">
-	<button class="btn btn-primary btn-lg">
-		<i class="bi bi-gear"></i>
-	</button>
+<div th:fragment="edit(link)" sec:authorize="hasRole('ADMIN')">
+	<a th:href="${link}" class="btn btn-primary btn-lg"> <i
+		class="bi bi-gear"></i> <span>Edit</span>
+	</a>
 </div>
+
 <div th:fragment="delete">
 	<button class="btn btn-danger">
 		<i class="bi bi-trash-fill"></i>
 	</button>
 </div>
+
+<div th:fragment="create(link)" sec:authorize="hasRole('ADMIN')">
+	<a th:href="${link}" class="btn btn-primary btn-lg p-2"> <i
+		class="bi bi-plus-lg"></i> <span>Create</span>
+	</a>
+</div>
+
 
 <div th:fragment="show_modal_table(btn_text,data_bs_target)">
 	<button class="btn btn-outline-primary btn-lg p-2"

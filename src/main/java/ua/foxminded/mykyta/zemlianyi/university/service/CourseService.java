@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,8 @@ public interface CourseService {
 
     Course update(Course course);
 
+    List<Course> findAll();
+
     Page<Course> findAll(Pageable pageable);
 
     List<Course> findForTeacher(Teacher teacher);
@@ -21,5 +24,11 @@ public interface CourseService {
     List<Course> findForStduent(Student student);
 
     void delete(Course course);
+
+    void deleteOrThrow(Long id);
+
+    Optional<Course> findById(Long id);
+
+    Course getByIdOrThrow(Long id);
 
 }

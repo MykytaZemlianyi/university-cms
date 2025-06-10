@@ -1,8 +1,10 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -11,17 +13,25 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.TeacherDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.TeacherDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.TeacherNotFoundException;
 
-@SpringBootTest
+@SpringBootTest(classes = { TeacherServiceImpl.class })
 class TeacherServiceImplTest {
+
     @MockitoBean
     TeacherDao teacherDao;
+
+    @MockitoBean
+    PasswordEncoder encoder;
+
     @Autowired
-    TeacherService teacherService;
+    TeacherServiceImpl teacherService;
 
     Teacher teacher;
 
@@ -60,7 +70,7 @@ class TeacherServiceImplTest {
         teacherWithSameEmail.setPassword("securePass123");
         doReturn(true).when(teacherDao).existsByEmail(teacherWithSameEmail.getEmail());
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(TeacherDuplicateException.class, () -> {
             teacherService.addNew(teacherWithSameEmail);
         });
     }
@@ -90,16 +100,16 @@ class TeacherServiceImplTest {
 
     @Test
     void update_shouldThrowIllegalArgumentException_whenTeacherDoesNotExistsInDb() {
-        doReturn(false).when(teacherDao).existsById(teacher.getId());
-        assertThrows(IllegalArgumentException.class, () -> {
+        when(teacherDao.findById(teacher.getId())).thenReturn(Optional.empty());
+        assertThrows(TeacherNotFoundException.class, () -> {
             teacherService.update(teacher);
         });
     }
 
     @Test
     void update_shouldUpdate_whenTeacherIsCorrectAndExistsInDb() {
-        doReturn(true).when(teacherDao).existsById(teacher.getId());
-
+        doReturn(Optional.of(teacher)).when(teacherDao).findById(teacher.getId());
+        doReturn("encryptedPassword").when(encoder).encode(teacher.getPassword());
         teacherService.update(teacher);
 
         verify(teacherDao).save(teacher);
@@ -179,7 +189,7 @@ class TeacherServiceImplTest {
 
         teacherService.delete(teacher);
 
-        verify(teacherDao).delete(teacher);
+        verify(teacherDao).deleteById(teacher.getId());
     }
 
 }

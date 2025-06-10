@@ -5,21 +5,30 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.RoomDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.RoomNotFoundException;
 
-@SpringBootTest
+@SpringBootTest(classes = { RoomServiceImpl.class })
 class RoomServiceImplTest {
+
     @MockitoBean
     RoomDao roomDao;
 
+    @MockitoBean
+    PasswordEncoder encoder;
+
     @Autowired
-    RoomService roomService;
+    RoomServiceImpl roomService;
 
     @Test
     void addNew_shouldThrowIllegalArgumentException_whenRoomIsNull() {
@@ -44,7 +53,7 @@ class RoomServiceImplTest {
 
         doReturn(true).when(roomDao).existsByNumber(roomWithSameNumber.getNumber());
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(RoomDuplicateException.class, () -> {
             roomService.addNew(roomWithSameNumber);
         });
     }
@@ -83,28 +92,33 @@ class RoomServiceImplTest {
 
         when(roomDao.existsById(1L)).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(RoomNotFoundException.class, () -> {
             roomService.update(untrackedRoom);
         });
     }
 
     @Test
     void update_shouldUpdateRoom_whenRoomValidAndSavedBeforeUpdate() {
-        Room trackedRoom = new Room();
-        trackedRoom.setId(1L);
-        trackedRoom.setNumber(1);
 
-        when(roomDao.existsById(1L)).thenReturn(true);
+        Room managedRoom = new Room();
+        managedRoom.setId(1L);
+        managedRoom.setNumber(0);
 
-        roomService.update(trackedRoom);
+        Room updatedRoom = new Room();
+        updatedRoom.setId(1L);
+        updatedRoom.setNumber(1);
 
-        verify(roomDao).save(trackedRoom);
+        when(roomDao.findById(1L)).thenReturn(Optional.of(managedRoom));
+
+        roomService.update(updatedRoom);
+
+        verify(roomDao).save(updatedRoom);
     }
 
     @Test
     void delete_shouldThrowIllegalArgumentException_when_roomIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
-            roomService.delete(null);
+            roomService.deleteById(null);
         });
     }
 
@@ -112,7 +126,7 @@ class RoomServiceImplTest {
     void delete_shouldThrowIllegalArgumentException_when_roomIsInvalid() {
         Room invalidRoom = new Room();
         assertThrows(IllegalArgumentException.class, () -> {
-            roomService.delete(invalidRoom);
+            roomService.deleteById(invalidRoom);
         });
     }
 
@@ -123,7 +137,7 @@ class RoomServiceImplTest {
 
         doReturn(false).when(roomDao).existsById(room.getId());
         assertThrows(IllegalArgumentException.class, () -> {
-            roomService.delete(room);
+            roomService.deleteById(room);
         });
     }
 
@@ -134,9 +148,9 @@ class RoomServiceImplTest {
 
         doReturn(true).when(roomDao).existsById(room.getId());
 
-        roomService.delete(room);
+        roomService.deleteById(room);
 
-        verify(roomDao).delete(room);
+        verify(roomDao).deleteById(room.getId());
     }
 
 }

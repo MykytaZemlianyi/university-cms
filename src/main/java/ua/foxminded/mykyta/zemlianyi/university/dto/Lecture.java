@@ -30,15 +30,15 @@ public class Lecture implements Verifiable, Dto {
     @JoinColumn(name = "course_id", referencedColumnName = "course_id")
     private Course course;
 
+    @ManyToOne
+    @JoinColumn(name = "room_id", referencedColumnName = "room_id")
+    private Room room;
+
     @Column(name = "lecture_time_start")
     private LocalDateTime timeStart;
 
     @Column(name = "lecture_time_end")
     private LocalDateTime timeEnd;
-
-    @ManyToOne
-    @JoinColumn(name = "room_id", referencedColumnName = "room_id")
-    private Room room;
 
     public Long getId() {
         return id;
@@ -88,6 +88,15 @@ public class Lecture implements Verifiable, Dto {
         this.room = room;
     }
 
+    public void clearRelations() {
+        if (this.room != null) {
+            this.room.removeLecture(this);
+        }
+        if (this.course != null) {
+            this.course.removeLecture(this);
+        }
+    }
+
     @Override
     public boolean verify() {
         return verifyType() && verifyCourse() && verifyTime();
@@ -118,7 +127,7 @@ public class Lecture implements Verifiable, Dto {
     }
 
     public boolean isOverlappingWith(Lecture l2) {
-        return (this.getTimeStart().isBefore(l2.getTimeEnd()));
+        return this.timeStart.isBefore(l2.getTimeEnd()) && this.timeEnd.isAfter(l2.getTimeStart());
     }
 
     @Override

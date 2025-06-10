@@ -9,4 +9,5 @@ public interface AdminService extends UserService<Admin> {
 
     Page<Admin> findAll(Pageable pageable);
 
+    public Admin getByIdOrThrow(Long id);
 }

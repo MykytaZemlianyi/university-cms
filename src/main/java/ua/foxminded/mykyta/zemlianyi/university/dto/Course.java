@@ -3,7 +3,6 @@ package ua.foxminded.mykyta.zemlianyi.university.dto;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +14,8 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "courses", schema = "university")
@@ -24,11 +25,13 @@ public class Course implements Verifiable, Dto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Name cannot be blank")
+    @Size(max = 50, message = "Lenght < 50")
     @Column(name = "course_name")
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id")
+    @JoinColumn(name = "teacher_id", nullable = true)
     private Teacher teacher;
 
     @ManyToMany(mappedBy = "courses")
@@ -54,27 +57,37 @@ public class Course implements Verifiable, Dto {
     }
 
     public void setId(Long id) {
-        if (id != null && id >= 0) {
-            this.id = id;
-        } else {
-            throw new IllegalArgumentException("Invalid ID");
-        }
+        this.id = id;
     }
 
     public void setName(String name) {
-        if (verifyName(name)) {
-            this.name = name;
-        } else {
-            throw new IllegalArgumentException("Invalid name");
-        }
+        this.name = name;
     }
 
     public void setTeacher(Teacher teacher) {
         this.teacher = teacher;
     }
 
-    public void setGroups(Set<Group> groups) {
-        this.groups = groups;
+    public void clearTeacher() {
+        if (this.teacher != null) {
+            this.teacher.getCourses().remove(this);
+            this.teacher = null;
+        }
+    }
+
+    public void setGroups(Set<Group> newGroups) {
+        if (newGroups != null) {
+
+            for (Group oldGroup : new HashSet<>(this.groups)) {
+                oldGroup.getCourses().remove(this);
+            }
+            this.groups = newGroups;
+
+            for (Group newGroup : newGroups) {
+                newGroup.getCourses().add(this);
+            }
+        }
+
     }
 
     public void addGroup(Group group) {
@@ -89,13 +102,17 @@ public class Course implements Verifiable, Dto {
         }
     }
 
-    @Override
-    public boolean verify() {
-        return verifyName(this.name);
+    public void clearGroups() {
+        for (Group group : new HashSet<>(groups)) {
+            group.getCourses().remove(this);
+        }
+        this.groups = new HashSet<>();
     }
 
-    public boolean verifyName(String name) {
-        return name != null && !name.isEmpty() && !name.isBlank();
+    public void clearRelations() {
+        clearGroups();
+        clearTeacher();
+        clearLectures();
     }
 
     public Set<Lecture> getLectures() {
@@ -114,6 +131,22 @@ public class Course implements Verifiable, Dto {
     public void removeLecture(Lecture lecture) {
         this.lectures.remove(lecture);
         lecture.setCourse(null);
+    }
+
+    public void clearLectures() {
+        for (Lecture lecture : new HashSet<>(this.lectures)) {
+            lecture.setCourse(null);
+        }
+        this.lectures = new HashSet<>();
+    }
+
+    @Override
+    public boolean verify() {
+        return verifyName(this.name);
+    }
+
+    public boolean verifyName(String name) {
+        return name != null && !name.isEmpty() && !name.isBlank();
     }
 
     @Override

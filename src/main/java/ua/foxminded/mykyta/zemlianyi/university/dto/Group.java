@@ -15,6 +15,8 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "groups", schema = "university")
@@ -23,11 +25,12 @@ public class Group implements Verifiable, Dto {
     @Column(name = "group_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @NotBlank(message = "Name cannot be blank")
+    @Size(max = 5, message = "Lenght < 5")
     @Column(name = "group_name")
     private String name;
 
-    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "group", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private Set<Student> students = new HashSet<>();
 
     @ManyToMany
@@ -62,8 +65,20 @@ public class Group implements Verifiable, Dto {
         this.name = name;
     }
 
-    public void setStudents(Set<Student> students) {
+    public void setStudents(Set<Student> newStudents) {
+        this.students = newStudents;
+    }
+
+    public void assignStudents(Set<Student> students) {
+        for (Student student : this.students) {
+            student.setGroup(null);
+        }
+
         this.students = students;
+
+        for (Student student : students) {
+            student.setGroup(this);
+        }
     }
 
     public void addStudent(Student student) {
@@ -78,16 +93,45 @@ public class Group implements Verifiable, Dto {
         }
     }
 
-    public void setCourses(Set<Course> courses) {
-        this.courses = courses;
+    public void clearStudents() {
+        this.students = new HashSet<>();
+    }
+
+    public void setCourses(Set<Course> newCourses) {
+        if (newCourses != null) {
+
+            clearCourses();
+
+            for (Course course : newCourses) {
+                course.getGroups().add(this);
+            }
+
+            this.courses = newCourses;
+        }
     }
 
     public void addCourse(Course course) {
-        this.courses.add(course);
+        if (this.courses.add(course)) {
+            course.getGroups().add(this);
+        }
     }
 
     public void removeCourse(Course course) {
-        this.courses.remove(course);
+        if (this.courses.remove(course)) {
+            course.getGroups().remove(this);
+        }
+    }
+
+    public void clearCourses() {
+        for (Course course : new HashSet<>(courses)) {
+            course.getGroups().remove(this);
+        }
+        this.courses = new HashSet<>();
+    }
+
+    public void clearRelations() {
+        clearCourses();
+        clearStudents();
     }
 
     @Override

@@ -8,10 +8,12 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.CourseDao;
@@ -19,14 +21,20 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.CourseDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.CourseNotFoundException;
 
-@SpringBootTest
+@SpringBootTest(classes = { CourseServiceImpl.class })
 class CourseServiceImplTest {
+
     @MockitoBean
     CourseDao courseDao;
 
+    @MockitoBean
+    PasswordEncoder encoder;
+
     @Autowired
-    CourseService courseService;
+    CourseServiceImpl courseService;
 
     @Test
     void addNew_shouldThrowIllegalArumentException_whenCourseIsNull() {
@@ -51,7 +59,7 @@ class CourseServiceImplTest {
 
         doReturn(true).when(courseDao).existsByName(courseWithSameName.getName());
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(CourseDuplicateException.class, () -> {
             courseService.addNew(courseWithSameName);
         });
     }
@@ -86,20 +94,24 @@ class CourseServiceImplTest {
         untrackedCourse.setId(1L);
         untrackedCourse.setName("Course");
 
-        when(courseDao.existsById(1L)).thenReturn(false);
+        when(courseDao.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(CourseNotFoundException.class, () -> {
             courseService.update(untrackedCourse);
         });
     }
 
     @Test
     void update_shouldUpdateCourse_whenCourseValidAndSavedBeforeUpdate() {
+        Course managedCourse = new Course();
+        managedCourse.setId(1L);
+        managedCourse.setName("old Course");
+
         Course trackedCourse = new Course();
         trackedCourse.setId(1L);
         trackedCourse.setName("Course");
 
-        when(courseDao.existsById(1L)).thenReturn(true);
+        when(courseDao.findById(1L)).thenReturn(Optional.of(managedCourse));
 
         courseService.update(trackedCourse);
 
@@ -220,6 +232,6 @@ class CourseServiceImplTest {
 
         courseService.delete(course);
 
-        verify(courseDao).delete(course);
+        verify(courseDao).deleteById(course.getId());
     }
 }

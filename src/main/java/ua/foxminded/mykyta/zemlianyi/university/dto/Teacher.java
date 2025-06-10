@@ -3,6 +3,7 @@ package ua.foxminded.mykyta.zemlianyi.university.dto;
 import java.util.HashSet;
 import java.util.Set;
 
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -12,7 +13,7 @@ import jakarta.persistence.Table;
 @Table(name = "teachers", schema = "university")
 public class Teacher extends User {
 
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "teacher", cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     private Set<Course> courses = new HashSet<>();
 
     public Set<Course> getCourses() {
@@ -20,6 +21,11 @@ public class Teacher extends User {
     }
 
     public void setCourses(Set<Course> courses) {
+        clearCourses();
+
+        for (Course course : courses) {
+            course.setTeacher(this);
+        }
         this.courses = courses;
     }
 
@@ -33,6 +39,13 @@ public class Teacher extends User {
         if (successRemoval) {
             course.setTeacher(null);
         }
+    }
+
+    public void clearCourses() {
+        for (Course course : new HashSet<>(this.courses)) {
+            course.setTeacher(null);
+        }
+        this.courses = new HashSet<>();
     }
 
 }

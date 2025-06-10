@@ -1,41 +1,64 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import ua.foxminded.mykyta.zemlianyi.university.dao.CourseDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.LectureDao;
+import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
+import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.LectureNotFoundException;
 
-@SpringBootTest
+@SpringBootTest(classes = { LectureServiceImpl.class })
 class LectureServiceImplTest {
+
     @MockitoBean
     LectureDao lectureDao;
 
+    @MockitoBean
+    PasswordEncoder encoder;
+
+    @MockitoBean
+    CourseDao courseDao;
+
+    @MockitoBean
+    RoomDao roomDao;
+
     @Autowired
-    LectureService lectureService;
+    LectureServiceImpl lectureService;
 
     Lecture lecture = new Lecture();
     Course course = new Course();
+    Room room = new Room();
 
     @BeforeEach
     void setUp() {
         course.setId(1L);
         course.setName("Good course");
+
+        room.setId(1L);
+        room.setNumber(101);
 
         lecture.setId(1L);
         lecture.setLectureType(LectureType.LABORATORIUM);
@@ -47,7 +70,7 @@ class LectureServiceImplTest {
     @Test
     void addNew_shouldThrowIllegarArgumentException_whenLectureNull() {
         assertThrows(IllegalArgumentException.class, () -> {
-            lectureService.addNew(null);
+            lectureService.addNewFromForm(null);
         });
     }
 
@@ -68,7 +91,7 @@ class LectureServiceImplTest {
     @Test
     void update_shouldThrowIllegalArgumentException_whenLectureNull() {
         assertThrows(IllegalArgumentException.class, () -> {
-            lectureService.update(null);
+            lectureService.updateFromForm(null);
         });
     }
 
@@ -84,14 +107,14 @@ class LectureServiceImplTest {
     void update_shouldThrowIllegalArgumentException_whenLectureIsNotSavedInDb() {
         when(lectureDao.existsById(1L)).thenReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(LectureNotFoundException.class, () -> {
             lectureService.update(lecture);
         });
     }
 
     @Test
     void update_shouldUpdateLecture_whenLectureIsValidAndSaved() {
-        when(lectureDao.existsById(1L)).thenReturn(true);
+        when(lectureDao.findById(1L)).thenReturn(Optional.of(lecture));
         lectureService.update(lecture);
         verify(lectureDao).save(lecture);
     }
@@ -99,7 +122,7 @@ class LectureServiceImplTest {
     @Test
     void delete_shouldThrowIllegalArgumentException_when_lectureIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
-            lectureService.delete(null);
+            lectureService.deleteById(null);
         });
     }
 
@@ -107,7 +130,7 @@ class LectureServiceImplTest {
     void delete_shouldThrowIllegalArgumentException_when_lectureIsInvalid() {
         Lecture invalidLecture = new Lecture();
         assertThrows(IllegalArgumentException.class, () -> {
-            lectureService.delete(invalidLecture);
+            lectureService.deleteById(invalidLecture);
         });
     }
 
@@ -115,17 +138,17 @@ class LectureServiceImplTest {
     void delete_shouldThrowIllegalArgumentException_when_lectureIsNotSavedInDb() {
         doReturn(false).when(lectureDao).existsById(lecture.getId());
         assertThrows(IllegalArgumentException.class, () -> {
-            lectureService.delete(lecture);
+            lectureService.deleteById(lecture);
         });
     }
 
     @Test
     void delete_shouldDeleteLecture_when_lectureIsValidAndExistsInDb() {
-        doReturn(true).when(lectureDao).existsById(lecture.getId());
+        doReturn(true).when(lectureDao).existsById(1L);
 
-        lectureService.delete(lecture);
+        lectureService.deleteById(lecture);
 
-        verify(lectureDao).delete(lecture);
+        verify(lectureDao).deleteById(lecture.getId());
     }
 
     @Test
@@ -216,4 +239,145 @@ class LectureServiceImplTest {
 
         verify(lectureDao).findByCourseAndTimeStartBetween(course, timeStart, timeEnd);
     }
+
+    @Test
+    void mapLectureToForm_shouldThrowIllegalArgumentException_whenLectureIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            lectureService.mapLectureToForm(null);
+        });
+    }
+
+    @Test
+    void mapLectureToForm_shouldThrowIllegalArgumentException_whenLectureIdIsNull() {
+        lecture.setId(null);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            lectureService.mapLectureToForm(lecture);
+        });
+    }
+
+    @Test
+    void mapLectureToForm_shouldReturnLectureForm_whenLectureIsValid() {
+        LectureForm lectureForm = lectureService.mapLectureToForm(lecture);
+
+        assertEquals(lecture.getId(), lectureForm.getId());
+        assertEquals(lecture.getLectureType(), lectureForm.getLectureType());
+        assertEquals(lecture.getCourse().getId(), lectureForm.getCourseId());
+        assertEquals(lecture.getTimeStart().toLocalDate(), lectureForm.getDate());
+        assertEquals(lecture.getTimeStart().toLocalTime(), lectureForm.getTimeStart());
+        assertEquals(lecture.getTimeEnd().toLocalTime(), lectureForm.getTimeEnd());
+    }
+
+    @Test
+    void mapLectureToForm_shouldReturnLectureFormWithNullCourseId_whenCourseIsNull() {
+        lecture.setCourse(null);
+        LectureForm lectureForm = lectureService.mapLectureToForm(lecture);
+
+        assertEquals(lecture.getId(), lectureForm.getId());
+        assertEquals(lecture.getLectureType(), lectureForm.getLectureType());
+        assertEquals(lecture.getTimeStart().toLocalDate(), lectureForm.getDate());
+        assertEquals(lecture.getTimeStart().toLocalTime(), lectureForm.getTimeStart());
+        assertEquals(lecture.getTimeEnd().toLocalTime(), lectureForm.getTimeEnd());
+        assertNull(lectureForm.getCourseId());
+    }
+
+    @Test
+    void mapLectureToForm_shouldReturnLectureFormWithNullRoomId_whenRoomIsNull() {
+        lecture.setRoom(null);
+        LectureForm lectureForm = lectureService.mapLectureToForm(lecture);
+
+        assertEquals(lecture.getId(), lectureForm.getId());
+        assertEquals(lecture.getLectureType(), lectureForm.getLectureType());
+        assertEquals(lecture.getCourse().getId(), lectureForm.getCourseId());
+        assertEquals(lecture.getTimeStart().toLocalDate(), lectureForm.getDate());
+        assertEquals(lecture.getTimeStart().toLocalTime(), lectureForm.getTimeStart());
+        assertEquals(lecture.getTimeEnd().toLocalTime(), lectureForm.getTimeEnd());
+        assertNull(lectureForm.getRoomId());
+    }
+
+    @Test
+    void mapFormToLecture_shouldThrowIllegalArgumentException_whenLectureFormIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            lectureService.mapFormToLecture(null);
+        });
+    }
+
+    @Test
+    void mapFormToLecture_shouldThrowIllegalArgumentException_whenLectureFormHasInvalidTimeStamps() {
+        LectureForm lectureForm = new LectureForm();
+        lectureForm.setId(null);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            lectureService.mapFormToLecture(lectureForm);
+        });
+    }
+
+    @Test
+    void mapFormToLecture_shouldReturnLecture_whenLectureFormIsValid() {
+        LectureForm lectureForm = new LectureForm();
+        lectureForm.setId(1L);
+        lectureForm.setLectureType(LectureType.LECTURE);
+        lectureForm.setCourseId(1L);
+        lectureForm.setRoomId(1L);
+        lectureForm.setDate(LocalDate.of(2025, 1, 16));
+        lectureForm.setTimeStart(LocalTime.of(10, 0));
+        lectureForm.setTimeEnd(LocalTime.of(12, 0));
+
+        when(courseDao.findById(1L)).thenReturn(Optional.of(course));
+        when(roomDao.findById(1L)).thenReturn(Optional.of(room));
+
+        Lecture mappedLecture = lectureService.mapFormToLecture(lectureForm);
+
+        assertEquals(lectureForm.getId(), mappedLecture.getId());
+        assertEquals(lectureForm.getLectureType(), mappedLecture.getLectureType());
+        assertEquals(course, mappedLecture.getCourse());
+        assertEquals(room, mappedLecture.getRoom());
+        assertEquals(LocalDateTime.of(2025, 1, 16, 10, 0), mappedLecture.getTimeStart());
+        assertEquals(LocalDateTime.of(2025, 1, 16, 12, 0), mappedLecture.getTimeEnd());
+    }
+
+    @Test
+    void mapFormToLecture_shouldReturnLectureWithNullCourse_whenCourseisNull() {
+        LectureForm lectureForm = new LectureForm();
+        lectureForm.setId(1L);
+        lectureForm.setLectureType(LectureType.LECTURE);
+        lectureForm.setRoomId(1L);
+        lectureForm.setDate(LocalDate.of(2025, 1, 16));
+        lectureForm.setTimeStart(LocalTime.of(10, 0));
+        lectureForm.setTimeEnd(LocalTime.of(12, 0));
+
+        when(roomDao.findById(1L)).thenReturn(Optional.of(room));
+
+        Lecture mappedLecture = lectureService.mapFormToLecture(lectureForm);
+
+        assertEquals(lectureForm.getId(), mappedLecture.getId());
+        assertEquals(lectureForm.getLectureType(), mappedLecture.getLectureType());
+        assertEquals(room, mappedLecture.getRoom());
+        assertEquals(LocalDateTime.of(2025, 1, 16, 10, 0), mappedLecture.getTimeStart());
+        assertEquals(LocalDateTime.of(2025, 1, 16, 12, 0), mappedLecture.getTimeEnd());
+        assertNull(mappedLecture.getCourse());
+    }
+
+    @Test
+    void mapFormToLecture_shouldReturnLectureWithNullRoom_whenRoomisNull() {
+        LectureForm lectureForm = new LectureForm();
+        lectureForm.setId(1L);
+        lectureForm.setLectureType(LectureType.LECTURE);
+        lectureForm.setCourseId(1L);
+        lectureForm.setDate(LocalDate.of(2025, 1, 16));
+        lectureForm.setTimeStart(LocalTime.of(10, 0));
+        lectureForm.setTimeEnd(LocalTime.of(12, 0));
+
+        when(courseDao.findById(1L)).thenReturn(Optional.of(course));
+
+        Lecture mappedLecture = lectureService.mapFormToLecture(lectureForm);
+
+        assertEquals(lectureForm.getId(), mappedLecture.getId());
+        assertEquals(lectureForm.getLectureType(), mappedLecture.getLectureType());
+        assertEquals(course, mappedLecture.getCourse());
+        assertEquals(LocalDateTime.of(2025, 1, 16, 10, 0), mappedLecture.getTimeStart());
+        assertEquals(LocalDateTime.of(2025, 1, 16, 12, 0), mappedLecture.getTimeEnd());
+        assertNull(mappedLecture.getRoom());
+    }
+
 }

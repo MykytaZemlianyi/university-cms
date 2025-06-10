@@ -3,7 +3,10 @@ package ua.foxminded.mykyta.zemlianyi.university.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -12,18 +15,25 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import ua.foxminded.mykyta.zemlianyi.university.dao.AdminDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Admin;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.AdminDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.AdminNotFoundException;
 
-@SpringBootTest
+@SpringBootTest(classes = { AdminServiceImpl.class })
 class AdminServiceImplTest {
 
     @MockitoBean
     AdminDao adminDao;
+
+    @MockitoBean
+    PasswordEncoder encoder;
+
     @Autowired
-    AdminService adminService;
+    AdminServiceImpl adminService;
 
     Admin admin = new Admin();
 
@@ -61,16 +71,18 @@ class AdminServiceImplTest {
         adminWithSameEmail.setPassword("123123123");
         doReturn(true).when(adminDao).existsByEmail(adminWithSameEmail.getEmail());
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(AdminDuplicateException.class, () -> {
             adminService.addNew(adminWithSameEmail);
         });
     }
 
     @Test
-    void addNew_shouldSaveAdmin_whenAdminIsVerified() {
-
+    void addNew_shouldEncryptPasswordAndSaveAdmin_whenAdminIsVerified() {
+        String rawPassword = admin.getPassword();
+        when(encoder.encode(admin.getPassword())).thenReturn("encodedPassword");
         adminService.addNew(admin);
 
+        verify(encoder).encode(rawPassword);
         verify(adminDao).save(admin);
     }
 
@@ -91,18 +103,52 @@ class AdminServiceImplTest {
 
     @Test
     void update_shouldThrowIllegalArgumentException_whenAdminDoesNotExistsInDb() {
-        doReturn(false).when(adminDao).existsById(admin.getId());
-        assertThrows(IllegalArgumentException.class, () -> {
+        doThrow(new AdminNotFoundException(admin.getId())).when(adminDao).findById(admin.getId());
+        assertThrows(AdminNotFoundException.class, () -> {
             adminService.update(admin);
         });
     }
 
     @Test
     void update_shouldUpdate_whenAdminIsCorrectAndExistsInDb() {
-        doReturn(true).when(adminDao).existsById(admin.getId());
-
+        doReturn(Optional.of(admin)).when(adminDao).findById(admin.getId());
+        doReturn("encodedPassword").when(encoder).encode(admin.getPassword());
         adminService.update(admin);
 
+        verify(adminDao).save(admin);
+    }
+
+    @Test
+    void update_shouldNotEncryptPassword_whenPasswordDidntChanged() {
+        String rawPassword = admin.getPassword();
+        doReturn(Optional.of(admin)).when(adminDao).findById(admin.getId());
+        doReturn(true).when(encoder).matches(rawPassword, rawPassword);
+        Admin updatedAdminWithSamePassword = admin;
+        updatedAdminWithSamePassword.setName("Different-Name");
+
+        adminService.update(updatedAdminWithSamePassword);
+
+        verify(encoder, never()).encode(rawPassword);
+        verify(adminDao).save(updatedAdminWithSamePassword);
+    }
+
+    @Test
+    void update_shouldEncryptPassword_whenPasswordChanged() {
+        String newPassword = "NewPassword1234";
+
+        Admin updatedAdminWithNewPassword = new Admin();
+        updatedAdminWithNewPassword.setId(1L);
+        updatedAdminWithNewPassword.setName(admin.getName());
+        updatedAdminWithNewPassword.setSurname(admin.getSurname());
+        updatedAdminWithNewPassword.setEmail(admin.getEmail());
+        updatedAdminWithNewPassword.setPassword(newPassword);
+
+        doReturn(Optional.of(admin)).when(adminDao).findById(updatedAdminWithNewPassword.getId());
+        when(encoder.encode(newPassword)).thenReturn("newEncryptedPassword");
+
+        adminService.update(updatedAdminWithNewPassword);
+
+        verify(encoder).encode(newPassword);
         verify(adminDao).save(admin);
     }
 
