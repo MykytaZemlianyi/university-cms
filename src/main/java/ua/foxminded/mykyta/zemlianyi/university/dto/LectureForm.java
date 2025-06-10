@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 
-public class LectureForm implements Dto{
+public class LectureForm implements Dto, Verifiable {
 
     private Long id;
 
@@ -82,6 +82,11 @@ public class LectureForm implements Dto{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public boolean verify() {
+        return this.date != null && this.timeStart != null && this.timeEnd != null && this.lectureType != null;
     }
 
 }

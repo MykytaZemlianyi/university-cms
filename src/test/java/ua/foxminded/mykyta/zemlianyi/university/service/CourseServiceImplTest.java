@@ -22,6 +22,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Student;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 import ua.foxminded.mykyta.zemlianyi.university.exceptions.CourseDuplicateException;
+import ua.foxminded.mykyta.zemlianyi.university.exceptions.CourseNotFoundException;
 
 @SpringBootTest(classes = { CourseServiceImpl.class })
 class CourseServiceImplTest {
@@ -93,9 +94,9 @@ class CourseServiceImplTest {
         untrackedCourse.setId(1L);
         untrackedCourse.setName("Course");
 
-        when(courseDao.existsById(1L)).thenReturn(false);
+        when(courseDao.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(CourseNotFoundException.class, () -> {
             courseService.update(untrackedCourse);
         });
     }

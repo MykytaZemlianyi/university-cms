@@ -85,7 +85,7 @@ class CourseControllerTest {
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showCreateCourseForm_shouldReturnModelWithNewCourse() throws Exception {
         mockMvc.perform(get("/courses/add")).andExpect(status().isOk()).andExpect(view().name("add-new-course"))
-                .andExpect(model().attributeExists("course")).andExpect(model().attributeExists("teacherList"));
+                .andExpect(model().attributeExists("course")).andExpect(model().attributeExists("teacherPage"));
     }
 
     @Test

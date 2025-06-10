@@ -303,7 +303,7 @@ class LectureServiceImplTest {
     }
 
     @Test
-    void mapFormToLecture_shouldThrowIllegalArgumentException_whenLectureFormIdIsNull() {
+    void mapFormToLecture_shouldThrowIllegalArgumentException_whenLectureFormHasInvalidTimeStamps() {
         LectureForm lectureForm = new LectureForm();
         lectureForm.setId(null);
 

@@ -1,6 +1,5 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -116,8 +115,8 @@ class LectureControllerTest {
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void showCreateLectureForm_shouldReturnModelWithNewLecture() throws Exception {
         mockMvc.perform(get("/lectures/add")).andExpect(status().isOk()).andExpect(view().name("add-new-lecture"))
-                .andExpect(model().attributeExists("lectureForm")).andExpect(model().attributeExists("courseList"))
-                .andExpect(model().attributeExists("roomList")).andExpect(model().attributeExists("lectureTypes"));
+                .andExpect(model().attributeExists("lectureForm")).andExpect(model().attributeExists("coursePage"))
+                .andExpect(model().attributeExists("roomPage")).andExpect(model().attributeExists("lectureTypes"));
     }
 
     @Test
@@ -133,8 +132,8 @@ class LectureControllerTest {
     @Test
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void createLecture_shouldRedirectWithError_whenServiceThrowsException() throws Exception {
-        doReturn(lecture).when(service).mapFormToLecture(Mockito.any(LectureForm.class));
-        doThrow(new IllegalArgumentException("Service error")).when(service).addNew(Mockito.any(Lecture.class));
+        doThrow(new IllegalArgumentException("Service error")).when(service)
+                .addNewFromForm(Mockito.any(LectureForm.class));
 
         mockMvc.perform(post("/lectures/add").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("lectureType", "SEMINAR").param("courseId", "1").param("groupId", "1").param("roomId", "1")
@@ -196,8 +195,8 @@ class LectureControllerTest {
     @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
     void updateLecture_shouldRedirectWithError_whenUpdateFails() throws Exception {
 
-        when(service.mapFormToLecture(Mockito.any(LectureForm.class))).thenReturn(lecture);
-        when(service.update(Mockito.any(Lecture.class))).thenThrow(new IllegalArgumentException("Service Error"));
+        when(service.updateFromForm(Mockito.any(LectureForm.class)))
+                .thenThrow(new IllegalArgumentException("Service Error"));
 
         mockMvc.perform(post("/lectures/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("lectureType", "SEMINAR").param("courseId", "2").param("groupId", "2").param("roomId", "2")
