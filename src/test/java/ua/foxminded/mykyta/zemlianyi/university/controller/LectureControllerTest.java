@@ -19,9 +19,13 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -92,8 +96,9 @@ class LectureControllerTest {
         form.setTimeEnd(LocalTime.now());
     }
 
-    @Test
-    void getLectures_shouldReturnCorrectModel() throws Exception {
+    @ParameterizedTest
+    @MethodSource("userRoles")
+    void getLectures_shouldReturnCorrectModel(String username, String role) throws Exception {
 
         List<Lecture> lectureList = new ArrayList<>();
         lectureList.add(lecture);
@@ -103,12 +108,16 @@ class LectureControllerTest {
 
         when(service.findAll(pageable)).thenReturn(lecturePage);
 
-        mockMvc.perform(
-                get("/lectures").param("page", "0").param("size", "5").with(user("admin@gmail.com").roles("ADMIN")))
+        mockMvc.perform(get("/lectures").param("page", "0").param("size", "5").with(user(username).roles(role)))
                 .andExpect(status().isOk()).andExpect(view().name("view-all-lectures"))
                 .andExpect(model().attributeExists("lectures")).andExpect(model().attributeExists("currentPage"))
                 .andExpect(model().attributeExists("totalPages")).andExpect(model().attribute("currentPage", 0))
                 .andExpect(model().attribute("totalPages", 1)).andExpect(model().attribute("lectures", lecturePage));
+    }
+
+    private static Stream<Arguments> userRoles() {
+        return Stream.of(Arguments.of("admin@gmail.com", "ADMIN"), Arguments.of("student@gmail.com", "STUDENT"),
+                Arguments.of("teacher@gmail.com", "TEACHER"));
     }
 
     @Test

@@ -4,6 +4,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -15,9 +16,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -59,9 +64,9 @@ class StudentControllerTest {
         student.setGroup(group);
     }
 
-    @Test
-    @WithMockUser(username = "admin@gmail.com", roles = "ADMIN")
-    void getStudents_shouldReturnCorrectModel() throws Exception {
+    @ParameterizedTest
+    @MethodSource("userRoles")
+    void getStudents_shouldReturnCorrectModel(String username, String role) throws Exception {
 
         List<Student> studentsList = new ArrayList<>();
         studentsList.add(student);
@@ -71,11 +76,15 @@ class StudentControllerTest {
 
         when(service.findAll(pageable)).thenReturn(studentsPage);
 
-        mockMvc.perform(get("/students").param("page", "0").param("size", "5")).andExpect(status().isOk())
-                .andExpect(view().name("view-all-students")).andExpect(model().attributeExists("students"))
-                .andExpect(model().attributeExists("currentPage")).andExpect(model().attributeExists("totalPages"))
-                .andExpect(model().attribute("currentPage", 0)).andExpect(model().attribute("totalPages", 1))
-                .andExpect(model().attribute("students", studentsPage));
+        mockMvc.perform(get("/students").param("page", "0").param("size", "5").with(user(username).roles(role)))
+                .andExpect(status().isOk()).andExpect(view().name("view-all-students"))
+                .andExpect(model().attributeExists("students")).andExpect(model().attributeExists("currentPage"))
+                .andExpect(model().attributeExists("totalPages")).andExpect(model().attribute("currentPage", 0))
+                .andExpect(model().attribute("totalPages", 1)).andExpect(model().attribute("students", studentsPage));
+    }
+
+    private static Stream<Arguments> userRoles() {
+        return Stream.of(Arguments.of("admin@gmail.com", "ADMIN"), Arguments.of("teacher@gmail.com", "TEACHER"));
     }
 
     @Test
