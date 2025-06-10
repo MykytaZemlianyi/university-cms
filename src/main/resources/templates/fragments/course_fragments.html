@@ -1,0 +1,114 @@
+<th:block th:fragment="table (courses)">
+	<table class="table table-striped table-bordered mx-auto">
+		<thead>
+			<tr class="text-center align-middle">
+				<th scope="col" class="p-2">ID</th>
+				<th scope="col" class="p-2">Name</th>
+				<th scope="col" class="p-2">Teacher</th>
+				<th scope="col" class="p-2">Groups</th>
+				<th scope="col" class="p-2" sec:authorize="hasRole('ADMIN')">Tools</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="align-middle" th:each="course : ${courses}">
+				<td class="text-center p-2" th:text="${course.id}"></td>
+				<td class="p-2" th:text="${course.name}"></td>
+				<td class="p-2"
+					th:text="${course.teacher != null ? course.teacher.name + ' ' + course.teacher.surname : 'No teacher assigned'}">
+				</td>
+
+				<td class="p-2"><a th:each="group : ${course.groups}"
+					th:text="${group.name}" style="display: block;"></a></td>
+
+				<td class="text-center p-2" sec:authorize="hasRole('ADMIN')">
+					<div th:with="editUrl=@{/courses/edit/{id}(id=${course.id})}">
+						<div
+							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</th:block>
+
+<div th:fragment="modal(group)">
+	<div class="modal fade" th:id="'coursesModal_' + ${group.id}"
+		tabindex="-1" aria-labelledby="studentsModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">
+						Courses for group <span th:text="${group.name}"></span>
+					</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<div
+						th:replace="~{fragments/course_fragments :: table(courses=${group.courses})}"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div
+	th:fragment="courseSelectCheckboxList (coursePage, selectedCourses)">
+	<label class="form-label">Courses</label>
+	<div class="form-control mb-3"
+		style="max-height: 200px; overflow-y: auto;">
+		<div th:each="course : ${coursePage.content}" class="form-check">
+			<input class="form-check-input" type="checkbox" name="courses"
+				th:id="'course_' + ${course.id}" th:value="${course.id}"
+				th:checked="${selectedCourseIds != null and selectedCourseIds.contains(course.id)}" />
+			<label class="form-check-label" th:for="'course_' + ${course.id}"
+				th:text="${course.name}"></label>
+		</div>
+	</div>
+	<div
+		th:insert="~{fragments/course_fragments :: js-courses-pagination(
+        coursePage=${coursePage})}"></div>
+</div>
+
+<div th:fragment="courseSelectRadioList(coursePage)">
+	<label class="form-label">Course</label>
+	<div class="form-control mb-3"
+		style="max-height: 250px; overflow-y: auto;">
+		<div th:each="course : ${coursePage.content}" class="form-check">
+			<input class="form-check-input" type="radio"
+				th:id="'course_' + ${course.id}" name="courseRadio"
+				th:value="${course.id}"
+				th:checked="${selectedCourseId != null and selectedCourseId == course.id}"
+				onchange="$('#selectedCourseId').val(this.value);" /> <label
+				class="form-check-label" th:for="'course_' + ${course.id}"
+				th:text="${course.name}"></label>
+		</div>
+	</div>
+
+	<div
+		th:insert="~{fragments/course_fragments :: js-courses-pagination(
+        coursePage=${coursePage})}"></div>
+</div>
+
+
+
+<nav th:fragment="js-courses-pagination(coursePage)">
+	<ul class="pagination justify-content-center">
+		<li class="page-item"
+			th:classappend="${coursePage.first} ? 'disabled'"><a
+			class="page-link" href="#"
+			th:onclick="|loadCourses(${coursePage.number - 1}); return false;|">«</a>
+		</li>
+
+		<li th:each="i : ${#numbers.sequence(0, coursePage.totalPages - 1)}"
+			class="page-item"
+			th:classappend="${i == coursePage.number} ? 'active'"><a
+			class="page-link" href="#" th:text="${i + 1}"
+			th:onclick="|loadCourses(${i}); return false;|"></a></li>
+
+		<li class="page-item" th:classappend="${coursePage.last} ? 'disabled'">
+			<a class="page-link" href="#"
+			th:onclick="|loadCourses(${coursePage.number + 1}); return false;|">»</a>
+		</li>
+	</ul>
+</nav>

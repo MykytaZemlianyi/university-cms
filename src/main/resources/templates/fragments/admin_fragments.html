@@ -1,0 +1,76 @@
+<th:block th:fragment="table (admins)">
+	<table class="table table-striped table-bordered mx-auto">
+		<thead>
+			<tr class="text-center align-middle">
+				<th scope="col" class="p-2">ID</th>
+				<th scope="col" class="p-2">Name</th>
+				<th scope="col" class="p-2">Surname</th>
+				<th scope="col" class="p-2">Email</th>
+				<th scope="col" class="p-2">Tools</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="align-middle" th:each="admin : ${admins.content}">
+				<td class="text-center p-2" th:text="${admin.id}"></td>
+				<td class="p-2" th:text="${admin.name}"></td>
+				<td class="p-2" th:text="${admin.surname}"></td>
+				<td class="p-2" th:text="${admin.email}"></td>
+				<td class="text-center p-2">
+					<div th:with="editUrl=@{/admins/edit/{id}(id=${admin.id})}">
+						<div
+							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
+					</div>
+
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</th:block>
+
+<nav th:fragment="navbar"
+	class="navbar navbar-expand-lg navbar-light bg-light">
+	<div class="container-fluid">
+		<a class="navbar-brand" href="#">Admin</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+			data-bs-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false"
+			aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+				<li class="nav-item"><a class="nav-link" href="/welcome">Home</a></li>
+
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+					role="button" aria-expanded="false">Users</a>
+					<ul class="dropdown-menu">
+						<li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item"
+							href="/admins">Admins</a></li>
+						<li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item"
+							href="/students">Students</a></li>
+						<li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item"
+							href="/teachers">Teachers</a></li>
+					</ul></li>
+
+				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
+					class="nav-link" href="/groups">Groups</a></li>
+
+				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
+					class="nav-link" href="/courses">Courses</a></li>
+
+				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
+					class="nav-link" href="/lectures">Lectures</a></li>
+				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
+					class="nav-link" href="/rooms">Rooms</a></li>
+
+				<li class="nav-item">
+					<form th:action="@{/logout}" method="post">
+						<button type="submit" class="nav-link">Log out</button>
+					</form>
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>

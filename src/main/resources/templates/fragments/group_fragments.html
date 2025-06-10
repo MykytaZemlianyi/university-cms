@@ -1,0 +1,91 @@
+<th:block th:fragment="table(groups)">
+	<table class="table table-striped table-bordered mx-auto">
+		<thead>
+			<tr class="text-center align-middle">
+				<th scope="col" class="p-2">ID</th>
+				<th scope="col" class="p-2">Name</th>
+				<th scope="col" class="p-2">Students</th>
+				<th scope="col" class="p-2">Courses</th>
+				<th scope="col" class="p-2" sec:authorize="hasRole('ADMIN')">Tools</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="align-middle" th:each="group : ${groups}">
+				<td class="text-center p-2" th:text="${group.id}"></td>
+				<td class="p-2" th:text="${group.name}"></td>
+				<td class="text-center p-2">
+					<div class="d-flex justify-content-center"
+						th:insert="~{fragments/button_fragments :: show_modal_table(btn_text='View Students', data_bs_target=|#studentsModal_${group.id}|)}">
+					</div>
+
+					<div
+						th:replace="~{fragments/student_fragments :: modal(group=${group})}"></div>
+				</td>
+				<td class="text-center p-2">
+					<div class="d-flex justify-content-center"
+						th:insert="~{fragments/button_fragments :: show_modal_table(btn_text='View Courses', data_bs_target=|#coursesModal_${group.id}|)}">
+					</div>
+
+					<div
+						th:replace="~{fragments/course_fragments :: modal(group=${group})}"></div>
+				</td>
+				<td class="text-center p-2" sec:authorize="hasRole('ADMIN')">
+					<div th:with="editUrl=@{/groups/edit/{id}(id=${group.id})}">
+						<div
+							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</th:block>
+
+<div th:fragment="groupSelectRadioList(groupPage)">
+	<label class="form-label">Group</label>
+	<div class="form-control mb-3"
+		style="max-height: 250px; overflow-y: auto;">
+
+		<input class="form-check-input" type="radio" th:id="empty"
+			name="groupRadio" th:value="''"
+			th:checked="${selectedGroupId == null}"
+			onchange="$('#selectedGroupId').val('');" /> <label
+			class="form-check-label" th:for="empty">None</label>
+
+
+		<div th:each="group : ${groupPage.content}" class="form-check">
+			<input class="form-check-input" type="radio"
+				th:id="'group_' + ${group.id}" name="groupRadio"
+				th:value="${group.id}"
+				th:checked="${selectedGroupId != null and selectedGroupId == group.id}"
+				onchange="$('#selectedGroupId').val(this.value);" /> <label
+				class="form-check-label" th:for="'group_' + ${group.id}"
+				th:text="${group.name}"></label>
+		</div>
+	</div>
+
+	<div
+		th:insert="~{fragments/group_fragments :: js-groups-pagination(
+        groupPage=${groupPage})}"></div>
+</div>
+
+<nav th:fragment="js-groups-pagination(groupPage)">
+	<ul class="pagination justify-content-center">
+		<li class="page-item" th:classappend="${groupPage.first} ? 'disabled'">
+			<a class="page-link" href="#"
+			th:onclick="|loadGroups(${groupPage.number - 1}); return false;|">«</a>
+		</li>
+
+		<li th:each="i : ${#numbers.sequence(0, groupPage.totalPages - 1)}"
+			class="page-item"
+			th:classappend="${i == groupPage.number} ? 'active'"><a
+			class="page-link" href="#" th:text="${i + 1}"
+			th:onclick="|loadGroups(${i}); return false;|"></a></li>
+
+		<li class="page-item" th:classappend="${groupPage.last} ? 'disabled'">
+			<a class="page-link" href="#"
+			th:onclick="|loadGroups(${groupPage.number + 1}); return false;|">»</a>
+		</li>
+	</ul>
+</nav>
+
+
