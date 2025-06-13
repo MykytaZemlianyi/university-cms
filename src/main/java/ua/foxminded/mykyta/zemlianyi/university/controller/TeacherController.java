@@ -1,6 +1,8 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -56,11 +58,9 @@ public class TeacherController {
         model.addAttribute("coursePage", coursePageObj);
         model.addAttribute("teacher", teacher);
 
-        if (teacher.getCourses() != null) {
-            model.addAttribute("selectedCourseIds", teacher.getCourses().stream().map(Course::getId).toList());
-        } else {
-            model.addAttribute("selectedCourseIds", Collections.emptySet());
-        }
+        List<Long> selectedCourseIds = Optional.ofNullable(teacher.getCourses().stream().map(Course::getId).toList())
+                .orElse(Collections.emptyList());
+        model.addAttribute("selectedCourseIds", selectedCourseIds);
     }
 
     @GetMapping("/add")

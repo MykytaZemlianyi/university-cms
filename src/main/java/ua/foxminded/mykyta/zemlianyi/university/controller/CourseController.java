@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -117,7 +118,8 @@ public class CourseController {
         Page<Teacher> teacherPage = teacherService.findAll(pageable);
         model.addAttribute("course", course);
         model.addAttribute("teacherPage", teacherPage);
-        model.addAttribute("selectedTeacherId", course.getTeacher() != null ? course.getTeacher().getId() : null);
+        model.addAttribute("selectedTeacherId",
+                Optional.ofNullable(course.getTeacher()).map(Teacher::getId).orElse(null));
     }
 
     @PostMapping("/courseSelectCheckboxList")
