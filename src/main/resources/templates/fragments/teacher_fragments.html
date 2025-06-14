@@ -44,13 +44,13 @@
 				<li class="nav-item"><a class="nav-link" href="/welcome">Home</a></li>
 
 				<li class="nav-item" sec:authorize="hasRole('TEACHER')"><a
-					class="nav-link" href="/courses">Courses</a></li>
+					class="nav-link" href="/lectures">My Schedule</a></li>
+				<li class="nav-item" sec:authorize="hasRole('TEACHER')"><a
+					class="nav-link" href="/courses/my-courses">My Courses</a></li>
 				<li class="nav-item" sec:authorize="hasRole('TEACHER')"><a
 					class="nav-link" href="/groups">Groups</a></li>
 				<li class="nav-item" sec:authorize="hasRole('TEACHER')"><a
 					class="nav-link" href="/students">Students</a></li>
-				<li class="nav-item" sec:authorize="hasRole('TEACHER')"><a
-					class="nav-link" href="/lectures">My Schedule</a></li>
 
 				<li class="nav-item">
 					<form th:action="@{/logout}" method="post">

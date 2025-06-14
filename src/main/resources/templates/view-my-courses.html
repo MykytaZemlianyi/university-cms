@@ -22,6 +22,9 @@
 
 			<div th:replace="~{fragments/course_fragments :: table(${courses})}"></div>
 
+			<a class="btn btn-outline-secondary btn-lg p-2" th:href="@{/courses}">
+				<i class=" bi bi-search me-2"></i> <span>View All Courses</span>
+			</a>
 		</div>
 	</div>
 	<script
