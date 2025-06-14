@@ -23,6 +23,21 @@ University CMS is an extensible and user-friendly platform built for small educa
 
 ---
 
+## 🔑 Access
+
+The application is deployed and accessible online.  
+You can log in using one of the predefined demo accounts:
+
+| Role     | Email               | Password |
+|----------|---------------------|----------|
+| Admin    | admin@gmail.com     | `11111`  |
+| Student  | student@gmail.com   | `11111`  |
+| Teacher  | teacher@gmail.com   | `11111`  |
+
+> ⚠️ All users have restricted access according to their roles as defined in the system.
+
+The application is available at: [https://university-cms-7fq6.onrender.com/](https://university-cms-7fq6.onrender.com/)
+
 ## 🛠️ Tech Stack
 
 - **Backend**: Java, Spring Boot, Spring Security, Spring Web MVC, Spring Data JPA
