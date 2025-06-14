@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -51,6 +53,20 @@ public class CourseController {
         model.addAttribute("totalPages", courses.hasContent() ? courses.getTotalPages() : 1);
 
         return "view-all-courses";
+    }
+
+    @GetMapping("/my-courses")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER')")
+    public String getCoursesForUser(Model model) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst()
+                .map(Object::toString).orElse("").substring(5);
+
+        List<Course> courses = courseService.findForUserWithUsername(username, role);
+
+        model.addAttribute("courses", courses);
+
+        return "view-my-courses";
     }
 
     @GetMapping("/add")

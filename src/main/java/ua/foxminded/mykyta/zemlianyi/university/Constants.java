@@ -26,6 +26,7 @@ public class Constants {
 
     public static final String STUDENT_DOES_NOT_HAVE_GROUP = "Student doesn't have group";
 
+    public static final String USERNAME_INVALID = "Username cannot be null or empty";
     public static final String USER_INVALID = " is invalid";
     public static final String USER_PASSWORD_CHANGE_ERROR = " doesn't exists in database - unable to change password";
     public static final String USER_DUPLICATE_BY_EMAIL_ERROR = " with this email already exists";
@@ -53,4 +54,5 @@ public class Constants {
 
     public static final String INVALID_NAME_MSG = "Name should contain only letters and [',-]";
     public static final String INVALID_SURNAME_MSG = "Surname should contain only letters and [',-]";
+    public static final String ROLE_INVALID = "Role cannot be null or empty";
 }
