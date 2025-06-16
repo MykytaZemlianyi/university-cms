@@ -69,7 +69,7 @@ class CourseControllerTest {
 
     private static Stream<Arguments> userRoles() {
         return Stream.of(Arguments.of("admin@gmail.com", "ADMIN"), Arguments.of("student@gmail.com", "STUDENT"),
-                Arguments.of("teacher@gmail.com", "TEACHER"));
+                Arguments.of("teacher@gmail.com", "TEACHER"), Arguments.of("staff@gmail.com", "STAFF"));
     }
 
     @ParameterizedTest
