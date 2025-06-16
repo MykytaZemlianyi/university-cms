@@ -38,7 +38,7 @@ public class TeacherController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
     public String getTeachers(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -64,7 +64,7 @@ public class TeacherController {
     }
 
     @GetMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showCreateTeacherForm(Model model, @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
         prepareTeacherFormModel(model, new Teacher(), PageRequest.of(coursePage, coursePageSize));
@@ -72,7 +72,7 @@ public class TeacherController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String createTeacher(@Valid @ModelAttribute Teacher teacher, BindingResult bindingResult, Model model,
             RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
@@ -88,7 +88,7 @@ public class TeacherController {
     }
 
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showEditTeacherForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes,
             @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
@@ -99,7 +99,7 @@ public class TeacherController {
     }
 
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String updateTeacher(@PathVariable Long id, @Valid @ModelAttribute("teacher") Teacher updatedTeacher,
             BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model,
             @RequestParam(defaultValue = "0") Integer coursePage,
@@ -115,7 +115,7 @@ public class TeacherController {
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String deleteTeacher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         teacherService.deleteOrThrow(id);
         redirectAttributes.addFlashAttribute("successMessage", "Teacher deleted successfully!");
@@ -123,7 +123,7 @@ public class TeacherController {
     }
 
     @PostMapping("/teacherSelectRadioList")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String getTeacherRadioList(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size, @RequestParam(required = false) Long selectedTeacherId,
             Model model) {

@@ -41,7 +41,7 @@ public class CourseController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
     public String getCourses(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -56,7 +56,7 @@ public class CourseController {
     }
 
     @GetMapping("/my-courses")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
     public String getCoursesForUser(Model model) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst()
@@ -70,7 +70,7 @@ public class CourseController {
     }
 
     @GetMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showCreateCourseForm(@RequestParam(defaultValue = "0") Integer teacherPage,
             @RequestParam(defaultValue = "5") Integer teacherSize, Model model) {
 
@@ -79,7 +79,7 @@ public class CourseController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String createCourse(@Valid @ModelAttribute Course course, BindingResult bindingResult,
             RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer teacherPage,
             @RequestParam(defaultValue = "5") Integer teacherSize, Model model) {
@@ -95,7 +95,7 @@ public class CourseController {
     }
 
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showEditCourseForm(@PathVariable Long id, Model model,
             @RequestParam(defaultValue = "0") Integer teacherPage,
             @RequestParam(defaultValue = "5") Integer teacherSize) {
@@ -105,7 +105,7 @@ public class CourseController {
     }
 
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String updateCourse(@PathVariable Long id, @Valid @ModelAttribute("course") Course updatedCourse,
             BindingResult bindingResult, RedirectAttributes redirectAttributes,
             @RequestParam(defaultValue = "0") Integer teacherPage,
@@ -139,7 +139,7 @@ public class CourseController {
     }
 
     @PostMapping("/courseSelectCheckboxList")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String getCourseSelectCheckboxList(@ModelAttribute Group group,
             @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
             @RequestParam(required = false) Set<Long> selectedCourseIds, Model model) {
@@ -161,7 +161,7 @@ public class CourseController {
     }
 
     @PostMapping("/courseSelectRadioList")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String getCourseRadioList(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size, @RequestParam(required = false) Long selectedCourseId,
             Model model) {

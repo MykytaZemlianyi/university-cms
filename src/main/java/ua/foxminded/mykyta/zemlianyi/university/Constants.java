@@ -13,11 +13,14 @@ public class Constants {
 
     public static final String ROLE_PREFIX = "ROLE_";
     public static final String ROLE_ADMIN = "ADMIN";
+    public static final String ROLE_STAFF = "STAFF";
     public static final String ROLE_TEACHER = "TEACHER";
     public static final String ROLE_STUDENT = "STUDENT";
 
     public static final String LOAD_USER_BY_USERNAME = """
             SELECT email, "password", 'ROLE_ADMIN' AS role FROM university.admins WHERE email = :username
+            UNION ALL
+            SELECT email, "password", 'ROLE_STAFF' AS role FROM university.staff WHERE email = :username
             UNION ALL
             SELECT email, "password", 'ROLE_STUDENT' AS role FROM university.students WHERE email = :username
             UNION ALL

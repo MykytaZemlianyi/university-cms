@@ -7,7 +7,8 @@
 				<th scope="col" class="p-2">Surname</th>
 				<th scope="col" class="p-2">Email</th>
 				<th scope="col" class="p-2">Courses</th>
-				<th scope="col" class="p-2" sec:authorize="hasRole('ADMIN')">Tools</th>
+				<th scope="col" class="p-2"
+					sec:authorize="hasAnyRole('ADMIN','STAFF')">Tools</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -18,7 +19,7 @@
 				<td class="p-2" th:text="${teacher.email}"></td>
 				<td class="p-2"><a th:each="course : ${teacher.courses}"
 					th:text="${course.name}" style="display: block;"></a></td>
-				<td class="text-center p-2" sec:authorize="hasRole('ADMIN')">
+				<td class="text-center p-2" sec:authorize="hasAnyRole('ADMIN','STAFF')">
 					<div th:with="editUrl=@{/teachers/edit/{id}(id=${teacher.id})}">
 						<div
 							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
