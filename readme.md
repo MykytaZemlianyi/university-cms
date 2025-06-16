@@ -9,13 +9,14 @@ University CMS is an extensible and user-friendly platform built for small educa
 ## 🚀 Features
 
 - Admin dashboard with full CRUD operations for:
-  - Users (Admins, Teachers, Students)
+  - Users (Admins,Staff, Teachers, Students)
   - Courses, Groups, Lectures, Classrooms
 - Dynamic pagination select and multi-select fields (JS + jQuery) for entity associations
 - Pagination and modals for improved UX
 - Form validation with user-friendly error feedback
 - Spring Security role-based access control:
   - **Admin**: Full access
+  - **Staff**: Create/Read/Update access to all entities exept admins
   - **Teacher**: View access to students, lectures, courses
   - **Student**: View access to courses, teachers, groups, lectures
 - Error handling
@@ -30,7 +31,7 @@ You can log in using one of the predefined demo accounts:
 
 | Role     | Email               | Password |
 |----------|---------------------|----------|
-| Admin    | admin@gmail.com     | `11111`  |
+| Staff    | staff@gmail.com     | `11111`  |
 | Student  | student@gmail.com   | `11111`  |
 | Teacher  | teacher@gmail.com   | `11111`  |
 
@@ -105,7 +106,14 @@ cd university-cms
 ```bash
 mvn clean install spring-boot:repackage
 ```
-3. Run the JAR file from the terminal
+3. Env vars
+```
+${PG_DB_URL}
+${PG_DB_USERNAME}
+${PG_DB_PASSWORD}
+${PORT}
+```
+5. Run the JAR file from the terminal
 ```bash
 java -jar target/university-cms.jar
 ```
