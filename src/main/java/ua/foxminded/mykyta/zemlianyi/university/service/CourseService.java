@@ -31,4 +31,6 @@ public interface CourseService {
 
     Course getByIdOrThrow(Long id);
 
+    public List<Course> findForUserWithUsername(String username, String role);
+
 }

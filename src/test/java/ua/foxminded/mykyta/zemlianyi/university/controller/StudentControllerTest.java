@@ -84,7 +84,8 @@ class StudentControllerTest {
     }
 
     private static Stream<Arguments> userRoles() {
-        return Stream.of(Arguments.of("admin@gmail.com", "ADMIN"), Arguments.of("teacher@gmail.com", "TEACHER"));
+        return Stream.of(Arguments.of("admin@gmail.com", "ADMIN"), Arguments.of("teacher@gmail.com", "TEACHER"),
+                Arguments.of("staff@gmail.com", "STAFF"));
     }
 
     @Test

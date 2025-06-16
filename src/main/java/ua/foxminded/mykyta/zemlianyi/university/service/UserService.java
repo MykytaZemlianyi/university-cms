@@ -19,6 +19,8 @@ public interface UserService<T extends User> {
     public Optional<T> findById(Long id);
 
     public T getByIdOrThrow(Long id);
-    
+
+    public T getByEmailOrThrow(String email);
+
     List<T> findAll();
 }

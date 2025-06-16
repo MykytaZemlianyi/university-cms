@@ -1,12 +1,15 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,7 +41,7 @@ public class CourseController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
     public String getCourses(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -52,8 +55,22 @@ public class CourseController {
         return "view-all-courses";
     }
 
+    @GetMapping("/my-courses")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
+    public String getCoursesForUser(Model model) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst()
+                .map(Object::toString).orElse("").substring(5);
+
+        List<Course> courses = courseService.findForUserWithUsername(username, role);
+
+        model.addAttribute("courses", courses);
+
+        return "view-my-courses";
+    }
+
     @GetMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showCreateCourseForm(@RequestParam(defaultValue = "0") Integer teacherPage,
             @RequestParam(defaultValue = "5") Integer teacherSize, Model model) {
 
@@ -62,7 +79,7 @@ public class CourseController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String createCourse(@Valid @ModelAttribute Course course, BindingResult bindingResult,
             RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer teacherPage,
             @RequestParam(defaultValue = "5") Integer teacherSize, Model model) {
@@ -78,7 +95,7 @@ public class CourseController {
     }
 
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showEditCourseForm(@PathVariable Long id, Model model,
             @RequestParam(defaultValue = "0") Integer teacherPage,
             @RequestParam(defaultValue = "5") Integer teacherSize) {
@@ -88,7 +105,7 @@ public class CourseController {
     }
 
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String updateCourse(@PathVariable Long id, @Valid @ModelAttribute("course") Course updatedCourse,
             BindingResult bindingResult, RedirectAttributes redirectAttributes,
             @RequestParam(defaultValue = "0") Integer teacherPage,
@@ -117,11 +134,12 @@ public class CourseController {
         Page<Teacher> teacherPage = teacherService.findAll(pageable);
         model.addAttribute("course", course);
         model.addAttribute("teacherPage", teacherPage);
-        model.addAttribute("selectedTeacherId", course.getTeacher() != null ? course.getTeacher().getId() : null);
+        model.addAttribute("selectedTeacherId",
+                Optional.ofNullable(course.getTeacher()).map(Teacher::getId).orElse(null));
     }
 
     @PostMapping("/courseSelectCheckboxList")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String getCourseSelectCheckboxList(@ModelAttribute Group group,
             @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
             @RequestParam(required = false) Set<Long> selectedCourseIds, Model model) {
@@ -143,7 +161,7 @@ public class CourseController {
     }
 
     @PostMapping("/courseSelectRadioList")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String getCourseRadioList(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size, @RequestParam(required = false) Long selectedCourseId,
             Model model) {

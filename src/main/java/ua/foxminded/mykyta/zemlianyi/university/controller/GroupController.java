@@ -40,7 +40,7 @@ public class GroupController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
     public String getGroups(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
         Pageable pageable = PageRequest.of(currentPage, size);
@@ -54,7 +54,7 @@ public class GroupController {
     }
 
     @GetMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showCreateGroupForm(@RequestParam(defaultValue = "0") Integer studentPage,
             @RequestParam(defaultValue = "5") Integer studentPageSize,
             @RequestParam(defaultValue = "0") Integer coursePage,
@@ -68,7 +68,7 @@ public class GroupController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String createGroup(@Valid @ModelAttribute Group group, BindingResult bindingResult, Model model,
             RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer studentPage,
             @RequestParam(defaultValue = "5") Integer studentPageSize,
@@ -87,7 +87,7 @@ public class GroupController {
     }
 
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showEditGroupForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes,
             @RequestParam(defaultValue = "0") Integer studentPage,
             @RequestParam(defaultValue = "5") Integer studentPageSize,
@@ -103,7 +103,7 @@ public class GroupController {
     }
 
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String updateGroup(@PathVariable Long id, @Valid @ModelAttribute("group") Group updatedGroup,
             BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model,
             @RequestParam(defaultValue = "0") Integer studentPage,
@@ -148,7 +148,7 @@ public class GroupController {
     }
 
     @PostMapping("/groupSelectRadioList")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String getGroupRadioList(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size, @RequestParam(required = false) Long selectedGroupId,
             Model model) {

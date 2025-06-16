@@ -1,5 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,9 +24,13 @@ public class CourseServiceImpl implements CourseService {
     private static Logger logger = LogManager.getLogger(CourseServiceImpl.class.getName());
 
     private CourseDao courseDao;
+    private TeacherService teacherService;
+    private StudentService studentService;
 
-    public CourseServiceImpl(CourseDao courseDao) {
+    public CourseServiceImpl(CourseDao courseDao, TeacherService teacherService, StudentService studentService) {
         this.courseDao = courseDao;
+        this.teacherService = teacherService;
+        this.studentService = studentService;
     }
 
     @Override
@@ -87,6 +92,35 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public List<Course> findAll() {
         return courseDao.findAll();
+    }
+
+    @Override
+    public List<Course> findForUserWithUsername(String username, String role) {
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException(Constants.USERNAME_INVALID);
+        }
+        if (role == null || role.isBlank()) {
+            throw new IllegalArgumentException(Constants.ROLE_INVALID);
+        }
+        List<Course> courses = new ArrayList<>();
+
+        switch (role) {
+        case Constants.ROLE_TEACHER -> {
+            Teacher teacher = teacherService.getByEmailOrThrow(username);
+            courses = findForTeacher(teacher);
+        }
+        case Constants.ROLE_STUDENT -> {
+            Student student = studentService.getByEmailOrThrow(username);
+            courses = findForStduent(student);
+        }
+        case Constants.ROLE_ADMIN -> logger.info("Admin does not have courses assigned, returning empty list");
+
+        case Constants.ROLE_STAFF -> logger.info("Staff does not have courses assigned, returning empty list");
+
+        default -> throw new IllegalArgumentException("Role " + role + " is not supported");
+        }
+
+        return courses;
     }
 
     @Override

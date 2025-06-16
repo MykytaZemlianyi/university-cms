@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -66,6 +67,11 @@ class CourseControllerTest {
         course.addGroup(group);
     }
 
+    private static Stream<Arguments> userRoles() {
+        return Stream.of(Arguments.of("admin@gmail.com", "ADMIN"), Arguments.of("student@gmail.com", "STUDENT"),
+                Arguments.of("teacher@gmail.com", "TEACHER"), Arguments.of("staff@gmail.com", "STAFF"));
+    }
+
     @ParameterizedTest
     @MethodSource("userRoles")
     void getCourses_shouldReturnCorrectModelForUser(String username, String role) throws Exception {
@@ -81,11 +87,6 @@ class CourseControllerTest {
                 .andExpect(model().attributeExists("courses")).andExpect(model().attributeExists("currentPage"))
                 .andExpect(model().attributeExists("totalPages")).andExpect(model().attribute("currentPage", 0))
                 .andExpect(model().attribute("totalPages", 1)).andExpect(model().attribute("courses", coursePage));
-    }
-
-    private static Stream<Arguments> userRoles() {
-        return Stream.of(Arguments.of("admin@gmail.com", "ADMIN"), Arguments.of("student@gmail.com", "STUDENT"),
-                Arguments.of("teacher@gmail.com", "TEACHER"));
     }
 
     @Test
@@ -225,6 +226,39 @@ class CourseControllerTest {
         mockMvc.perform(delete("/courses/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/courses"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("userRoles")
+    void getCoursesForUser_shouldReturnCoursesForUser_whenServiceReturnCourseList(String username, String role)
+            throws Exception {
+        Course course1 = new Course();
+        course1.setId(1L);
+        course1.setName("Math");
+        Course course2 = new Course();
+        course2.setId(2L);
+        course2.setName("Physics");
+
+        List<Course> courses = new ArrayList<>();
+        courses.add(course1);
+        courses.add(course2);
+
+        when(service.findForUserWithUsername(username, role)).thenReturn(courses);
+
+        mockMvc.perform(get("/courses/my-courses").with(user(username).roles(role))).andExpect(status().isOk())
+                .andExpect(view().name("view-my-courses")).andExpect(model().attribute("courses", courses));
+    }
+
+    @ParameterizedTest
+    @MethodSource("userRoles")
+    void getCoursesForUser_shouldReturnEmptyCoursesForUser_whenServiceReturnEmptyList(String username, String role)
+            throws Exception {
+        List<Course> courses = new ArrayList<>();
+
+        when(service.findForUserWithUsername(username, role)).thenReturn(courses);
+
+        mockMvc.perform(get("/courses/my-courses").with(user(username).roles(role))).andExpect(status().isOk())
+                .andExpect(view().name("view-my-courses")).andExpect(model().attribute("courses", courses));
     }
 
 }

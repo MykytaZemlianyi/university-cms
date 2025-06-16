@@ -37,7 +37,7 @@ public class StudentController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_TEACHER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_TEACHER','ROLE_STAFF')")
     public String getStudents(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -52,7 +52,7 @@ public class StudentController {
     }
 
     @GetMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showCreateStudentForm(Model model, @RequestParam(defaultValue = "0") Integer groupPage,
             @RequestParam(defaultValue = "5") Integer groupPageSize) {
 
@@ -61,7 +61,7 @@ public class StudentController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String createStudent(@Valid @ModelAttribute Student student, BindingResult bindingResult,
             RedirectAttributes redirectAttributes, Model model, @RequestParam(defaultValue = "0") Integer groupPage,
             @RequestParam(defaultValue = "5") Integer groupSize) {
@@ -77,7 +77,7 @@ public class StudentController {
     }
 
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showEditStudentForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes,
             @RequestParam(defaultValue = "0") Integer groupPage, @RequestParam(defaultValue = "5") Integer groupSize,
             @RequestParam(required = false) Long selectedGroupId) {
@@ -87,7 +87,7 @@ public class StudentController {
     }
 
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String updateStudent(@PathVariable Long id, @Valid @ModelAttribute("student") Student updatedStudent,
             BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model,
             @RequestParam(defaultValue = "0") Integer groupPage, @RequestParam(defaultValue = "5") Integer groupSize) {
@@ -118,7 +118,7 @@ public class StudentController {
     }
 
     @PostMapping("/studentSelectCheckboxList")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String getStudentSelectCheckboxList(@ModelAttribute Group group,
             @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
             @RequestParam(required = false) Set<Long> selectedStudentIds, Model model) {

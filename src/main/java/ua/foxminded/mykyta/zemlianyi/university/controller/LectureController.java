@@ -40,7 +40,7 @@ public class LectureController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
     public String getLectures(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
         Pageable pageable = PageRequest.of(currentPage, size);
@@ -54,7 +54,7 @@ public class LectureController {
     }
 
     @GetMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showCreateLectureForm(Model model, @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer courseSize, @RequestParam(defaultValue = "0") Integer roomPage,
             @RequestParam(defaultValue = "5") Integer roomSize) {
@@ -64,7 +64,7 @@ public class LectureController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String createLecture(@Valid @ModelAttribute LectureForm form, BindingResult bindingResult,
             RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer courseSize, @RequestParam(defaultValue = "0") Integer roomPage,
@@ -83,7 +83,7 @@ public class LectureController {
     }
 
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showEditLectureForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes,
             @RequestParam(defaultValue = "0") Integer coursePage, @RequestParam(defaultValue = "5") Integer courseSize,
             @RequestParam(defaultValue = "0") Integer roomPage, @RequestParam(defaultValue = "5") Integer roomSize) {
@@ -96,7 +96,7 @@ public class LectureController {
     }
 
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String updateLecture(@PathVariable Long id, @Valid @ModelAttribute("lectureForm") LectureForm form,
             BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model,
             @RequestParam(defaultValue = "0") Integer coursePage, @RequestParam(defaultValue = "5") Integer courseSize,

@@ -31,6 +31,12 @@ class CourseServiceImplTest {
     CourseDao courseDao;
 
     @MockitoBean
+    TeacherService teacherService;
+
+    @MockitoBean
+    StudentService studentService;
+
+    @MockitoBean
     PasswordEncoder encoder;
 
     @Autowired

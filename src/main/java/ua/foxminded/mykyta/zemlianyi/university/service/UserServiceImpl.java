@@ -92,6 +92,11 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
         return dao.findById(id);
     }
 
+    public T getByEmailOrThrow(String email) {
+        return dao.findByEmail(email).orElseThrow(
+                () -> new IllegalArgumentException(Constants.USER_NOT_FOUND_ERROR + " with email: " + email));
+    }
+
     public List<T> findAll() {
         return dao.findAll();
     }

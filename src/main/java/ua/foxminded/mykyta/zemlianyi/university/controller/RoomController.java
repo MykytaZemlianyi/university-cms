@@ -30,7 +30,7 @@ public class RoomController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String getRooms(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
 
@@ -45,14 +45,14 @@ public class RoomController {
     }
 
     @GetMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showCreateRoomForm(Model model) {
         model.addAttribute("room", new Room());
         return "add-new-room";
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String createRoom(@Valid @ModelAttribute Room room, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
@@ -66,7 +66,7 @@ public class RoomController {
     }
 
     @GetMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showEditRoomForm(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Room room = roomService.getByIdOrThrow(id);
         model.addAttribute("room", room);
@@ -74,7 +74,7 @@ public class RoomController {
     }
 
     @PostMapping("/edit/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String updateRoom(@PathVariable Long id, @Valid @ModelAttribute("room") Room updatedRoom,
             BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
@@ -94,9 +94,9 @@ public class RoomController {
         redirectAttributes.addFlashAttribute("successMessage", "Room deleted successfully!");
         return "redirect:/rooms";
     }
-    
+
     @PostMapping("/roomSelectRadioList")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String getRoomRadioList(@RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size, @RequestParam(required = false) Long selectedRoomId,
             Model model) {
