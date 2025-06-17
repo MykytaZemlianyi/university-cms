@@ -45,14 +45,14 @@ public class StaffController {
     }
 
     @GetMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateStaffForm(Model model) {
         model.addAttribute("staff", new Staff());
         return "add-new-staff";
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createStaff(@Valid @ModelAttribute("staff") Staff staff, BindingResult bindingResult,
             RedirectAttributes redirectAttributes) {
 
