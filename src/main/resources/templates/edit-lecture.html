@@ -16,15 +16,16 @@
 </head>
 <body>
 
-	<div class="container mt-5">
+	<div
+		class="container mt-5 mb-2 d-flex justify-content-center align-items-center">
+		<h1>Edit Lecture</h1>
+	</div>
 
+
+	<div class="container">
 		<form th:action="@{/lectures/edit/{id}(id=${lectureForm.id})}"
 			th:object="${lectureForm}" id="lectureForm" method="post"
 			class="mt-3">
-
-			<div class="container-fluid text-center">
-				<h1>Edit Lecture</h1>
-			</div>
 
 			<div class="mb-3">
 				<label for="lectureType" class="form-label">Lecture Type</label> <select

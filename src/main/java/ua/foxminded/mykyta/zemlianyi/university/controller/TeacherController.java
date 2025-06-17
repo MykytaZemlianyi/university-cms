@@ -64,7 +64,7 @@ public class TeacherController {
     }
 
     @GetMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateTeacherForm(Model model, @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
         prepareTeacherFormModel(model, new Teacher(), PageRequest.of(coursePage, coursePageSize));
@@ -72,7 +72,7 @@ public class TeacherController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createTeacher(@Valid @ModelAttribute Teacher teacher, BindingResult bindingResult, Model model,
             RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
@@ -115,7 +115,7 @@ public class TeacherController {
     }
 
     @DeleteMapping("/delete/{id}")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String deleteTeacher(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         teacherService.deleteOrThrow(id);
         redirectAttributes.addFlashAttribute("successMessage", "Teacher deleted successfully!");

@@ -19,27 +19,8 @@ public class TeacherServiceImpl extends UserServiceImpl<Teacher> implements Teac
     }
 
     @Override
-    protected Teacher mergeWithExisting(Teacher newTeacher) {
-        ObjectChecker.checkNullAndId(newTeacher);
-        Teacher existingTeacher = getByIdOrThrow(newTeacher.getId());
-
-        existingTeacher.setName(newTeacher.getName());
-        existingTeacher.setSurname(newTeacher.getSurname());
-        existingTeacher.setEmail(newTeacher.getEmail());
-        existingTeacher.setPassword(choosePassword(newTeacher.getPassword(), existingTeacher.getPassword()));
-
+    protected void mergeCustomFields(Teacher existingTeacher, Teacher newTeacher) {
         existingTeacher.setCourses(newTeacher.getCourses());
-
-        return existingTeacher;
-
-    }
-
-    private String choosePassword(String newPassword, String existingPassword) {
-        if (newPassword == null || newPassword.isBlank() || passwordEncoder.matches(newPassword, existingPassword)) {
-            return existingPassword;
-        } else {
-            return passwordEncoder.encode(newPassword);
-        }
     }
 
     @Override

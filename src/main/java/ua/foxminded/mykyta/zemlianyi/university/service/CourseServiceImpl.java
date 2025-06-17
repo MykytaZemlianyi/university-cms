@@ -113,9 +113,9 @@ public class CourseServiceImpl implements CourseService {
             Student student = studentService.getByEmailOrThrow(username);
             courses = findForStduent(student);
         }
-        case Constants.ROLE_ADMIN -> logger.info("Admin does not have courses assigned, returning empty list");
+        case Constants.ROLE_ADMIN -> throw new IllegalArgumentException(Constants.ADMIN_DOES_NOT_HAVE_COURSES);
 
-        case Constants.ROLE_STAFF -> logger.info("Staff does not have courses assigned, returning empty list");
+        case Constants.ROLE_STAFF -> throw new IllegalArgumentException(Constants.STAFF_DOES_NOT_HAVE_COURSES);
 
         default -> throw new IllegalArgumentException("Role " + role + " is not supported");
         }

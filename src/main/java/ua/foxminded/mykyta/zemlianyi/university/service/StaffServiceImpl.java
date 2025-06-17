@@ -26,27 +26,6 @@ public class StaffServiceImpl extends UserServiceImpl<Staff> implements StaffSer
     }
 
     @Override
-    protected Staff mergeWithExisting(Staff newStaff) {
-        ObjectChecker.checkNullAndId(newStaff);
-        Staff existingStaff = getByIdOrThrow(newStaff.getId());
-
-        existingStaff.setName(newStaff.getName());
-        existingStaff.setSurname(newStaff.getSurname());
-        existingStaff.setEmail(newStaff.getEmail());
-        existingStaff.setPassword(choosePassword(newStaff.getPassword(), existingStaff.getPassword()));
-
-        return existingStaff;
-    }
-
-    private String choosePassword(String newPassword, String existingPassword) {
-        if (newPassword == null || newPassword.isBlank() || passwordEncoder.matches(newPassword, existingPassword)) {
-            return existingPassword;
-        } else {
-            return passwordEncoder.encode(newPassword);
-        }
-    }
-
-    @Override
     public Staff getByIdOrThrow(Long id) {
         return dao.findById(id).orElseThrow(() -> new StaffNotFoundException(id));
     }

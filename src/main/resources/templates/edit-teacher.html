@@ -16,14 +16,15 @@
 </head>
 <body>
 
-	<div class="container mt-5">
+	<div
+		class="container mt-5 mb-2 d-flex justify-content-center align-items-center">
+		<h1>Edit Teacher</h1>
+	</div>
 
+
+	<div class="container">
 		<form th:action="@{/teachers/edit/{id}(id=${teacher.id})}"
 			th:object="${teacher}" method="post" class="mt-3" id="teacherForm">
-
-			<div class="container-fluid text-center">
-				<h1>Edit Teacher</h1>
-			</div>
 
 			<div class="mb-3">
 				<label for="name" class="form-label">Name</label> <input type="text"

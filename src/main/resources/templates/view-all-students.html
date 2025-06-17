@@ -12,19 +12,25 @@
 	rel="stylesheet">
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-	<link rel="stylesheet" href="/css/styles.css">
+<link rel="stylesheet" href="/css/styles.css">
 
 </head>
 <body>
 	<div th:insert="~{fragments/general_fragments :: navbar}"></div>
-	<div class="container-xxl mt-5">
+
+	<div
+		class="container-xxl mt-5 mb-2 d-flex justify-content-center align-items-center">
+		<h1>Students</h1>
+	</div>
+
+	<div class="container-xxl">
 		<div
 			class="d-flex flex-column justify-content-center align-items-center">
 
 			<div class="d-flex w-100"
 				th:insert="~{fragments/general_fragments :: operation-status-alert}"></div>
 
-			<div class="d-flex w-100 mb-2"
+			<div class="d-flex w-100 mb-2" sec:authorize="hasRole('ROLE_ADMIN')"
 				th:insert="~{fragments/button_fragments :: create(link='/students/add')}"></div>
 
 			<div

@@ -52,7 +52,7 @@ public class StudentController {
     }
 
     @GetMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String showCreateStudentForm(Model model, @RequestParam(defaultValue = "0") Integer groupPage,
             @RequestParam(defaultValue = "5") Integer groupPageSize) {
 
@@ -61,7 +61,7 @@ public class StudentController {
     }
 
     @PostMapping("/add")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     public String createStudent(@Valid @ModelAttribute Student student, BindingResult bindingResult,
             RedirectAttributes redirectAttributes, Model model, @RequestParam(defaultValue = "0") Integer groupPage,
             @RequestParam(defaultValue = "5") Integer groupSize) {

@@ -17,14 +17,17 @@
 
 </head>
 <body>
-	<div class="container mt-5">
 
+	<div
+		class="container mt-5 mb-2 d-flex justify-content-center align-items-center">
+		<h1>Edit Group</h1>
+	</div>
+
+
+	<div class="container">
 		<form th:action="@{/groups/edit/{id}(id=${group.id})}"
 			th:object="${group}" id="groupForm" method="post" class="mt-3">
 
-			<div class="container-fluid text-center">
-				<h1>Edit Group</h1>
-			</div>
 
 			<div class="mb-3">
 				<label for="name" class="form-label">Name</label> <input type="text"
