@@ -18,6 +18,21 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
         super(studentDao, passwordEncoder);
     }
 
+    public Student addNew(Student student) {
+        ObjectChecker.checkNullAndVerify(student);
+        uniqueEmailOrThrow(student.getEmail());
+
+        encodePasswordBeforeSave(student);
+
+        if (student.getGroup() == null || student.getGroup().getId() == null) {
+            student.setGroup(null);
+        }
+
+        logger.info("Adding new {} - {}", student.getClass().getSimpleName(), student);
+        return dao.save(student);
+
+    }
+
     @Override
     protected Student mergeWithExisting(Student newStudent) {
         ObjectChecker.checkNullAndId(newStudent);
