@@ -30,4 +30,16 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
         return dao.findById(id).orElseThrow(() -> new AdminNotFoundException(id));
     }
 
+    @Override
+    protected void mergeCustomFields(Admin existingUser, Admin newUser) {
+        // No custom fields to merge for Admin
+
+    }
+
+    @Override
+    protected void resolveCustomFields(Admin user) {
+        // No custom fields to resolve for Admin
+
+    }
+
 }

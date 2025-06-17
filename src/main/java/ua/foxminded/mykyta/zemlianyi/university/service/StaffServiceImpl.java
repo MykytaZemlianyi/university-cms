@@ -30,4 +30,16 @@ public class StaffServiceImpl extends UserServiceImpl<Staff> implements StaffSer
         return dao.findById(id).orElseThrow(() -> new StaffNotFoundException(id));
     }
 
+    @Override
+    protected void mergeCustomFields(Staff existingUser, Staff newUser) {
+        // No custom fields to merge for Staff
+
+    }
+
+    @Override
+    protected void resolveCustomFields(Staff user) {
+        // No custom fields to resolve for Staff
+
+    }
+
 }
