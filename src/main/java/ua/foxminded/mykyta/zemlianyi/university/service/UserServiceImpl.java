@@ -94,6 +94,12 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
          */
     }
 
+    /**
+     * Resolves custom fields for the user. This method can be overridden in
+     * subclasses to handle specific fields.
+     *
+     * @param user the user for which custom fields need to be resolved
+     */
     protected void resolveCustomFields(T user) {
         /*
          * This method can be overridden in subclasses to resolve custom fields. For
