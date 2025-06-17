@@ -18,52 +18,25 @@ public class StudentServiceImpl extends UserServiceImpl<Student> implements Stud
         super(studentDao, passwordEncoder);
     }
 
-    public Student addNew(Student student) {
-        ObjectChecker.checkNullAndVerify(student);
-        uniqueEmailOrThrow(student.getEmail());
-
-        encodePasswordBeforeSave(student);
-
-        if (student.getGroup() == null || student.getGroup().getId() == null) {
-            student.setGroup(null);
-        }
-
-        logger.info("Adding new {} - {}", student.getClass().getSimpleName(), student);
-        return dao.save(student);
-
-    }
-
     @Override
-    protected Student mergeWithExisting(Student newStudent) {
-        ObjectChecker.checkNullAndId(newStudent);
-        Student existingStudent = getByIdOrThrow(newStudent.getId());
-
-        existingStudent.setName(newStudent.getName());
-        existingStudent.setSurname(newStudent.getSurname());
-        existingStudent.setEmail(newStudent.getEmail());
-        existingStudent.setPassword(choosePassword(newStudent.getPassword(), existingStudent.getPassword()));
-
+    protected void mergeCustomFields(Student existingStudent, Student newStudent) {
         if (newStudent.getGroup() == null || newStudent.getGroup().getId() == null) {
             existingStudent.setGroup(null);
         } else {
             existingStudent.setGroup(newStudent.getGroup());
         }
+    }
 
-        return existingStudent;
-
+    @Override
+    protected void resolveCustomFields(Student student) {
+        if (student.getGroup() == null || student.getGroup().getId() == null) {
+            student.setGroup(null);
+        }
     }
 
     @Override
     public Student getByIdOrThrow(Long id) {
         return dao.findById(id).orElseThrow(() -> new StudentNotFoundException(id));
-    }
-
-    private String choosePassword(String newPassword, String existingPassword) {
-        if (newPassword == null || newPassword.isBlank() || passwordEncoder.matches(newPassword, existingPassword)) {
-            return existingPassword;
-        } else {
-            return passwordEncoder.encode(newPassword);
-        }
     }
 
     @Override

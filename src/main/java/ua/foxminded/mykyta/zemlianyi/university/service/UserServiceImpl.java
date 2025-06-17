@@ -29,7 +29,7 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
         uniqueEmailOrThrow(user.getEmail());
 
         encodePasswordBeforeSave(user);
-
+        resolveCustomFields(user);
         logger.info("Adding new {} - {}", user.getClass().getSimpleName(), user);
         return dao.save(user);
     }
@@ -51,7 +51,63 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
         user.setPassword(passwordEncoder.encode(rawPassword));
     }
 
-    protected abstract T mergeWithExisting(T user);
+    /**
+     * Merges the fields of the new user with the existing user in the database.
+     * This method retrieves the existing user by ID, merges the default and custom
+     * fields, and returns the updated user.
+     *
+     * @param user the user with updated fields
+     * @return the merged user
+     */
+    protected T mergeWithExisting(T user) {
+        ObjectChecker.checkNullAndId(user);
+        T existingUser = getByIdOrThrow(user.getId());
+        mergeDefaultFields(existingUser, user);
+        mergeCustomFields(existingUser, user);
+        return existingUser;
+    }
+
+    /**
+     * Merges default fields from newUser into existingUser.
+     *
+     * @param existingUser the user that already exists in the database
+     * @param newUser      the user with updated fields
+     */
+    protected void mergeDefaultFields(T existingUser, T newUser) {
+        existingUser.setName(newUser.getName());
+        existingUser.setSurname(newUser.getSurname());
+        existingUser.setEmail(newUser.getEmail());
+        existingUser.setPassword(choosePassword(newUser.getPassword(), existingUser.getPassword()));
+    }
+
+    /**
+     * Merges custom fields from newUser into existingUser. This method can be
+     * overridden in subclasses to handle specific fields.
+     *
+     * @param existingUser the user that already exists in the database
+     * @param newUser      the user with updated fields
+     */
+    protected void mergeCustomFields(T existingUser, T newUser) {
+        /*
+         * This method can be overridden in subclasses to merge custom fields. For
+         * example, merging group for Student Default implementation does nothing
+         */
+    }
+
+    protected void resolveCustomFields(T user) {
+        /*
+         * This method can be overridden in subclasses to resolve custom fields. For
+         * example, resolving group for Student Default implementation does nothing
+         */
+    }
+
+    private String choosePassword(String newPassword, String existingPassword) {
+        if (newPassword == null || newPassword.isBlank() || passwordEncoder.matches(newPassword, existingPassword)) {
+            return existingPassword;
+        } else {
+            return passwordEncoder.encode(newPassword);
+        }
+    }
 
     public void delete(T user) {
         ObjectChecker.checkNullAndVerify(user);

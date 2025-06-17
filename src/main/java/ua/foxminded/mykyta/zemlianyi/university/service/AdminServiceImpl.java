@@ -26,27 +26,6 @@ public class AdminServiceImpl extends UserServiceImpl<Admin> implements AdminSer
     }
 
     @Override
-    protected Admin mergeWithExisting(Admin newAdmin) {
-        ObjectChecker.checkNullAndId(newAdmin);
-        Admin existingAdmin = getByIdOrThrow(newAdmin.getId());
-
-        existingAdmin.setName(newAdmin.getName());
-        existingAdmin.setSurname(newAdmin.getSurname());
-        existingAdmin.setEmail(newAdmin.getEmail());
-        existingAdmin.setPassword(choosePassword(newAdmin.getPassword(), existingAdmin.getPassword()));
-
-        return existingAdmin;
-    }
-
-    private String choosePassword(String newPassword, String existingPassword) {
-        if (newPassword == null || newPassword.isBlank() || passwordEncoder.matches(newPassword, existingPassword)) {
-            return existingPassword;
-        } else {
-            return passwordEncoder.encode(newPassword);
-        }
-    }
-
-    @Override
     public Admin getByIdOrThrow(Long id) {
         return dao.findById(id).orElseThrow(() -> new AdminNotFoundException(id));
     }
