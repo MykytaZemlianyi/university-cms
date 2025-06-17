@@ -7,7 +7,8 @@
 				<th scope="col" class="p-2">Surname</th>
 				<th scope="col" class="p-2">Email</th>
 				<th scope="col" class="p-2">Group</th>
-				<th scope="col" class="p-2" sec:authorize="hasAnyRole('ADMIN','STAFF')">Tools</th>
+				<th scope="col" class="p-2"
+					sec:authorize="hasAnyRole('ADMIN','STAFF')">Tools</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -17,7 +18,8 @@
 				<td class="p-2" th:text="${student.surname}"></td>
 				<td class="p-2" th:text="${student.email}"></td>
 				<td class="p-2 text-center" th:text="${student.group?.name}"></td>
-				<td class="text-center p-2" sec:authorize="hasAnyRole('ADMIN','STAFF')">
+				<td class="text-center p-2"
+					sec:authorize="hasAnyRole('ADMIN','STAFF')">
 					<div th:with="editUrl=@{/students/edit/{id}(id=${student.id})}">
 						<div
 							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
@@ -65,12 +67,14 @@
 		tabindex="-1" aria-labelledby="studentsModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title">
+				<div
+					class="modal-header d-flex justify-content-center position-relative">
+					<h5 class="modal-title m-0">
 						Students in group <span th:text="${group.name}"></span>
 					</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close"></button>
+					<button type="button"
+						class="btn-close position-absolute end-0 me-3"
+						data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
 					<div
