@@ -87,7 +87,12 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
      * @param existingUser the user that already exists in the database
      * @param newUser      the user with updated fields
      */
-    protected abstract void mergeCustomFields(T existingUser, T newUser);
+    protected void mergeCustomFields(T existingUser, T newUser) {
+        /*
+         * This method can be overridden in subclasses to merge custom fields. For
+         * example, merging group for Student Default implementation does nothing
+         */
+    }
 
     /**
      * Resolves custom fields for the user. This method can be overridden in
@@ -95,7 +100,12 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
      *
      * @param user the user for which custom fields need to be resolved
      */
-    protected abstract void resolveCustomFields(T user);
+    protected void resolveCustomFields(T user) {
+        /*
+         * This method can be overridden in subclasses to resolve custom fields. For
+         * example, resolving group for Student Default implementation does nothing
+         */
+    }
 
     private String choosePassword(String newPassword, String existingPassword) {
         if (newPassword == null || newPassword.isBlank() || passwordEncoder.matches(newPassword, existingPassword)) {

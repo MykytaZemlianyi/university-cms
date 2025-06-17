@@ -45,9 +45,4 @@ public class TeacherServiceImpl extends UserServiceImpl<Teacher> implements Teac
         }
     }
 
-    @Override
-    protected void resolveCustomFields(Teacher user) {
-        // No custom fields to resolve for Teacher
-    }
-
 }
