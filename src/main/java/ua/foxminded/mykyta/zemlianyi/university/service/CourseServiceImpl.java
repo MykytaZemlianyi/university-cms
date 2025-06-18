@@ -102,7 +102,7 @@ public class CourseServiceImpl implements CourseService {
         if (role == null || role.isBlank()) {
             throw new IllegalArgumentException(Constants.ROLE_INVALID);
         }
-        List<Course> courses = new ArrayList<>();
+        List<Course> courses;
 
         switch (role) {
         case Constants.ROLE_TEACHER -> {
@@ -136,6 +136,7 @@ public class CourseServiceImpl implements CourseService {
         if (student == null || student.getId() == null) {
             throw new IllegalArgumentException("Student" + Constants.USER_INVALID);
         } else if (student.getGroup() == null || student.getGroup().getId() == null) {
+            logger.info("Student {} does not have group, returning empty List", student);
             return new ArrayList<>();
         }
         logger.info("looking for courses for student {} in group {}", student, student.getGroup());
