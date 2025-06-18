@@ -133,9 +133,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<Course> findForStduent(Student student) {
-        if (student == null || student.getId() == null) {
-            throw new IllegalArgumentException("Student" + Constants.USER_INVALID);
-        } else if (student.getGroup() == null || student.getGroup().getId() == null) {
+        ObjectChecker.checkNullAndId(student);
+        if (student.getGroup() == null || student.getGroup().getId() == null) {
             logger.info("Student {} does not have group, returning empty List", student);
             return new ArrayList<>();
         }

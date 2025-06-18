@@ -1,5 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,10 +26,12 @@ public class GroupServiceImpl implements GroupService {
 
     private GroupDao groupDao;
     private StudentDao studentDao;
+    private StudentService studentService;
 
-    public GroupServiceImpl(GroupDao groupDao, StudentDao studentDao) {
+    public GroupServiceImpl(GroupDao groupDao, StudentDao studentDao, StudentService studentService) {
         this.groupDao = groupDao;
         this.studentDao = studentDao;
+        this.studentService = studentService;
     }
 
     @Override
@@ -127,6 +130,48 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Group getByIdOrThrow(Long id) {
         return groupDao.findById(id).orElseThrow(() -> new GroupNotFoundException(id));
+    }
+
+    @Override
+    public List<Group> findForUserWithUsername(String username, String role) {
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException(Constants.USERNAME_INVALID);
+        }
+        if (role == null || role.isBlank()) {
+            throw new IllegalArgumentException(Constants.ROLE_INVALID);
+        }
+        List<Group> groups;
+
+        switch (role) {
+        case Constants.ROLE_STUDENT -> {
+            Student student = studentService.getByEmailOrThrow(username);
+            groups = findForStduent(student);
+        }
+        case Constants.ROLE_TEACHER -> throw new IllegalArgumentException(Constants.TEACHER_DOES_NOT_HAVE_GROUP);
+
+        case Constants.ROLE_ADMIN -> throw new IllegalArgumentException(Constants.ADMIN_DOES_NOT_HAVE_GROUP);
+
+        case Constants.ROLE_STAFF -> throw new IllegalArgumentException(Constants.STAFF_DOES_NOT_HAVE_GROUP);
+
+        default -> throw new IllegalArgumentException("Role " + role + " is not supported");
+        }
+
+        return groups;
+    }
+
+    private List<Group> findForStduent(Student student) {
+        ObjectChecker.checkNullAndId(student);
+
+        List<Group> groupAsList = new ArrayList<>();
+        Group group = findForStudent(student);
+        if (group == null) {
+            logger.info("Student {} does not have group, returning empty List", student);
+            return new ArrayList<>();
+        } else {
+            groupAsList.add(group);
+        }
+
+        return groupAsList;
     }
 
 }

@@ -1,11 +1,13 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -51,6 +53,20 @@ public class GroupController {
         model.addAttribute("totalPages", groups.getTotalPages());
 
         return "view-all-groups";
+    }
+
+    @GetMapping("/my-group")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
+    public String getGroupForUser(Model model) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst()
+                .map(Object::toString).orElse("").substring(5);
+
+        List<Group> group = groupService.findForUserWithUsername(username, role);
+
+        model.addAttribute("groups", group);
+
+        return "view-my-group";
     }
 
     @GetMapping("/add")

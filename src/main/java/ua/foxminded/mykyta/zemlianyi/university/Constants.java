@@ -58,6 +58,11 @@ public class Constants {
     public static final String INVALID_NAME_MSG = "Name should contain only letters and [',-]";
     public static final String INVALID_SURNAME_MSG = "Surname should contain only letters and [',-]";
     public static final String ROLE_INVALID = "Role cannot be null or empty";
+
     public static final String ADMIN_DOES_NOT_HAVE_COURSES = "Admin does not have courses, invalid role for this operation";
     public static final String STAFF_DOES_NOT_HAVE_COURSES = "Staff does not have courses, invalid role for this operation";
+
+    public static final String TEACHER_DOES_NOT_HAVE_GROUP = "Teacher does not have group, invalid role for this operation";
+    public static final String ADMIN_DOES_NOT_HAVE_GROUP = "Admin does not have group, invalid role for this operation";
+    public static final String STAFF_DOES_NOT_HAVE_GROUP = "Staff does not have group, invalid role for this operation";
 }

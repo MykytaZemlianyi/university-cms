@@ -229,7 +229,7 @@ class CourseControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("userRoles")
+    @MethodSource("validRolesForGetCoursesForUser")
     void getCoursesForUser_shouldReturnCoursesForUser_whenServiceReturnCourseList(String username, String role)
             throws Exception {
         Course course1 = new Course();
@@ -250,7 +250,7 @@ class CourseControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("userRoles")
+    @MethodSource("validRolesForGetCoursesForUser")
     void getCoursesForUser_shouldReturnEmptyCoursesForUser_whenServiceReturnEmptyList(String username, String role)
             throws Exception {
         List<Course> courses = new ArrayList<>();
@@ -259,6 +259,24 @@ class CourseControllerTest {
 
         mockMvc.perform(get("/courses/my-courses").with(user(username).roles(role))).andExpect(status().isOk())
                 .andExpect(view().name("view-my-courses")).andExpect(model().attribute("courses", courses));
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidRolesForGetCoursesForUser")
+    void getCoursesForUser_shouldThrowException_whenInvalidRole(String username, String role) throws Exception {
+        when(service.findForUserWithUsername(username, role)).thenThrow(new IllegalArgumentException("Invalid role"));
+
+        mockMvc.perform(get("/courses/my-courses").with(user(username).roles(role)))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/courses"))
+                .andExpect(flash().attribute("errorMessage", "Error: Invalid role"));
+    }
+
+    private static Stream<Arguments> validRolesForGetCoursesForUser() {
+        return Stream.of(Arguments.of("student@gmail.com", "STUDENT"), Arguments.of("teacher@gmail.com", "TEACHER"));
+    }
+
+    private static Stream<Arguments> invalidRolesForGetCoursesForUser() {
+        return Stream.of(Arguments.of("student@gmail.com", "STUDENT"), Arguments.of("teacher@gmail.com", "TEACHER"));
     }
 
 }

@@ -27,4 +27,6 @@ public interface GroupService {
     Group getByIdOrThrow(Long id);
 
     void deleteOrThrow(Long id);
+
+    List<Group> findForUserWithUsername(String username, String role);
 }

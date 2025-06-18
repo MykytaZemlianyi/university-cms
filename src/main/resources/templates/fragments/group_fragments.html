@@ -4,16 +4,20 @@
 			<tr class="text-center align-middle">
 				<th scope="col" class="p-2">ID</th>
 				<th scope="col" class="p-2">Name</th>
-				<th scope="col" class="p-2">Students</th>
+				<th scope="col" class="p-2"
+					sec:authorize="hasAnyRole('ADMIN','STAFF','TEACHER')">Students</th>
 				<th scope="col" class="p-2">Courses</th>
-				<th scope="col" class="p-2" sec:authorize="hasAnyRole('ADMIN','STAFF')">Tools</th>
+				<th scope="col" class="p-2"
+					sec:authorize="hasAnyRole('ADMIN','STAFF')">Tools</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr class="align-middle" th:each="group : ${groups}">
 				<td class="text-center p-2" th:text="${group.id}"></td>
 				<td class="p-2" th:text="${group.name}"></td>
-				<td class="text-center p-2">
+
+				<td class="text-center p-2"
+					sec:authorize="hasAnyRole('ADMIN','STAFF','TEACHER')">
 					<div class="d-flex justify-content-center"
 						th:insert="~{fragments/button_fragments :: show_modal_table(btn_text='View Students', data_bs_target=|#studentsModal_${group.id}|)}">
 					</div>
@@ -21,6 +25,7 @@
 					<div
 						th:replace="~{fragments/student_fragments :: modal(group=${group})}"></div>
 				</td>
+
 				<td class="text-center p-2">
 					<div class="d-flex justify-content-center"
 						th:insert="~{fragments/button_fragments :: show_modal_table(btn_text='View Courses', data_bs_target=|#coursesModal_${group.id}|)}">
@@ -29,7 +34,8 @@
 					<div
 						th:replace="~{fragments/course_fragments :: modal(group=${group})}"></div>
 				</td>
-				<td class="text-center p-2" sec:authorize="hasAnyRole('ADMIN','STAFF')">
+				<td class="text-center p-2"
+					sec:authorize="hasAnyRole('ADMIN','STAFF')">
 					<div th:with="editUrl=@{/groups/edit/{id}(id=${group.id})}">
 						<div
 							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
