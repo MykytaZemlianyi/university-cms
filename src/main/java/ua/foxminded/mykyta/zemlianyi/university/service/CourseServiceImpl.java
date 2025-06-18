@@ -135,8 +135,8 @@ public class CourseServiceImpl implements CourseService {
     public List<Course> findForStduent(Student student) {
         if (student == null || student.getId() == null) {
             throw new IllegalArgumentException("Student" + Constants.USER_INVALID);
-        } else if (student.getGroup() == null) {
-            throw new IllegalArgumentException(Constants.STUDENT_DOES_NOT_HAVE_GROUP);
+        } else if (student.getGroup() == null || student.getGroup().getId() == null) {
+            return new ArrayList<>();
         }
         logger.info("looking for courses for student {} in group {}", student, student.getGroup());
         return courseDao.findByGroups(student.getGroup());
