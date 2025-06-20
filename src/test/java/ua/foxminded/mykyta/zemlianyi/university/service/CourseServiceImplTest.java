@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -167,12 +168,11 @@ class CourseServiceImplTest {
     }
 
     @Test
-    void findForStudent_shouldThrowIllegalArgumentException_whenStudentDoesNotHaveGroup() {
+    void findForStudent_shouldReturnEmptyList_whenStudentDoesNotHaveGroup() {
         Student studentWithoutGroup = new Student();
         studentWithoutGroup.setId(1L);
-        assertThrows(IllegalArgumentException.class, () -> {
-            courseService.findForStduent(studentWithoutGroup);
-        });
+        List<Course> actualList = courseService.findForStduent(studentWithoutGroup);
+        assertTrue(actualList.isEmpty());
     }
 
     @Test
@@ -182,6 +182,7 @@ class CourseServiceImplTest {
         course.setName("Computer Science");
 
         Group group = new Group();
+        group.setId(1L);
         group.addCourse(course);
 
         Student student = new Student();

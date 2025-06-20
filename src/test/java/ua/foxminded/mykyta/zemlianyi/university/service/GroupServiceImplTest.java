@@ -28,8 +28,12 @@ class GroupServiceImplTest {
 
     @MockitoBean
     GroupDao groupDao;
+
     @MockitoBean
     StudentDao studentDao;
+
+    @MockitoBean
+    StudentService studentService;
 
     @MockitoBean
     PasswordEncoder encoder;

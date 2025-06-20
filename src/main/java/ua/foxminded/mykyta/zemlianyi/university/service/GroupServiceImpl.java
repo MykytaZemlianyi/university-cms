@@ -105,11 +105,15 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group findForStudent(Student student) {
-        if (student == null || student.getId() == null) {
-            throw new IllegalArgumentException("Student" + Constants.USER_INVALID);
-        }
+        ObjectChecker.checkNullAndId(student);
         logger.info("Looking for Group for student - {}", student);
         return groupDao.findByStudents(student);
+    }
+
+    private List<Group> findForStduent(Student student) {
+        // return single group in a list to integrate with existing UI group table
+        // fragment. Returns empty list if no group found.
+        return Optional.ofNullable(groupDao.findByStudents(student)).map(List::of).orElseGet(ArrayList::new);
     }
 
     @Override
@@ -142,36 +146,14 @@ public class GroupServiceImpl implements GroupService {
         }
         List<Group> groups;
 
-        switch (role) {
-        case Constants.ROLE_STUDENT -> {
+        if (role.equals(Constants.ROLE_STUDENT)) {
             Student student = studentService.getByEmailOrThrow(username);
             groups = findForStduent(student);
-        }
-        case Constants.ROLE_TEACHER -> throw new IllegalArgumentException(Constants.TEACHER_DOES_NOT_HAVE_GROUP);
-
-        case Constants.ROLE_ADMIN -> throw new IllegalArgumentException(Constants.ADMIN_DOES_NOT_HAVE_GROUP);
-
-        case Constants.ROLE_STAFF -> throw new IllegalArgumentException(Constants.STAFF_DOES_NOT_HAVE_GROUP);
-
-        default -> throw new IllegalArgumentException("Role " + role + " is not supported");
+        } else {
+            throw new IllegalArgumentException(role + Constants.INVALID_OPERATION_FOR_ROLE);
         }
 
         return groups;
-    }
-
-    private List<Group> findForStduent(Student student) {
-        ObjectChecker.checkNullAndId(student);
-
-        List<Group> groupAsList = new ArrayList<>();
-        Group group = findForStudent(student);
-        if (group == null) {
-            logger.info("Student {} does not have group, returning empty List", student);
-            return new ArrayList<>();
-        } else {
-            groupAsList.add(group);
-        }
-
-        return groupAsList;
     }
 
 }

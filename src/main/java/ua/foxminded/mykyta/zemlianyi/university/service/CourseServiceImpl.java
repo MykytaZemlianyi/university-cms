@@ -113,11 +113,7 @@ public class CourseServiceImpl implements CourseService {
             Student student = studentService.getByEmailOrThrow(username);
             courses = findForStduent(student);
         }
-        case Constants.ROLE_ADMIN -> throw new IllegalArgumentException(Constants.ADMIN_DOES_NOT_HAVE_COURSES);
-
-        case Constants.ROLE_STAFF -> throw new IllegalArgumentException(Constants.STAFF_DOES_NOT_HAVE_COURSES);
-
-        default -> throw new IllegalArgumentException("Role " + role + " is not supported");
+        default -> throw new IllegalArgumentException(role + Constants.INVALID_OPERATION_FOR_ROLE);
         }
 
         return courses;
