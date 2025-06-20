@@ -121,7 +121,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<Course> findForTeacher(Teacher teacher) {
-        ObjectChecker.checkNullAndVerify(teacher);
+        ObjectChecker.checkNullAndId(teacher);
 
         logger.info("Looking for courses for teacher {}", teacher);
         return courseDao.findByTeacher(teacher);

@@ -1,5 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -8,9 +9,12 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -204,5 +208,66 @@ class GroupServiceImplTest {
         groupService.delete(group);
 
         verify(groupDao).deleteById(group.getId());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "ADMIN", "STUDENT", "TEACHER", "STAFF", "INVALID_ROLE" })
+    void findForUserWithUsername_shouldThrowIllegalArgumentException_whenUsernameIsNull(String role) {
+        assertThrows(IllegalArgumentException.class, () -> {
+            groupService.findForUserWithUsername(null, role);
+        });
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "ADMIN", "STUDENT", "TEACHER", "STAFF", "INVALID_ROLE" })
+    void findForUserWithUsername_shouldThrowIllegalArgumentException_whenUsernameIsBlank(String role) {
+        assertThrows(IllegalArgumentException.class, () -> {
+            groupService.findForUserWithUsername("", role);
+        });
+    }
+
+    @Test
+    void findForUserWithUsername_shouldThrowIllegalArgumentException_whenRoleIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            groupService.findForUserWithUsername("validUsername", null);
+        });
+    }
+
+    @Test
+    void findForUserWithUsername_shouldThrowIllegalArgumentException_whenRoleIsBlank() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            groupService.findForUserWithUsername("validUsername", "");
+        });
+    }
+
+    @Test
+    void findForUserWithUsername_shouldReturnListWithGroup_whenRoleIsStudent() {
+        String username = "validUsername";
+        String role = "STUDENT";
+
+        Group group = new Group();
+        group.setId(1L);
+        group.setName("Group A");
+
+        Student student = new Student();
+        student.setId(1L);
+
+        doReturn(student).when(studentService).getByEmailOrThrow(username);
+        doReturn(group).when(groupDao).findByStudents(student);
+
+        List<Group> expectedGroups = List.of(group);
+        List<Group> actualGroups = groupService.findForUserWithUsername(username, role);
+
+        assertArrayEquals(expectedGroups.toArray(), actualGroups.toArray());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "ADMIN", "TEACHER", "STAFF", "INVALID_ROLE" })
+    void findForUserWithUsername_shouldThrowIllegalArgumentException_whenRoleIsNotStudent(String role) {
+        String username = "validUsername";
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            groupService.findForUserWithUsername(username, role);
+        });
     }
 }
