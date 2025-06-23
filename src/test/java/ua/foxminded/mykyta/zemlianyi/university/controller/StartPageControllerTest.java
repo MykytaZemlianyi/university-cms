@@ -31,7 +31,7 @@ class StartPageControllerTest {
 
     @Test
     void welcomePage_shouldReturnWelcomeView_whenUserAutorized() throws Exception {
-        mockMvc.perform(get("/welcome").with(user("zemlianoyne@gmail.com").roles("ADMIN"))).andExpect(status().isOk())
+        mockMvc.perform(get("/welcome").with(user("admin@gmail.com").roles("ADMIN"))).andExpect(status().isOk())
                 .andExpect(view().name("welcome"));
     }
 

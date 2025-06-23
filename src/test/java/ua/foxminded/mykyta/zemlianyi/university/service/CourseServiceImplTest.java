@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
@@ -11,6 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -167,12 +170,11 @@ class CourseServiceImplTest {
     }
 
     @Test
-    void findForStudent_shouldThrowIllegalArgumentException_whenStudentDoesNotHaveGroup() {
+    void findForStudent_shouldReturnEmptyList_whenStudentDoesNotHaveGroup() {
         Student studentWithoutGroup = new Student();
         studentWithoutGroup.setId(1L);
-        assertThrows(IllegalArgumentException.class, () -> {
-            courseService.findForStduent(studentWithoutGroup);
-        });
+        List<Course> actualList = courseService.findForStduent(studentWithoutGroup);
+        assertTrue(actualList.isEmpty());
     }
 
     @Test
@@ -182,6 +184,7 @@ class CourseServiceImplTest {
         course.setName("Computer Science");
 
         Group group = new Group();
+        group.setId(1L);
         group.addCourse(course);
 
         Student student = new Student();
@@ -239,5 +242,96 @@ class CourseServiceImplTest {
         courseService.delete(course);
 
         verify(courseDao).deleteById(course.getId());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "ADMIN", "STUDENT", "TEACHER", "STAFF", "INVALID_ROLE" })
+    void findForUserWithUsername_shouldThrowIllegalArgumentException_whenUsernameIsNull(String role) {
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.findForUserWithUsername(null, role);
+        });
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "ADMIN", "STUDENT", "TEACHER", "STAFF", "INVALID_ROLE" })
+    void findForUserWithUsername_shouldThrowIllegalArgumentException_whenUsernameIsBlank(String role) {
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.findForUserWithUsername("", role);
+        });
+    }
+
+    @Test
+    void findForUserWithUsername_shouldThrowIllegalArgumentException_whenRoleIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.findForUserWithUsername("validUsername", null);
+        });
+    }
+
+    @Test
+    void findForUserWithUsername_shouldThrowIllegalArgumentException_whenRoleIsBlank() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.findForUserWithUsername("validUsername", "");
+        });
+    }
+
+    @Test
+    void findForUserWithUsername_shouldReturnListWithCourse_whenRoleIsStudent() {
+        String username = "validUsername";
+        String role = "STUDENT";
+
+        Course course = new Course();
+        course.setId(1L);
+        course.setName("Computer Science");
+
+        Group group = new Group();
+        group.setId(1L);
+        group.setName("Group A");
+
+        Student student = new Student();
+        student.setId(1L);
+        student.setGroup(group);
+
+        doReturn(student).when(studentService).getByEmailOrThrow(username);
+        doReturn(List.of(course)).when(courseDao).findByGroups(student.getGroup());
+
+        List<Course> expectedCourses = List.of(course);
+        List<Course> actualCourses = courseService.findForUserWithUsername(username, role);
+
+        assertArrayEquals(expectedCourses.toArray(), actualCourses.toArray());
+    }
+
+    @Test
+    void findForUserWithUsername_shouldReturnListWithCourse_whenRoleIsTeacher() {
+        String username = "validUsername";
+        String role = "TEACHER";
+
+        Course course = new Course();
+        course.setId(1L);
+        course.setName("Computer Science");
+
+        Group group = new Group();
+        group.setId(1L);
+        group.setName("Group A");
+
+        Teacher teacher = new Teacher();
+        teacher.setId(1L);
+
+        doReturn(teacher).when(teacherService).getByEmailOrThrow(username);
+        doReturn(List.of(course)).when(courseDao).findByTeacher(teacher);
+
+        List<Course> expectedCourses = List.of(course);
+        List<Course> actualCourses = courseService.findForUserWithUsername(username, role);
+
+        assertArrayEquals(expectedCourses.toArray(), actualCourses.toArray());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "ADMIN", "STAFF", "INVALID_ROLE" })
+    void findForUserWithUsername_shouldThrowIllegalArgumentException_whenRoleIsNotStudent(String role) {
+        String username = "validUsername";
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            courseService.findForUserWithUsername(username, role);
+        });
     }
 }

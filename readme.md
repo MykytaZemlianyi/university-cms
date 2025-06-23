@@ -9,15 +9,15 @@ University CMS is an extensible and user-friendly platform built for small educa
 ## 🚀 Features
 
 - Admin dashboard with full CRUD operations for:
-  - Users (Admins,Staff, Teachers, Students)
+  - Users (Admins, Staff, Teachers, Students)
   - Courses, Groups, Lectures, Classrooms
 - Dynamic pagination select and multi-select fields (JS + jQuery) for entity associations
 - Pagination and modals for improved UX
 - Form validation with user-friendly error feedback
 - Spring Security role-based access control:
   - **Admin**: Full access
-  - **Staff**: Create/Read/Update access to all entities exept admins
-  - **Teacher**: View access to students, lectures, courses
+  - **Staff**: Create/Read/Update access to courses, groups, lectures, rooms.
+  - **Teacher**: View access to students, lectures, courses, groups, lectures
   - **Student**: View access to courses, teachers, groups, lectures
 - Error handling
 - Clean and maintainable codebase
@@ -50,7 +50,7 @@ The application is available at: [https://university-cms-7fq6.onrender.com/](htt
 
 ---
 ## 🧪 Testing
-- 261 unit and integration tests written with JUnit 5, Mockito, and Testcontainers
+- 342 unit and integration tests written with JUnit 5, Mockito, and Testcontainers
 - Over 92% test coverage
 - Use Docker to provide a clean PostgreSQL instance for integration testing
 
@@ -107,6 +107,7 @@ cd university-cms
 mvn clean install spring-boot:repackage
 ```
 3. Env vars
+
 ```
 ${PG_DB_URL}
 ${PG_DB_USERNAME}
@@ -114,6 +115,7 @@ ${PG_DB_PASSWORD}
 ${PORT}
 ```
 5. Run the JAR file from the terminal
+
 ```bash
 java -jar target/university-cms.jar
 ```

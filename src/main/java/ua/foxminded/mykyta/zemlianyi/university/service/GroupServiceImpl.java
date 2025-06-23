@@ -1,5 +1,6 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,10 +26,12 @@ public class GroupServiceImpl implements GroupService {
 
     private GroupDao groupDao;
     private StudentDao studentDao;
+    private StudentService studentService;
 
-    public GroupServiceImpl(GroupDao groupDao, StudentDao studentDao) {
+    public GroupServiceImpl(GroupDao groupDao, StudentDao studentDao, StudentService studentService) {
         this.groupDao = groupDao;
         this.studentDao = studentDao;
+        this.studentService = studentService;
     }
 
     @Override
@@ -102,11 +105,15 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group findForStudent(Student student) {
-        if (student == null || student.getId() == null) {
-            throw new IllegalArgumentException("Student" + Constants.USER_INVALID);
-        }
+        ObjectChecker.checkNullAndId(student);
         logger.info("Looking for Group for student - {}", student);
         return groupDao.findByStudents(student);
+    }
+
+    private List<Group> findForStduent(Student student) {
+        // return single group in a list to integrate with existing UI group table
+        // fragment. Returns empty list if no group found.
+        return Optional.ofNullable(groupDao.findByStudents(student)).map(List::of).orElseGet(ArrayList::new);
     }
 
     @Override
@@ -127,6 +134,26 @@ public class GroupServiceImpl implements GroupService {
     @Override
     public Group getByIdOrThrow(Long id) {
         return groupDao.findById(id).orElseThrow(() -> new GroupNotFoundException(id));
+    }
+
+    @Override
+    public List<Group> findForUserWithUsername(String username, String role) {
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException(Constants.USERNAME_INVALID);
+        }
+        if (role == null || role.isBlank()) {
+            throw new IllegalArgumentException(Constants.ROLE_INVALID);
+        }
+        List<Group> groups;
+
+        if (role.equals(Constants.ROLE_STUDENT)) {
+            Student student = studentService.getByEmailOrThrow(username);
+            groups = findForStduent(student);
+        } else {
+            throw new IllegalArgumentException(role + Constants.INVALID_OPERATION_FOR_ROLE);
+        }
+
+        return groups;
     }
 
 }

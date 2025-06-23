@@ -234,4 +234,56 @@ class GroupControllerTest {
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
     }
 
+    @ParameterizedTest
+    @MethodSource("validRolesForGetGroupForUser")
+    void getGroupForUser_shouldReturnGroupForUser_whenServiceReturnGroupList(String username, String role)
+            throws Exception {
+        Group group1 = new Group();
+        group1.setId(1L);
+        group1.setName("Math");
+        Group group2 = new Group();
+        group2.setId(2L);
+        group2.setName("Physics");
+
+        List<Group> groups = new ArrayList<>();
+        groups.add(group1);
+        groups.add(group2);
+
+        when(service.findForUserWithUsername(username, role)).thenReturn(groups);
+
+        mockMvc.perform(get("/groups/my-group").with(user(username).roles(role))).andExpect(status().isOk())
+                .andExpect(view().name("view-my-group")).andExpect(model().attribute("groups", groups));
+    }
+
+    @ParameterizedTest
+    @MethodSource("validRolesForGetGroupForUser")
+    void getGroupForUser_shouldReturnEmptyGroupForUser_whenServiceReturnEmptyList(String username, String role)
+            throws Exception {
+        List<Group> groups = new ArrayList<>();
+
+        when(service.findForUserWithUsername(username, role)).thenReturn(groups);
+
+        mockMvc.perform(get("/groups/my-group").with(user(username).roles(role))).andExpect(status().isOk())
+                .andExpect(view().name("view-my-group")).andExpect(model().attribute("groups", groups));
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidRolesForGetGroupForUser")
+    void getGroupForUser_shouldThrowException_whenInvalidRole(String username, String role) throws Exception {
+        when(service.findForUserWithUsername(username, role)).thenThrow(new IllegalArgumentException("Invalid role"));
+
+        mockMvc.perform(get("/groups/my-group").with(user(username).roles(role))).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/groups"))
+                .andExpect(flash().attribute("errorMessage", "Error: Invalid role"));
+    }
+
+    private static Stream<Arguments> validRolesForGetGroupForUser() {
+        return Stream.of(Arguments.of("student@gmail.com", "STUDENT"));
+    }
+
+    private static Stream<Arguments> invalidRolesForGetGroupForUser() {
+        return Stream.of(Arguments.of("admin@gmail.com", "ADMIN"), Arguments.of("teacher@gmail.com", "TEACHER"),
+                Arguments.of("staff@gmail.com", "STAFF"));
+    }
+
 }

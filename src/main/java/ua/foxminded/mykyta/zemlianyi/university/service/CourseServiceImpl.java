@@ -102,7 +102,7 @@ public class CourseServiceImpl implements CourseService {
         if (role == null || role.isBlank()) {
             throw new IllegalArgumentException(Constants.ROLE_INVALID);
         }
-        List<Course> courses = new ArrayList<>();
+        List<Course> courses;
 
         switch (role) {
         case Constants.ROLE_TEACHER -> {
@@ -113,11 +113,7 @@ public class CourseServiceImpl implements CourseService {
             Student student = studentService.getByEmailOrThrow(username);
             courses = findForStduent(student);
         }
-        case Constants.ROLE_ADMIN -> throw new IllegalArgumentException(Constants.ADMIN_DOES_NOT_HAVE_COURSES);
-
-        case Constants.ROLE_STAFF -> throw new IllegalArgumentException(Constants.STAFF_DOES_NOT_HAVE_COURSES);
-
-        default -> throw new IllegalArgumentException("Role " + role + " is not supported");
+        default -> throw new IllegalArgumentException(role + Constants.INVALID_OPERATION_FOR_ROLE);
         }
 
         return courses;
@@ -125,7 +121,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<Course> findForTeacher(Teacher teacher) {
-        ObjectChecker.checkNullAndVerify(teacher);
+        ObjectChecker.checkNullAndId(teacher);
 
         logger.info("Looking for courses for teacher {}", teacher);
         return courseDao.findByTeacher(teacher);
@@ -133,10 +129,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<Course> findForStduent(Student student) {
-        if (student == null || student.getId() == null) {
-            throw new IllegalArgumentException("Student" + Constants.USER_INVALID);
-        } else if (student.getGroup() == null) {
-            throw new IllegalArgumentException(Constants.STUDENT_DOES_NOT_HAVE_GROUP);
+        ObjectChecker.checkNullAndId(student);
+        if (student.getGroup() == null || student.getGroup().getId() == null) {
+            logger.info("Student {} does not have group, returning empty List", student);
+            return new ArrayList<>();
         }
         logger.info("looking for courses for student {} in group {}", student, student.getGroup());
         return courseDao.findByGroups(student.getGroup());
