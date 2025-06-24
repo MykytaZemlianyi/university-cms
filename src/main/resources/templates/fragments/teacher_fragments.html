@@ -19,7 +19,8 @@
 				<td class="p-2" th:text="${teacher.email}"></td>
 				<td class="p-2"><a th:each="course : ${teacher.courses}"
 					th:text="${course.name}" style="display: block;"></a></td>
-				<td class="text-center p-2" sec:authorize="hasAnyRole('ADMIN','STAFF')">
+				<td class="text-center p-2"
+					sec:authorize="hasAnyRole('ADMIN','STAFF')">
 					<div th:with="editUrl=@{/teachers/edit/{id}(id=${teacher.id})}">
 						<div
 							th:insert="~{fragments/button_fragments :: edit(link=${editUrl})}"></div>
@@ -50,8 +51,15 @@
 					class="nav-link" href="/courses/my-courses">My Courses</a></li>
 				<li class="nav-item" sec:authorize="hasRole('TEACHER')"><a
 					class="nav-link" href="/groups">Groups</a></li>
-				<li class="nav-item" sec:authorize="hasRole('TEACHER')"><a
-					class="nav-link" href="/students">Students</a></li>
+				<li class="nav-item dropdown"><a
+					class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#"
+					role="button" aria-expanded="false">Users</a>
+					<ul class="dropdown-menu">
+						<li sec:authorize="hasRole('TEACHER')"><a
+							class="dropdown-item" href="/students">Students</a></li>
+						<li sec:authorize="hasRole('TEACHER')"><a
+							class="dropdown-item" href="/teachers">Teachers</a></li>
+					</ul></li>
 
 				<li class="nav-item">
 					<form th:action="@{/logout}" method="post">
