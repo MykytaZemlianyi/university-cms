@@ -75,19 +75,22 @@
 
 <div th:fragment="dateRangePicker">
 	<div
-		class="input-group d-flex align-items-center justify-content-between p-2 ps-4 pe-4">
-		<div class="form-check">
+		class="input-group d-flex align-items-center justify-content-between pt-2 pb-2 ">
+
+		<div class="form-check pe-3 me-3 border-end">
 			<input class="form-check-input" type="radio" autocomplete="off"
 				name="dateRange" id="dateRangeToday" checked> <label
 				class="form-check-label" th:for="dateRangeToday">Today</label>
 		</div>
-		<div class="form-check">
+
+		<div class="form-check pe-3 me-3 border-end">
 			<input class="form-check-input" type="radio" autocomplete="off"
 				name="dateRange" id="dateRangeThisWeek"> <label
 				class="form-check-label" th:for="dateRangeThisWeek">This
 				week</label>
 		</div>
-		<div class="form-check">
+
+		<div class="form-check pe-3 me-3 border-end">
 			<input class="form-check-input" type="radio" autocomplete="off"
 				name="dateRange" id="dateRangeThisMonth"> <label
 				class="form-check-label" th:for="dateRangeThisMonth">This
@@ -96,34 +99,33 @@
 
 		<!-- Custom range ---------------------------------------------------->
 
-		<div class="form-check">
+		<div
+			class="form-check d-flex align-items-center no-wrap gap-3 pe-3 me-3 border-end">
 
-			<div class="d-flex align-items-center gap-2 mb-2">
-				<input class="form-check-input" type="radio" autocomplete="off"
-					name="dateRange" id="dateRangeCustomRange"> <label
-					class="form-check-label mb-0" th:for="dateRangeCustomRange">
-					Custom range </label>
-			</div>
+			<!-- Radio + text -->
+			<input class="form-check-input" type="radio" autocomplete="off"
+				name="dateRange" id="dateRangeCustom"> <label
+				class="form-check-label" th:for="dateRangeCustom"> Custom
+				range </label>
 
-			<div class="row g-2 align-items-center mb-2">
-				<div class="col-auto">
-					<label for="dateStart" class="col-form-label mb-0">From</label>
-				</div>
-				<div class="col">
-					<input type="date" class="form-control" id="dateStart">
-				</div>
-			</div>
+			<!-- «From» -->
+			<label for="dateStart" class="col-form-label">from</label> <input
+				type="date" class="form-control form-control-sm w-auto"
+				id="dateStart">
 
-			<div class="row g-2 align-items-center">
-				<div class="col-auto">
-					<label for="dateEnd" class="col-form-label mb-0">To</label>
-				</div>
-				<div class="col">
-					<input type="date" class="form-control" id="dateEnd">
-				</div>
-			</div>
+			<!-- «To» -->
+			<label for="dateEnd" class="col-form-label">to</label> <input
+				type="date" class="form-control form-control-sm w-auto" id="dateEnd">
 
 		</div>
 		<!-- /Custom range ---------------------------------------------------->
+
+		<div class="input-group-append">
+			<button class="btn btn-primary" type="button"
+				id="applyDateRangeButton">
+				<i class=" bi bi-search me-2"></i> <span>Apply</span>
+			</button>
+		</div>
 	</div>
+
 </div>
