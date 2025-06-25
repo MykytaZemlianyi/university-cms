@@ -53,6 +53,20 @@ public class LectureController {
         return "view-all-lectures";
     }
 
+    @GetMapping("/my-schedule")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
+    public String getMySchedule(@RequestParam(defaultValue = "0") Integer currentPage,
+            @RequestParam(defaultValue = "5") Integer size, Model model) {
+        Pageable pageable = PageRequest.of(currentPage, size);
+        Page<Lecture> lectures = lectureService.findAll(pageable);
+
+        model.addAttribute("lectures", lectures);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", lectures.hasContent() ? lectures.getTotalPages() : 1);
+
+        return "view-my-schedule";
+    }
+
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showCreateLectureForm(Model model, @RequestParam(defaultValue = "0") Integer coursePage,

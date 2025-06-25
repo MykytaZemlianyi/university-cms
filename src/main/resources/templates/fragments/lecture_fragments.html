@@ -72,3 +72,58 @@
 		</div>
 	</div>
 </div>
+
+<div th:fragment="dateRangePicker">
+	<div
+		class="input-group d-flex align-items-center justify-content-between p-2 ps-4 pe-4">
+		<div class="form-check">
+			<input class="form-check-input" type="radio" autocomplete="off"
+				name="dateRange" id="dateRangeToday" checked> <label
+				class="form-check-label" th:for="dateRangeToday">Today</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="radio" autocomplete="off"
+				name="dateRange" id="dateRangeThisWeek"> <label
+				class="form-check-label" th:for="dateRangeThisWeek">This
+				week</label>
+		</div>
+		<div class="form-check">
+			<input class="form-check-input" type="radio" autocomplete="off"
+				name="dateRange" id="dateRangeThisMonth"> <label
+				class="form-check-label" th:for="dateRangeThisMonth">This
+				month</label>
+		</div>
+
+		<!-- Custom range ---------------------------------------------------->
+
+		<div class="form-check">
+
+			<div class="d-flex align-items-center gap-2 mb-2">
+				<input class="form-check-input" type="radio" autocomplete="off"
+					name="dateRange" id="dateRangeCustomRange"> <label
+					class="form-check-label mb-0" th:for="dateRangeCustomRange">
+					Custom range </label>
+			</div>
+
+			<div class="row g-2 align-items-center mb-2">
+				<div class="col-auto">
+					<label for="dateStart" class="col-form-label mb-0">From</label>
+				</div>
+				<div class="col">
+					<input type="date" class="form-control" id="dateStart">
+				</div>
+			</div>
+
+			<div class="row g-2 align-items-center">
+				<div class="col-auto">
+					<label for="dateEnd" class="col-form-label mb-0">To</label>
+				</div>
+				<div class="col">
+					<input type="date" class="form-control" id="dateEnd">
+				</div>
+			</div>
+
+		</div>
+		<!-- /Custom range ---------------------------------------------------->
+	</div>
+</div>
