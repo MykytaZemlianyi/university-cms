@@ -17,43 +17,16 @@ public class DatePicker {
 
     public void setPreset(DatePickerPreset preset) {
         this.preset = preset;
-
-        switch (preset) {
-        case TODAY:
-            this.startDate = currentDate;
-            this.endDate = currentDate;
-            break;
-        case THIS_WEEK:
-            this.startDate = currentDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-            this.endDate = currentDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
-            break;
-        case NEXT_WEEK:
-            this.startDate = currentDate.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
-            this.endDate = currentDate.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
-                    .with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
-            break;
-        case THIS_MONTH:
-            this.startDate = currentDate.withDayOfMonth(1);
-            this.endDate = currentDate.with(TemporalAdjusters.lastDayOfMonth());
-            break;
-        case CUSTOM:
-            // Custom date range will be set in the setter methods
-            break;
-        default:
-            break;
-        }
     }
 
     public void setStartDate(LocalDate startDate) {
-        if (preset == DatePickerPreset.CUSTOM) {
-            this.startDate = startDate;
-        }
+        this.startDate = startDate;
+
     }
 
     public void setEndDate(LocalDate endDate) {
-        if (preset == DatePickerPreset.CUSTOM) {
-            this.endDate = endDate;
-        }
+        this.endDate = endDate;
+
     }
 
     public DatePickerPreset getPreset() {
@@ -61,11 +34,38 @@ public class DatePicker {
     }
 
     public LocalDate getStartDate() {
-        return startDate;
+        switch (preset) {
+        case TODAY:
+            return currentDate;
+        case THIS_WEEK:
+            return currentDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+        case NEXT_WEEK:
+            return currentDate.with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        case THIS_MONTH:
+            return currentDate.withDayOfMonth(1);
+        case CUSTOM:
+            return startDate;
+        default:
+            return startDate;
+        }
     }
 
     public LocalDate getEndDate() {
-        return endDate;
+        switch (preset) {
+        case TODAY:
+            return currentDate;
+        case THIS_WEEK:
+            return currentDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        case NEXT_WEEK:
+            return currentDate.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+                    .with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
+        case THIS_MONTH:
+            return currentDate.with(TemporalAdjusters.lastDayOfMonth());
+        case CUSTOM:
+            return endDate;
+        default:
+            return endDate;
+        }
     }
 
 }
