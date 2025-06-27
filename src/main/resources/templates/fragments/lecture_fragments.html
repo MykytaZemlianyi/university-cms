@@ -73,59 +73,59 @@
 	</div>
 </div>
 
-<div th:fragment="dateRangePicker">
-	<div
-		class="input-group d-flex align-items-center justify-content-between pt-2 pb-2 ">
+<form th:fragment="dateRangePicker"
+	th:action="@{/lectures/change-date-range}" th:object="${datePicker}"
+	method="post"
+	class="input-group d-flex align-items-center
+	justify-content-between pt-2 pb-2">
 
-		<div class="form-check pe-3 me-3 border-end">
-			<input class="form-check-input" type="radio" autocomplete="off"
-				name="dateRange" id="dateRangeToday" checked> <label
-				class="form-check-label" th:for="dateRangeToday">Today</label>
-		</div>
-
-		<div class="form-check pe-3 me-3 border-end">
-			<input class="form-check-input" type="radio" autocomplete="off"
-				name="dateRange" id="dateRangeThisWeek"> <label
-				class="form-check-label" th:for="dateRangeThisWeek">This
-				week</label>
-		</div>
-
-		<div class="form-check pe-3 me-3 border-end">
-			<input class="form-check-input" type="radio" autocomplete="off"
-				name="dateRange" id="dateRangeThisMonth"> <label
-				class="form-check-label" th:for="dateRangeThisMonth">This
-				month</label>
-		</div>
-
-		<!-- Custom range ---------------------------------------------------->
-
-		<div
-			class="form-check d-flex align-items-center no-wrap gap-3 pe-3 me-3 border-end">
-
-			<!-- Radio + text -->
-			<input class="form-check-input" type="radio" autocomplete="off"
-				name="dateRange" id="dateRangeCustom"> <label
-				class="form-check-label" th:for="dateRangeCustom"> Custom
-				range </label>
-
-			<!-- «From» -->
-			<label for="dateStart" class="col-form-label">from</label> <input
-				type="date" class="form-control form-control-sm w-auto"
-				id="dateStart">
-
-			<!-- «To» -->
-			<label for="dateEnd" class="col-form-label">to</label> <input
-				type="date" class="form-control form-control-sm w-auto" id="dateEnd">
-
-		</div>
-		<!-- /Custom range ---------------------------------------------------->
-
-		<div class="input-group-append">
-			<button class="btn btn-primary" type="button"
-				id="applyDateRangeButton">
-				<i class=" bi bi-search me-2"></i> <span>Apply</span>
-			</button>
-		</div>
+	<!-- TODAY --------------------------------------------------------->
+	<div class="form-check pe-3 me-3 border-end">
+		<input class="form-check-input" type="radio" th:field="*{preset}"
+			value="TODAY" id="presetToday"> <label
+			class="form-check-label" th:for="presetToday">Today</label>
 	</div>
 
-</div>
+	<!-- THIS_WEEK ----------------------------------------------------->
+	<div class="form-check pe-3 me-3 border-end">
+		<input class="form-check-input" type="radio" th:field="*{preset}"
+			value="THIS_WEEK" id="presetWeek"> <label
+			class="form-check-label" th:for="presetWeek">This week</label>
+	</div>
+
+	<!-- NEXT_WEEK ----------------------------------------------------->
+	<div class="form-check pe-3 me-3 border-end">
+		<input class="form-check-input" type="radio" th:field="*{preset}"
+			value="NEXT_WEEK" id="presetNextWeek"> <label
+			class="form-check-label" th:for="presetNextWeek">Next week</label>
+	</div>
+
+	<!-- THIS_MONTH ---------------------------------------------------->
+	<div class="form-check pe-3 me-3 border-end">
+		<input class="form-check-input" type="radio" th:field="*{preset}"
+			value="THIS_MONTH" id="presetMonth"> <label
+			class="form-check-label" th:for="presetMonth">This month</label>
+	</div>
+
+	<!-- CUSTOM RANGE -------------------------------------------------->
+	<div
+		class="form-check d-flex align-items-center flex-wrap gap-3 pe-3 me-3 border-end">
+
+		<input class="form-check-input" type="radio" th:field="*{preset}"
+			value="CUSTOM" id="presetCustom"> <label
+			class="form-check-label" th:for="presetCustom">Custom range</label> <label
+			for="startDate" class="col-form-label">from</label> <input
+			type="date" th:field="*{startDate}" id="startDate"
+			class="form-control form-control-sm w-auto"> <label
+			for="endDate" class="col-form-label">to</label> <input type="date"
+			th:field="*{endDate}" id="endDate"
+			class="form-control form-control-sm w-auto">
+	</div>
+	<!-- /CUSTOM RANGE ------------------------------------------------->
+
+	<div class="input-group-append">
+		<button class="btn btn-primary" type="submit">
+			<i class="bi bi-search me-2"></i> Apply
+		</button>
+	</div>
+</form>

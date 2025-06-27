@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
+import ua.foxminded.mykyta.zemlianyi.university.dto.DatePicker;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
 
@@ -23,6 +24,8 @@ public interface LectureService {
     List<Lecture> findForCourse(Course course);
 
     List<Lecture> findForCourseInTimeInterval(Course course, LocalDateTime timeStart, LocalDateTime timeEnd);
+
+    Page<Lecture> findForUserByEmailInTimeInterval(String email, String role, DatePicker datePicker, Pageable pageable);
 
     void deleteById(Lecture lecture);
 

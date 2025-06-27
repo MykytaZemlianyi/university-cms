@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +19,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
+import ua.foxminded.mykyta.zemlianyi.university.dto.DatePicker;
+import ua.foxminded.mykyta.zemlianyi.university.dto.DatePickerPreset;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
@@ -57,9 +60,40 @@ public class LectureController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
     public String getMySchedule(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, Model model) {
-        Pageable pageable = PageRequest.of(currentPage, size);
-        Page<Lecture> lectures = lectureService.findAll(pageable);
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst()
+                .map(Object::toString).orElse("").substring(5);
+
+        Pageable pageable = PageRequest.of(currentPage, size);
+
+        DatePicker datePicker = new DatePicker();
+        datePicker.setPreset(DatePickerPreset.TODAY);
+
+        Page<Lecture> lectures = lectureService.findForUserByEmailInTimeInterval(username, role, datePicker, pageable);
+
+        model.addAttribute("datePicker", datePicker);
+        model.addAttribute("lectures", lectures);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", lectures.hasContent() ? lectures.getTotalPages() : 1);
+
+        return "view-my-schedule";
+    }
+
+    @PostMapping("/change-date-range")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
+    public String changeDateRange(@ModelAttribute DatePicker datePicker,
+            @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
+            Model model) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst()
+                .map(Object::toString).orElse("").substring(5);
+
+        Pageable pageable = PageRequest.of(currentPage, size);
+
+        Page<Lecture> lectures = lectureService.findForUserByEmailInTimeInterval(username, role, datePicker, pageable);
+
+        model.addAttribute("datePicker", datePicker);
         model.addAttribute("lectures", lectures);
         model.addAttribute("currentPage", currentPage);
         model.addAttribute("totalPages", lectures.hasContent() ? lectures.getTotalPages() : 1);
