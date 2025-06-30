@@ -1,5 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -40,6 +42,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
+import ua.foxminded.mykyta.zemlianyi.university.dto.DatePicker;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Group;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
@@ -257,5 +260,46 @@ class LectureControllerTest {
         mockMvc.perform(delete("/lectures/delete/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/lectures"))
                 .andExpect(flash().attribute("errorMessage", "Error: Service error"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("userRolesValidForGetMyScheduleRequest")
+    void getMySchedule_ShouldReturnViewWithModelAttributes_whenUserValidForOperation(String user, String role)
+            throws Exception {
+        Page<Lecture> mockPage = new PageImpl<>(List.of(lecture));
+        when(service.findForUserByEmailInTimeInterval(eq(user), eq(role), any(DatePicker.class), any(Pageable.class)))
+                .thenReturn(mockPage);
+
+        mockMvc.perform(get("/lectures/my-schedule").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(user(user).roles(role)).param("currentPage", "0").param("size", "5").param("preset", "TODAY")
+                .param("startDate", "2024-06-01").param("endDate", "2024-06-30")).andExpect(status().isOk())
+                .andExpect(view().name("view-my-schedule")).andExpect(model().attributeExists("datePicker"))
+                .andExpect(model().attribute("currentPage", 0))
+                .andExpect(model().attribute("totalPages", mockPage.getTotalPages()))
+                .andExpect(model().attribute("lectures", mockPage));
+
+    }
+
+    private static Stream<Arguments> userRolesValidForGetMyScheduleRequest() {
+        return Stream.of(Arguments.of("student@gmail.com", "STUDENT"), Arguments.of("teacher@gmail.com", "TEACHER"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("userRolesInvalidForGetMyScheduleRequest")
+    void getMySchedule_ShouldReturnViewWithModelAttributes_whenUserIsInvalidForOperation(String user, String role)
+            throws Exception {
+        when(service.findForUserByEmailInTimeInterval(eq(user), eq(role), any(DatePicker.class), any(Pageable.class)))
+                .thenThrow(new IllegalArgumentException("Invalid user role for this operation"));
+
+        mockMvc.perform(get("/lectures/my-schedule").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .with(user(user).roles(role)).param("currentPage", "0").param("size", "5").param("preset", "TODAY")
+                .param("startDate", "2024-06-01").param("endDate", "2024-06-30")).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/lectures"))
+                .andExpect(flash().attribute("errorMessage", "Error: Invalid user role for this operation"));
+
+    }
+
+    private static Stream<Arguments> userRolesInvalidForGetMyScheduleRequest() {
+        return Stream.of(Arguments.of("admin@gmail.com", "ADMIN"), Arguments.of("staff@gmail.com", "STAFF"));
     }
 }
