@@ -15,6 +15,20 @@ public class DatePicker {
 
     private LocalDate currentDate = LocalDate.now();
 
+    public DatePicker() {
+    }
+
+    public DatePicker(DatePickerPreset preset, LocalDate startDate, LocalDate endDate) {
+        if (preset == null) {
+            this.preset = DatePickerPreset.TODAY;
+        } else {
+            this.preset = preset;
+        }
+
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
     public void setPreset(DatePickerPreset preset) {
         this.preset = preset;
     }

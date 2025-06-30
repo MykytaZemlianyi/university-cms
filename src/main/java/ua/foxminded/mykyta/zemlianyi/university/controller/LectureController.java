@@ -1,5 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -59,16 +61,17 @@ public class LectureController {
     @GetMapping("/my-schedule")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
     public String getMySchedule(@RequestParam(defaultValue = "0") Integer currentPage,
-            @RequestParam(defaultValue = "5") Integer size, Model model) {
+            @RequestParam(defaultValue = "5") Integer size, @RequestParam(required = false) DatePickerPreset preset,
+            @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate,
+            Model model) {
+
+        DatePicker datePicker = new DatePicker(preset, startDate, endDate);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst()
                 .map(Object::toString).orElse("").substring(5);
 
         Pageable pageable = PageRequest.of(currentPage, size);
-
-        DatePicker datePicker = new DatePicker();
-        datePicker.setPreset(DatePickerPreset.TODAY);
 
         Page<Lecture> lectures = lectureService.findForUserByEmailInTimeInterval(username, role, datePicker, pageable);
 
@@ -84,21 +87,16 @@ public class LectureController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
     public String changeDateRange(@ModelAttribute DatePicker datePicker,
             @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
-            Model model) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst()
-                .map(Object::toString).orElse("").substring(5);
+            RedirectAttributes redirectAttributes) {
 
-        Pageable pageable = PageRequest.of(currentPage, size);
+        redirectAttributes.addAttribute("preset", datePicker.getPreset());
+        redirectAttributes.addAttribute("startDate", datePicker.getStartDate());
+        redirectAttributes.addAttribute("endDate", datePicker.getEndDate());
 
-        Page<Lecture> lectures = lectureService.findForUserByEmailInTimeInterval(username, role, datePicker, pageable);
+        redirectAttributes.addAttribute("currentPage", currentPage);
+        redirectAttributes.addAttribute("size", size);
 
-        model.addAttribute("datePicker", datePicker);
-        model.addAttribute("lectures", lectures);
-        model.addAttribute("currentPage", currentPage);
-        model.addAttribute("totalPages", lectures.hasContent() ? lectures.getTotalPages() : 1);
-
-        return "view-my-schedule";
+        return "redirect:/lectures/my-schedule";
     }
 
     @GetMapping("/add")

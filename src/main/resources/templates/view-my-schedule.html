@@ -36,14 +36,28 @@
 
 			<div
 				th:replace="~{fragments/lecture_fragments :: table(${lectures})}"></div>
-			<div th:with="paginationUrl='/lectures/my-schedule?currentPage='"
-				th:insert="~{fragments/general_fragments :: table-pagination(${lectures.size},${paginationUrl},${currentPage},${totalPages})}"></div>
+
+			<div
+				th:with="
+        baseUrl=@{/lectures/my-schedule(
+        preset = ${param.preset},
+        startDate = ${param.startDate},
+        endDate = ${param.endDate},
+        size = ${param.size})},
+        paginationUrl=${baseUrl + '&' + 'currentPage='}"
+				th:insert="~{fragments/general_fragments ::
+               table-pagination(${lectures.size},
+               ${paginationUrl},
+               ${currentPage},
+               ${totalPages})}">
+			</div>
 
 			<div
 				th:insert="~{fragments/button_fragments :: show_full_table('/lectures')}"></div>
 
 		</div>
-		<script
-			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	</div>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

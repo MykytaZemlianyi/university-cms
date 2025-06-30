@@ -60,4 +60,5 @@ public class Constants {
     public static final String ROLE_INVALID = "Role cannot be null or empty";
 
     public static final String INVALID_OPERATION_FOR_ROLE = " - invalid operation for this role";
+    public static final String ROOM_NOT_AVIAILABLE = "Room is not available for this lecture time:";
 }
