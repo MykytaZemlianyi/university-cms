@@ -41,6 +41,8 @@ class LectureServiceImplTest {
 
     @MockitoBean
     CourseDao courseDao;
+    @MockitoBean
+    CourseService courseService;
 
     @MockitoBean
     RoomDao roomDao;

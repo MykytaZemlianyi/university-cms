@@ -21,6 +21,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
+import ua.foxminded.mykyta.zemlianyi.university.service.CourseService;
 import ua.foxminded.mykyta.zemlianyi.university.service.LectureServiceImpl;
 
 @SpringBootTest
@@ -41,6 +42,9 @@ class LectureIntegrationalTest {
 
     @Autowired
     CourseDao courseDao;
+    
+    @Autowired
+    CourseService courseService;
 
     @Autowired
     LectureServiceImpl service;

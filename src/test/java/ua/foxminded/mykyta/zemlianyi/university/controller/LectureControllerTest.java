@@ -83,9 +83,9 @@ class LectureControllerTest {
         lecture.setId(1L);
         lecture.setLectureType(LectureType.SEMINAR);
         lecture.setCourse(course);
-        lecture.setRoom(room);
         lecture.setTimeStart(LocalDateTime.now());
-        lecture.setTimeEnd(LocalDateTime.now());
+        lecture.setTimeEnd(LocalDateTime.now().plusHours(1));
+        lecture.setRoom(room);
 
         form.setId(1L);
         form.setLectureType(LectureType.SEMINAR);
@@ -93,7 +93,7 @@ class LectureControllerTest {
         form.setRoomId(1L);
         form.setDate(LocalDate.now());
         form.setTimeStart(LocalTime.now());
-        form.setTimeEnd(LocalTime.now());
+        form.setTimeEnd(LocalTime.now().plusHours(1));
     }
 
     @ParameterizedTest
@@ -221,7 +221,7 @@ class LectureControllerTest {
     void updateLecture_shouldReturnWithErrors_whenBindingExceptionOccurs() throws Exception {
 
         mockMvc.perform(post("/lectures/edit/1").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .param("lectureType", "SEMINAR").param("courseId", "").param("groupId", "").param("roomId", "")
+                .param("lectureType", "").param("courseId", "").param("groupId", "").param("roomId", "")
                 .param("date", LocalDate.now().toString()).param("timeStart", LocalTime.now().toString())
                 .param("timeEnd", LocalTime.now().toString())).andExpect(status().isOk())
                 .andExpect(view().name("edit-lecture"))

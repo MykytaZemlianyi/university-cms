@@ -15,6 +15,7 @@ public class LectureForm implements Dto, Verifiable {
 
     @NotNull(message = "Course required")
     private Long courseId;
+
     @NotNull(message = "Date required")
     @FutureOrPresent
     private LocalDate date;

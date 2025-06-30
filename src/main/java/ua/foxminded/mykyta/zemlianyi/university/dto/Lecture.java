@@ -86,7 +86,10 @@ public class Lecture implements Verifiable, Dto {
     }
 
     public void setRoom(Room room) {
-        if (room.isAvailable(this)) {
+
+        if (room == null) {
+            this.room = null;
+        } else if (room.isAvailable(this)) {
             this.room = room;
         } else {
             throw new IllegalArgumentException(Constants.ROOM_NOT_AVIAILABLE + room.getId() + Constants.SPACE

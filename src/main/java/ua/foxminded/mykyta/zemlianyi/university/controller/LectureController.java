@@ -111,7 +111,7 @@ public class LectureController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
-    public String createLecture(@Valid @ModelAttribute LectureForm form, BindingResult bindingResult,
+    public String createLecture(@Valid @ModelAttribute("lectureForm") LectureForm form, BindingResult bindingResult,
             RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer courseSize, @RequestParam(defaultValue = "0") Integer roomPage,
             @RequestParam(defaultValue = "5") Integer roomSize, Model model) {

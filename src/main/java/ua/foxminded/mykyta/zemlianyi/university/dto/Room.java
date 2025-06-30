@@ -79,7 +79,7 @@ public class Room implements Verifiable, Dto {
     }
 
     public boolean isAvailable(Lecture lecture) {
-        if (lecture == null || !lecture.verify()) {
+        if (lecture == null || !lecture.verifyTime()) {
             throw new IllegalArgumentException(Constants.LECTURE_INVALID);
         }
 
