@@ -302,4 +302,16 @@ class LectureControllerTest {
     private static Stream<Arguments> userRolesInvalidForGetMyScheduleRequest() {
         return Stream.of(Arguments.of("admin@gmail.com", "ADMIN"), Arguments.of("staff@gmail.com", "STAFF"));
     }
+
+    @ParameterizedTest
+    @MethodSource("userRolesValidForGetMyScheduleRequest")
+    void changeDateRange_ShouldRedirectWithQueryParams_CustomRange(String user, String role) throws Exception {
+        mockMvc.perform(
+                post("/lectures/change-date-range").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .with(user(user).roles(role)).param("preset", "CUSTOM").param("startDate", "2024-11-01")
+                        .param("endDate", "2025-06-27").param("size", "5").param("currentPage", "0"))
+                .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl(
+                        "/lectures/my-schedule?preset=CUSTOM&startDate=11%2F1%2F24&endDate=6%2F27%2F25&currentPage=0&size=5"));
+    }
+
 }
