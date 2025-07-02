@@ -51,6 +51,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 import ua.foxminded.mykyta.zemlianyi.university.exceptions.LectureNotFoundException;
 import ua.foxminded.mykyta.zemlianyi.university.service.LectureService;
+import ua.foxminded.mykyta.zemlianyi.university.service.TeacherService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -61,6 +62,10 @@ class LectureControllerTest {
     @MockitoBean
     LectureService service;
 
+    @MockitoBean
+    TeacherService teacherService;
+
+    Teacher teacher = new Teacher();
     Lecture lecture = new Lecture();
     LectureForm form = new LectureForm();
 
@@ -69,9 +74,10 @@ class LectureControllerTest {
         Room room = new Room();
         room.setNumber(102);
 
-        Teacher teacher = new Teacher();
+        teacher.setId(1L);
         teacher.setName("Marek");
         teacher.setSurname("Szepski");
+        teacher.setEmail("mszepski@gmail.com");
 
         Group group = new Group();
         group.setId(1L);
@@ -298,5 +304,23 @@ class LectureControllerTest {
 
     private static Stream<Arguments> userRolesInvalidForGetMyScheduleRequest() {
         return Stream.of(Arguments.of("admin@gmail.com", "ADMIN"), Arguments.of("staff@gmail.com", "STAFF"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("userRoles")
+    void getTeacherSchedule_ShouldReturnViewWithModel(String user, String role) throws Exception {
+
+        when(teacherService.getByIdOrThrow(1L)).thenReturn(teacher);
+
+        Page<Lecture> page = new PageImpl<>(List.of(lecture), PageRequest.of(0, 5), 1);
+        when(service.findForUserByEmailInTimeInterval(eq(teacher.getEmail()), eq("TEACHER"), any(DatePicker.class),
+                any(Pageable.class))).thenReturn(page);
+
+        mockMvc.perform(get("/lectures/teacher-schedule/{id}", 1L).with(user(user).roles(role))
+                .param("currentPage", "0").param("size", "5").param("preset", "TODAY")).andExpect(status().isOk())
+                .andExpect(view().name("view-teacher-schedule")).andExpect(model().attributeExists("datePicker"))
+                .andExpect(model().attribute("teacherFullName", "Marek Szepski"))
+                .andExpect(model().attribute("lectures", page)).andExpect(model().attribute("currentPage", 0))
+                .andExpect(model().attribute("totalPages", 1));
     }
 }
