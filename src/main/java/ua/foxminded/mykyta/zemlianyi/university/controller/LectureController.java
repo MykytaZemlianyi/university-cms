@@ -83,22 +83,6 @@ public class LectureController {
         return "view-my-schedule";
     }
 
-    @PostMapping("/change-date-range")
-    @PreAuthorize("hasAnyAuthority('ROLE_STUDENT','ROLE_TEACHER')")
-    public String changeDateRange(@ModelAttribute DatePicker datePicker,
-            @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
-            RedirectAttributes redirectAttributes) {
-
-        redirectAttributes.addAttribute("preset", datePicker.getPreset());
-        redirectAttributes.addAttribute("startDate", datePicker.getStartDate());
-        redirectAttributes.addAttribute("endDate", datePicker.getEndDate());
-
-        redirectAttributes.addAttribute("currentPage", currentPage);
-        redirectAttributes.addAttribute("size", size);
-
-        return "redirect:/lectures/my-schedule";
-    }
-
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showCreateLectureForm(Model model, @RequestParam(defaultValue = "0") Integer coursePage,
