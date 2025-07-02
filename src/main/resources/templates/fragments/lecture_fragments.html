@@ -73,7 +73,7 @@
 	</div>
 </div>
 
-<form th:fragment="dateRangePicker" th:action="@{/lectures/my-schedule}"
+<form th:fragment="dateRangePicker(actionUrl)" th:action="${actionUrl}"
 	th:object="${datePicker}" method="get"
 	class="input-group d-flex align-items-center
 	justify-content-between pt-2 pb-2">
