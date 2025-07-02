@@ -24,3 +24,6 @@ INSERT INTO university.lectures (lecture_type, lecture_time_start, lecture_time_
 INSERT INTO university.lectures (lecture_type, lecture_time_start, lecture_time_end, course_id) VALUES ('LECTURE', '2025-01-17 14:00:00', '2025-01-17 15:30:00', 2);
 
 INSERT INTO university.lectures (lecture_type, lecture_time_start, lecture_time_end, course_id, room_id) VALUES ('SEMINAR', '2025-01-17 14:00:00', '2025-01-17 15:30:00', 1, 1);
+
+INSERT INTO university.lectures (lecture_type, lecture_time_start, lecture_time_end, course_id, room_id) VALUES ('SEMINAR', '2025-07-02 14:00:00', '2025-07-02 15:30:00', 1, 1);
+INSERT INTO university.lectures (lecture_type, lecture_time_start, lecture_time_end, course_id, room_id) VALUES ('SEMINAR', '2025-07-03 14:00:00', '2025-07-03 15:30:00', 2, 1);
