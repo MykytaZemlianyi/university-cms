@@ -286,16 +286,13 @@ class LectureControllerTest {
 
     @ParameterizedTest
     @MethodSource("userRolesInvalidForGetMyScheduleRequest")
-    void getMySchedule_ShouldReturnViewWithModelAttributes_whenUserIsInvalidForOperation(String user, String role)
+    void getMySchedule_ShouldReturnAccessDenied_whenUserIsInvalidForOperation(String user, String role)
             throws Exception {
-        when(service.findForUserByEmailInTimeInterval(eq(user), eq(role), any(DatePicker.class), any(Pageable.class)))
-                .thenThrow(new IllegalArgumentException("Invalid user role for this operation"));
 
         mockMvc.perform(get("/lectures/my-schedule").with(csrf()).contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .with(user(user).roles(role)).param("currentPage", "0").param("size", "5").param("preset", "TODAY")
-                .param("startDate", "2024-06-01").param("endDate", "2024-06-30")).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/lectures"))
-                .andExpect(flash().attribute("errorMessage", "Error: Invalid user role for this operation"));
+                .with(user(user).roles(role))).andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/welcome"))
+                .andExpect(flash().attribute("errorMessage", "Error: Access Denied"));
 
     }
 

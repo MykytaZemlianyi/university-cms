@@ -59,7 +59,7 @@ public class LectureController {
     }
 
     @GetMapping("/my-schedule")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
+    @PreAuthorize("hasAnyAuthority('ROLE_STUDENT','ROLE_TEACHER')")
     public String getMySchedule(@RequestParam(defaultValue = "0") Integer currentPage,
             @RequestParam(defaultValue = "5") Integer size, @RequestParam(required = false) DatePickerPreset preset,
             @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate,
@@ -84,7 +84,7 @@ public class LectureController {
     }
 
     @PostMapping("/change-date-range")
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
+    @PreAuthorize("hasAnyAuthority('ROLE_STUDENT','ROLE_TEACHER')")
     public String changeDateRange(@ModelAttribute DatePicker datePicker,
             @RequestParam(defaultValue = "0") Integer currentPage, @RequestParam(defaultValue = "5") Integer size,
             RedirectAttributes redirectAttributes) {
