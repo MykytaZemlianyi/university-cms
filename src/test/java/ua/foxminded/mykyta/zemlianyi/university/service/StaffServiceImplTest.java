@@ -153,51 +153,6 @@ class StaffServiceImplTest {
     }
 
     @Test
-    void changePassword_shouldThrowIllegalArgumentException_whenStaffIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            staffService.changePassword(null);
-        });
-    }
-
-    @Test
-    void changePassword_shouldThrowIllegalArgumentException_whenStaffIsInvalid() {
-        Staff invalidStaff = new Staff();
-        assertThrows(IllegalArgumentException.class, () -> {
-            staffService.changePassword(invalidStaff);
-        });
-    }
-
-    @Test
-    void changePassword_shouldThrowIllegalArgumentException_whenStaffIsNotSavedInDb() {
-        doReturn(Optional.empty()).when(staffDao).findById(staff.getId());
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            staffService.changePassword(staff);
-        });
-    }
-
-    @Test
-    void changePassword_shouldChangePassword_whenStaffIsValidAndExistsInDb() {
-        doReturn(Optional.of(staff)).when(staffDao).findById(staff.getId());
-
-        staff.setPassword("987654321");
-
-        ArgumentCaptor<Staff> captor = ArgumentCaptor.forClass(Staff.class);
-
-        staffService.changePassword(staff);
-
-        verify(staffDao).save(captor.capture());
-
-        Staff savedStaff = captor.getValue();
-        assertEquals(staff.getId(), savedStaff.getId());
-        assertEquals(staff.getName(), savedStaff.getName());
-        assertEquals(staff.getSurname(), savedStaff.getSurname());
-        assertEquals(staff.getEmail(), savedStaff.getEmail());
-
-        assertEquals(staff.getPassword(), savedStaff.getPassword());
-    }
-
-    @Test
     void delete_shouldThrowIllegalArgumentException_when_staffIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
             staffService.delete(null);

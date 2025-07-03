@@ -8,12 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.User;
-import ua.foxminded.mykyta.zemlianyi.university.service.AdminService;
-import ua.foxminded.mykyta.zemlianyi.university.service.StaffService;
-import ua.foxminded.mykyta.zemlianyi.university.service.StudentService;
-import ua.foxminded.mykyta.zemlianyi.university.service.TeacherService;
 import ua.foxminded.mykyta.zemlianyi.university.service.UserService;
 import ua.foxminded.mykyta.zemlianyi.university.service.UserServiceResolver;
 
@@ -41,7 +36,7 @@ public class GeneralController {
     }
 
     @GetMapping("/account")
-    public String myProfilePage(Model model) {
+    public String myAccount(Model model) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst()
                 .map(Object::toString).orElse("").substring(5);

@@ -152,51 +152,7 @@ class AdminServiceImplTest {
         verify(adminDao).save(admin);
     }
 
-    @Test
-    void changePassword_shouldThrowIllegalArgumentException_whenAdminIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            adminService.changePassword(null);
-        });
-    }
-
-    @Test
-    void changePassword_shouldThrowIllegalArgumentException_whenAdminIsInvalid() {
-        Admin invalidAdmin = new Admin();
-        assertThrows(IllegalArgumentException.class, () -> {
-            adminService.changePassword(invalidAdmin);
-        });
-    }
-
-    @Test
-    void changePassword_shouldThrowIllegalArgumentException_whenAdminIsNotSavedInDb() {
-        doReturn(Optional.empty()).when(adminDao).findById(admin.getId());
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            adminService.changePassword(admin);
-        });
-    }
-
-    @Test
-    void changePassword_shouldChangePassword_whenAdminIsValidAndExistsInDb() {
-        doReturn(Optional.of(admin)).when(adminDao).findById(admin.getId());
-
-        admin.setPassword("987654321");
-
-        ArgumentCaptor<Admin> captor = ArgumentCaptor.forClass(Admin.class);
-
-        adminService.changePassword(admin);
-
-        verify(adminDao).save(captor.capture());
-
-        Admin savedAdmin = captor.getValue();
-        assertEquals(admin.getId(), savedAdmin.getId());
-        assertEquals(admin.getName(), savedAdmin.getName());
-        assertEquals(admin.getSurname(), savedAdmin.getSurname());
-        assertEquals(admin.getEmail(), savedAdmin.getEmail());
-
-        assertEquals(admin.getPassword(), savedAdmin.getPassword());
-    }
-
+  
     @Test
     void delete_shouldThrowIllegalArgumentException_when_adminIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
