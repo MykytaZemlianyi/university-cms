@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -152,7 +153,6 @@ class AdminServiceImplTest {
         verify(adminDao).save(admin);
     }
 
-  
     @Test
     void delete_shouldThrowIllegalArgumentException_when_adminIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
@@ -184,4 +184,46 @@ class AdminServiceImplTest {
 
         verify(adminDao).delete(admin);
     }
+
+    @Test
+    void changePassword_shouldChangePasswordSuccessfully_whenCurrentPasswordMatches() {
+        String username = "admin@example.com";
+        String currentRawPassword = "oldPassword";
+        String newRawPassword = "newPassword";
+
+        admin.setEmail(username);
+        admin.setPassword("encodedOldPassword");
+
+        when(adminDao.findByEmail(username)).thenReturn(java.util.Optional.of(admin));
+        when(encoder.matches(currentRawPassword, admin.getPassword())).thenReturn(true);
+        when(encoder.encode(newRawPassword)).thenReturn("encodedNewPassword");
+        when(adminDao.save(any(Admin.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Admin updatedAdmin = adminService.changePassword(username, currentRawPassword, newRawPassword);
+
+        assertEquals("encodedNewPassword", updatedAdmin.getPassword());
+
+        ArgumentCaptor<Admin> adminCaptor = ArgumentCaptor.forClass(Admin.class);
+        verify(adminDao).save(adminCaptor.capture());
+        assertEquals("encodedNewPassword", adminCaptor.getValue().getPassword());
+    }
+
+    @Test
+    void changePassword_shouldThrowException_whenCurrentPasswordDoesNotMatch() {
+        String username = "admin@example.com";
+        String wrongCurrentPassword = "wrongPassword";
+        String newRawPassword = "newPassword";
+
+        admin.setEmail(username);
+        admin.setPassword("encodedOldPassword");
+
+        when(adminDao.findByEmail(username)).thenReturn(java.util.Optional.of(admin));
+        when(encoder.matches(wrongCurrentPassword, admin.getPassword())).thenReturn(false);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> adminService.changePassword(username, wrongCurrentPassword, newRawPassword));
+
+        verify(adminDao, never()).save(any());
+    }
+
 }
