@@ -26,7 +26,7 @@ public class GeneralControllerExceptionHandler {
             ra.addFlashAttribute("errorMessage", "Error: " + ex.getMessage());
             return "redirect:/account";
         }
-        throw ex; // или вернуть null, чтобы передать дальше
+        throw ex;
     }
 
 }
