@@ -14,8 +14,6 @@ public interface UserService<T extends User> {
 
     public void deleteOrThrow(Long id);
 
-    public T changePassword(T user);
-
     public Optional<T> findById(Long id);
 
     public T getByIdOrThrow(Long id);
@@ -23,4 +21,6 @@ public interface UserService<T extends User> {
     public T getByEmailOrThrow(String email);
 
     List<T> findAll();
+
+    T changePassword(String username, String currentPasswordVerification, String newPassword);
 }

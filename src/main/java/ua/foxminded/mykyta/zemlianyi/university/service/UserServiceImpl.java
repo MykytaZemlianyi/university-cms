@@ -130,19 +130,16 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
         dao.delete(user);
     }
 
-    public T changePassword(T user) {
-        ObjectChecker.checkNullAndVerify(user);
-
-        Optional<T> managedAdminOptional = dao.findById(user.getId());
-
-        if (managedAdminOptional.isPresent()) {
-            T managedUser = managedAdminOptional.get();
-            managedUser.setPassword(user.getPassword());
+    @Override
+    public T changePassword(String username, String currentPasswordVerification, String newPassword) {
+        T user = getByEmailOrThrow(username);
+        if (passwordEncoder.matches(currentPasswordVerification, user.getPassword())) {
+            user.setPassword(newPassword);
             logger.info("Changed password for {} - {}", user.getClass().getSimpleName(), user);
-            encodePasswordBeforeSave(managedUser);
-            return dao.save(managedUser);
+            encodePasswordBeforeSave(user);
+            return dao.save(user);
         } else {
-            throw new IllegalArgumentException(Constants.USER_PASSWORD_CHANGE_ERROR);
+            throw new IllegalArgumentException("Current password is incorrect");
         }
     }
 

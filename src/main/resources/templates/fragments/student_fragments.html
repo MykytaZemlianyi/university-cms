@@ -51,6 +51,8 @@
 					class="nav-link" href="/groups/my-group">My Group</a></li>
 				<li class="nav-item" sec:authorize="hasRole('STUDENT')"><a
 					class="nav-link" href="/teachers">Teachers</a></li>
+					<li class="nav-item" sec:authorize="hasRole('STUDENT')"><a
+                    class="nav-link" href="/account">My Account</a></li>
 
 				<li class="nav-item">
 					<form th:action="@{/logout}" method="post">

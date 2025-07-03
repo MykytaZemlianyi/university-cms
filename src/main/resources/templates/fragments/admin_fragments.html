@@ -66,6 +66,8 @@
 					class="nav-link" href="/lectures">Lectures</a></li>
 				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
 					class="nav-link" href="/rooms">Rooms</a></li>
+				<li class="nav-item" sec:authorize="hasRole('ADMIN')"><a
+					class="nav-link" href="/account">My Account</a></li>
 
 				<li class="nav-item">
 					<form th:action="@{/logout}" method="post">

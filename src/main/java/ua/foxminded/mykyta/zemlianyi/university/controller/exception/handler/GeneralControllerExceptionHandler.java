@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @ControllerAdvice
 public class GeneralControllerExceptionHandler {
     private static Logger logger = LogManager.getLogger(GeneralControllerExceptionHandler.class.getName());
@@ -16,6 +18,15 @@ public class GeneralControllerExceptionHandler {
         logger.warn(ex.getMessage());
         redirectAttributes.addFlashAttribute("errorMessage", "Error: " + ex.getMessage());
         return "redirect:/welcome";
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public String handleAccessDenied(HttpServletRequest req, Exception ex, RedirectAttributes ra) throws Exception {
+        if (req.getRequestURI().startsWith("/account")) {
+            ra.addFlashAttribute("errorMessage", "Error: " + ex.getMessage());
+            return "redirect:/account";
+        }
+        throw ex; // или вернуть null, чтобы передать дальше
     }
 
 }
