@@ -20,13 +20,13 @@ public class GeneralControllerExceptionHandler {
         return "redirect:/welcome";
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public String handleAccessDenied(HttpServletRequest req, Exception ex, RedirectAttributes ra) throws Exception {
-        if (req.getRequestURI().startsWith("/account")) {
-            ra.addFlashAttribute("errorMessage", "Error: " + ex.getMessage());
-            return "redirect:/account";
-        }
-        throw ex;
-    }
+//    @ExceptionHandler(IllegalArgumentException.class)
+//    public String handleAccessDenied(HttpServletRequest req, Exception ex, RedirectAttributes ra) throws Exception {
+//        if (req.getRequestURI().startsWith("/account")) {
+//            ra.addFlashAttribute("errorMessage", "Error: " + ex.getMessage());
+//            return "redirect:/account";
+//        }
+//        throw ex;
+//    }
 
 }

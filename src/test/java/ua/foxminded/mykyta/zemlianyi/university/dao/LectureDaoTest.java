@@ -36,6 +36,7 @@ class LectureDaoTest {
 
     Course course1 = new Course();
     Course course2 = new Course();
+    Course course3 = new Course();
     Lecture lecture = new Lecture();
 
     @BeforeEach
@@ -45,6 +46,9 @@ class LectureDaoTest {
 
         course2.setId(2L);
         course2.setName("Computer Science 2");
+
+        course3.setId(3L);
+        course3.setName("Computer Science 3");
 
         lecture.setId(4L);
         lecture.setLectureType(LectureType.SEMINAR);
@@ -90,7 +94,7 @@ class LectureDaoTest {
         Lecture lectureOne = new Lecture();
         lectureOne.setId(5L);
         lectureOne.setLectureType(LectureType.SEMINAR);
-        lectureOne.setCourse(course1);
+        lectureOne.setCourse(course3);
         lectureOne.setTimeStart(LocalDateTime.of(2025, 7, 2, 14, 0));
         lectureOne.setTimeEnd(LocalDateTime.of(2025, 7, 2, 15, 30));
 
@@ -102,7 +106,7 @@ class LectureDaoTest {
         lectureTwo.setTimeEnd(LocalDateTime.of(2025, 7, 3, 15, 30));
         List<Lecture> lectures = List.of(lectureOne, lectureTwo);
 
-        List<Course> courses = new ArrayList<>(Arrays.asList(course1, course2));
+        List<Course> courses = new ArrayList<>(Arrays.asList(course3, course2));
 
         Page<Lecture> expectedLectures = new PageImpl<>(lectures, pageable, lectures.size());
 
@@ -118,12 +122,12 @@ class LectureDaoTest {
         Lecture lectureOne = new Lecture();
         lectureOne.setId(5L);
         lectureOne.setLectureType(LectureType.SEMINAR);
-        lectureOne.setCourse(course1);
+        lectureOne.setCourse(course3);
         lectureOne.setTimeStart(LocalDateTime.of(2025, 7, 2, 14, 0));
         lectureOne.setTimeEnd(LocalDateTime.of(2025, 7, 2, 15, 30));
         List<Lecture> lectures = List.of(lectureOne);
 
-        List<Course> courses = new ArrayList<>(Arrays.asList(course1, course2));
+        List<Course> courses = new ArrayList<>(Arrays.asList(course3, course2));
 
         Page<Lecture> expectedLectures = new PageImpl<>(lectures, pageable, lectures.size());
 

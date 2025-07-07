@@ -3,6 +3,7 @@ INSERT INTO university.teachers (name, surname, email, password) VALUES ('Pawel'
 
 INSERT INTO university.courses (course_name, teacher_id) VALUES ('Computer Science', 1);
 INSERT INTO university.courses (course_name) VALUES ('Computer Science 2');
+INSERT INTO university.courses (course_name, teacher_id) VALUES ('Computer Science 3', 1);
 
 INSERT INTO university.groups (group_name) VALUES ('AA-11');
 
@@ -25,5 +26,5 @@ INSERT INTO university.lectures (lecture_type, lecture_time_start, lecture_time_
 
 INSERT INTO university.lectures (lecture_type, lecture_time_start, lecture_time_end, course_id, room_id) VALUES ('SEMINAR', '2025-01-17 14:00:00', '2025-01-17 15:30:00', 1, 1);
 
-INSERT INTO university.lectures (lecture_type, lecture_time_start, lecture_time_end, course_id, room_id) VALUES ('SEMINAR', '2025-07-02 14:00:00', '2025-07-02 15:30:00', 1, 1);
+INSERT INTO university.lectures (lecture_type, lecture_time_start, lecture_time_end, course_id, room_id) VALUES ('SEMINAR', '2025-07-02 14:00:00', '2025-07-02 15:30:00', 3, 1);
 INSERT INTO university.lectures (lecture_type, lecture_time_start, lecture_time_end, course_id, room_id) VALUES ('SEMINAR', '2025-07-03 14:00:00', '2025-07-03 15:30:00', 2, 1);

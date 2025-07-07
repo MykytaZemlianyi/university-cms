@@ -1,6 +1,14 @@
 package ua.foxminded.mykyta.zemlianyi.university;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
+
+import ua.foxminded.mykyta.zemlianyi.university.service.AdminService;
+import ua.foxminded.mykyta.zemlianyi.university.service.StaffService;
+import ua.foxminded.mykyta.zemlianyi.university.service.StudentService;
+import ua.foxminded.mykyta.zemlianyi.university.service.TeacherService;
+import ua.foxminded.mykyta.zemlianyi.university.service.UserService;
+import ua.foxminded.mykyta.zemlianyi.university.dto.User;
 
 public class Constants {
     private Constants() {
@@ -61,4 +69,10 @@ public class Constants {
 
     public static final String INVALID_OPERATION_FOR_ROLE = " - invalid operation for this role";
     public static final String ROOM_NOT_AVIAILABLE = "Room is not available for this lecture time:";
+
+    public static final Map<String, Class<? extends UserService<? extends User>>> USER_SERVICES = Map.of(ROLE_ADMIN,
+            AdminService.class, ROLE_STAFF, StaffService.class, ROLE_STUDENT, StudentService.class, ROLE_TEACHER,
+            TeacherService.class);
+    public static final String CHANGE_PASSWORD_ERROR_SAME_AS_CURRENT = "New password cannot be the same as current password";
+    public static final String CHANGE_PASSWORD_ERROR_NOT_MATCHING = "Current password does not match the existing password";
 }
