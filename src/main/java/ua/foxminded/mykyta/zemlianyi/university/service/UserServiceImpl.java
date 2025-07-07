@@ -133,14 +133,18 @@ public abstract class UserServiceImpl<T extends User> implements UserService<T> 
     @Override
     public T changePassword(String username, String currentPasswordVerification, String newPassword) {
         T user = getByEmailOrThrow(username);
-        if (passwordEncoder.matches(currentPasswordVerification, user.getPassword())) {
-            user.setPassword(newPassword);
-            logger.info("Changed password for {} - {}", user.getClass().getSimpleName(), user);
-            encodePasswordBeforeSave(user);
-            return dao.save(user);
-        } else {
-            throw new IllegalArgumentException("Current password is incorrect");
+
+        if (!passwordEncoder.matches(currentPasswordVerification, user.getPassword())) {
+            throw new IllegalArgumentException(Constants.CHANGE_PASSWORD_ERROR_NOT_MATCHING);
         }
+        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+            throw new IllegalArgumentException(Constants.CHANGE_PASSWORD_ERROR_SAME_AS_CURRENT);
+        }
+
+        user.setPassword(newPassword);
+        logger.info("Changed password for {} - {}", user.getClass().getSimpleName(), user);
+        encodePasswordBeforeSave(user);
+        return dao.save(user);
     }
 
     public Page<T> findAll(Pageable page) {

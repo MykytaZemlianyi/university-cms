@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ua.foxminded.mykyta.zemlianyi.university.dto.User;
-import ua.foxminded.mykyta.zemlianyi.university.service.UserService;
 import ua.foxminded.mykyta.zemlianyi.university.service.UserServiceResolver;
 
 @Controller
@@ -41,8 +40,7 @@ public class GeneralController {
         String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst()
                 .map(Object::toString).orElse("").substring(5);
 
-        UserService<?> service = userServiceResolver.resolveUserService(role);
-        User user = service.getByEmailOrThrow(username);
+        User user = userServiceResolver.getUserByEmailAndRole(username, role);
 
         model.addAttribute("user", user);
         return "view-my-account";
@@ -55,8 +53,7 @@ public class GeneralController {
         String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst()
                 .map(Object::toString).orElse("").substring(5);
 
-        UserService<?> service = userServiceResolver.resolveUserService(role);
-        service.changePassword(username, currentPassword, newPassword);
+        userServiceResolver.changePasswordForUserByEmailAndRole(username, role, currentPassword, newPassword);
         redirectAttributes.addFlashAttribute("successMessage", "Password changed successfully!");
         return "redirect:/account";
     }

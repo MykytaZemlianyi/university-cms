@@ -43,7 +43,7 @@ class GeneralControllerTest {
     @MockitoBean
     UserServiceResolver userServiceResolver;
 
-    private UserService<User> userService = Mockito.mock(UserService.class);;
+    private UserService<User> userService = Mockito.mock(UserService.class);
 
     @Autowired
     private MockMvc mockMvc;
@@ -81,9 +81,7 @@ class GeneralControllerTest {
     @MethodSource("userRoles")
     void myAccount_shouldReturnViewMyAccount_whenUserAuthorized(String username, String role, User user)
             throws Exception {
-        when(userServiceResolver.resolveUserService(role)).thenReturn(userService);
-
-        when(userService.getByEmailOrThrow(username)).thenReturn(user);
+        when(userServiceResolver.getUserByEmailAndRole(username, role)).thenReturn(user);
 
         mockMvc.perform(get("/account").with(user(username).roles(role))).andExpect(status().isOk())
                 .andExpect(view().name("view-my-account")).andExpect(model().attributeExists("user"));
@@ -93,15 +91,17 @@ class GeneralControllerTest {
     @MethodSource("userRoles")
     void changePassword_shouldRedirectWithSuccessMessage_whenPasswordChanged(String username, String role, User user)
             throws Exception {
+        String currentPassword = "oldPass123";
+        String newPassword = "newPass456";
 
-        when(userServiceResolver.resolveUserService(role)).thenReturn(userService);
-        doNothing().when(userService).changePassword(eq(username), any(String.class), any(String.class));
+        when(userServiceResolver.changePasswordForUserByEmailAndRole(username, role, currentPassword, newPassword))
+                .thenReturn(user);
 
         mockMvc.perform(post("/account/change-password").with(user(username).roles(role))
-                .param("currentPassword", "oldPass123").param("newPassword", "newPass456").with(csrf()))
+                .param("currentPassword", currentPassword).param("newPassword", newPassword).with(csrf()))
                 .andExpect(status().is3xxRedirection()).andExpect(redirectedUrl("/account"))
                 .andExpect(flash().attribute("successMessage", "Password changed successfully!"));
 
-        verify(userService).changePassword(username, "oldPass123", "newPass456");
+        verify(userServiceResolver).changePasswordForUserByEmailAndRole(username, role, currentPassword, newPassword);
     }
 }
