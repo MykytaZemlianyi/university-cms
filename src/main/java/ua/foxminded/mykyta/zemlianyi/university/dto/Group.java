@@ -129,11 +129,6 @@ public class Group implements Verifiable, Dto {
         this.courses = new HashSet<>();
     }
 
-    public void clearRelations() {
-        clearCourses();
-        clearStudents();
-    }
-
     @Override
     public boolean verify() {
         return this.name != null && !this.name.isEmpty() && !this.name.isBlank();

@@ -71,13 +71,6 @@ public class Room implements Verifiable, Dto {
         }
     }
 
-    public void clearLectures() {
-        for (Lecture lecture : new HashSet<>(this.lectures)) {
-            lecture.setRoom(null);
-        }
-        this.lectures = new HashSet<>();
-    }
-
     public boolean isAvailable(Lecture lecture) {
         if (lecture == null || !lecture.verifyTime()) {
             throw new IllegalArgumentException(Constants.LECTURE_INVALID);
