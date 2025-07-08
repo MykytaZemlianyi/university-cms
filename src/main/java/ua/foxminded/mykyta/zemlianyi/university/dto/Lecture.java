@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import ua.foxminded.mykyta.zemlianyi.university.Constants;
 
 @Entity
 @Table(name = "lectures", schema = "university")
@@ -85,7 +86,15 @@ public class Lecture implements Verifiable, Dto {
     }
 
     public void setRoom(Room room) {
-        this.room = room;
+
+        if (room == null) {
+            this.room = null;
+        } else if (room.isAvailable(this)) {
+            this.room = room;
+        } else {
+            throw new IllegalArgumentException(Constants.ROOM_NOT_AVIAILABLE + room.getId() + Constants.SPACE
+                    + this.timeStart + Constants.PIPE + this.timeEnd);
+        }
     }
 
     public void clearRelations() {

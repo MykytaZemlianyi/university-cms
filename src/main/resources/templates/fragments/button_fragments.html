@@ -4,6 +4,11 @@
 		class="bi bi-gear"></i> <span>Edit</span>
 	</a>
 </div>
+<div th:fragment="lectures(link)">
+	<a th:href="${link}" class="btn btn-primary btn-lg"> <i
+		class="bi bi-person-lines-fill me-1"></i> <span>Lectures</span>
+	</a>
+</div>
 
 <div th:fragment="delete" sec:authorize="hasRole('ADMIN')">
 	<button class="btn btn-danger btn-lg" type="submit">
@@ -24,4 +29,10 @@
 		th:data-bs-toggle="modal" th:data-bs-target="${data_bs_target}">
 		<i class=" bi bi-search me-2"></i> <span th:text="${btn_text}"></span>
 	</button>
+</div>
+
+<div th:fragment="show_full_table(link)">
+	<a class="btn btn-outline-secondary btn-lg p-2" th:href="${link}">
+		<i class=" bi bi-search me-2"></i> <span>View All</span>
+	</a>
 </div>

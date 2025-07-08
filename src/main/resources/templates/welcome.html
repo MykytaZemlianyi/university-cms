@@ -73,6 +73,12 @@
 							handled to ensure data protection and application reliability.</p>
 					</div>
 				</div>
+				<div class="d-flex align-items-center justify-content-center mb-5"
+					sec:authorize="!isAuthenticated()">
+					<button type="button" class="btn btn-lg btn-primary"
+						th:onclick="|window.location.href='@{/login}'|">Get
+						Started</button>
+				</div>
 			</div>
 		</div>
 

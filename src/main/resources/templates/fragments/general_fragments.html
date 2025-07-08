@@ -49,3 +49,85 @@
 	</div>
 
 </div>
+
+<div th:fragment="my-account-table">
+	<div class="row g-3 align-items-center mb-3">
+		<div class="col-sm-3">
+			<label for="name" class="form-label">Name</label>
+		</div>
+		<div class="col-sm-9">
+			<input type="text" class="form-control" id="name"
+				th:value="${user.name}" disabled>
+		</div>
+	</div>
+
+	<div class="row g-3 align-items-center mb-3">
+		<div class="col-sm-3">
+			<label for="surname" class="form-label">Surname</label>
+		</div>
+		<div class="col-sm-9">
+			<input type="text" class="form-control" id="surname"
+				th:value="${user.surname}" disabled>
+		</div>
+	</div>
+
+	<div class="row g-3 align-items-center mb-3">
+		<div class="col-sm-3">
+			<label for="email" class="form-label">Email</label>
+		</div>
+		<div class="col-sm-9">
+			<input type="text" class="form-control" id="email"
+				th:value="${user.email}" disabled>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="offset-sm-3 col-sm-9">
+			<button type="button" class="btn btn-warning btn-lg w-100"
+				data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change
+				Password</button>
+		</div>
+	</div>
+</div>
+
+<div th:fragment="modal_change_password">
+	<div class="modal fade" id="changePasswordModal" tabindex="-1"
+		aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<form th:action="@{/account/change-password}" method="post">
+
+					<div
+						class="modal-header d-flex justify-content-center position-relative">
+						<h5 class="modal-title m-0">Change password</h5>
+						<button type="button"
+							class="btn-close position-absolute end-0 me-3"
+							data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+
+
+					<div class="modal-body">
+						<div class="mb-3">
+							<label for="currentPassword" class="form-label">Current
+								password</label> <input type="password" class="form-control"
+								id="currentPassword" name="currentPassword" required>
+						</div>
+
+						<div class="mb-3">
+							<label for="newPassword" class="form-label">New password</label>
+							<input type="password" class="form-control" id="newPassword"
+								name="newPassword" required>
+						</div>
+					</div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary"
+							data-bs-dismiss="modal">Cancel</button>
+						<button type="submit" class="btn btn-primary">Save
+							changes</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

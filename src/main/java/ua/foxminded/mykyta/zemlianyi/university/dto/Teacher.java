@@ -3,7 +3,6 @@ package ua.foxminded.mykyta.zemlianyi.university.dto;
 import java.util.HashSet;
 import java.util.Set;
 
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -32,13 +31,6 @@ public class Teacher extends User {
     public void addCourse(Course course) {
         this.courses.add(course);
         course.setTeacher(this);
-    }
-
-    public void removeCourse(Course course) {
-        boolean successRemoval = this.courses.remove(course);
-        if (successRemoval) {
-            course.setTeacher(null);
-        }
     }
 
     public void clearCourses() {

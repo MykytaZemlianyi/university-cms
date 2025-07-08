@@ -1,9 +1,12 @@
 package ua.foxminded.mykyta.zemlianyi.university.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,14 +20,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
+import ua.foxminded.mykyta.zemlianyi.university.Constants;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
+import ua.foxminded.mykyta.zemlianyi.university.dto.DatePicker;
+import ua.foxminded.mykyta.zemlianyi.university.dto.DatePickerPreset;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureType;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Room;
+import ua.foxminded.mykyta.zemlianyi.university.dto.Teacher;
 import ua.foxminded.mykyta.zemlianyi.university.service.CourseService;
 import ua.foxminded.mykyta.zemlianyi.university.service.LectureService;
 import ua.foxminded.mykyta.zemlianyi.university.service.RoomService;
+import ua.foxminded.mykyta.zemlianyi.university.service.TeacherService;
 
 @Controller
 @RequestMapping("/lectures")
@@ -32,11 +40,14 @@ public class LectureController {
     private LectureService lectureService;
     private CourseService courseService;
     private RoomService roomService;
+    private TeacherService teacherService;
 
-    public LectureController(LectureService lectureService, CourseService courseService, RoomService roomService) {
+    public LectureController(LectureService lectureService, CourseService courseService, RoomService roomService,
+            TeacherService teacherService) {
         this.lectureService = lectureService;
         this.courseService = courseService;
         this.roomService = roomService;
+        this.teacherService = teacherService;
     }
 
     @GetMapping
@@ -53,6 +64,57 @@ public class LectureController {
         return "view-all-lectures";
     }
 
+    @GetMapping("/my-schedule")
+    @PreAuthorize("hasAnyAuthority('ROLE_STUDENT','ROLE_TEACHER')")
+    public String getMySchedule(@RequestParam(defaultValue = "0") Integer currentPage,
+            @RequestParam(defaultValue = "5") Integer size, @RequestParam(required = false) DatePickerPreset preset,
+            @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate,
+            Model model) {
+
+        DatePicker datePicker = new DatePicker(preset, startDate, endDate);
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().findFirst()
+                .map(Object::toString).orElse("").substring(5);
+
+        Pageable pageable = PageRequest.of(currentPage, size);
+
+        Page<Lecture> lectures = lectureService.findForUserByEmailInTimeInterval(username, role, datePicker, pageable);
+
+        model.addAttribute("datePicker", datePicker);
+        model.addAttribute("lectures", lectures);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", lectures.hasContent() ? lectures.getTotalPages() : 1);
+
+        return "view-my-schedule";
+    }
+
+    @GetMapping("/teacher-schedule/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STUDENT','ROLE_TEACHER','ROLE_STAFF')")
+    public String getTeachersSchedule(@PathVariable Long id, @RequestParam(defaultValue = "0") Integer currentPage,
+            @RequestParam(defaultValue = "5") Integer size, @RequestParam(required = false) DatePickerPreset preset,
+            @RequestParam(required = false) LocalDate startDate, @RequestParam(required = false) LocalDate endDate,
+            Model model) {
+
+        DatePicker datePicker = new DatePicker(preset, startDate, endDate);
+        Teacher teacher = teacherService.getByIdOrThrow(id);
+        String username = teacher.getEmail();
+        String fullName = teacher.getName() + Constants.SPACE + teacher.getSurname();
+        String role = Constants.ROLE_TEACHER; // Assuming the role is always TEACHER for this endpoint
+
+        Pageable pageable = PageRequest.of(currentPage, size);
+
+        Page<Lecture> lectures = lectureService.findForUserByEmailInTimeInterval(username, role, datePicker, pageable);
+
+        model.addAttribute("teacherFullName", fullName);
+        model.addAttribute("datePicker", datePicker);
+        model.addAttribute("lectures", lectures);
+        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("totalPages", lectures.hasContent() ? lectures.getTotalPages() : 1);
+
+        return "view-teacher-schedule";
+    }
+
     @GetMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
     public String showCreateLectureForm(Model model, @RequestParam(defaultValue = "0") Integer coursePage,
@@ -65,7 +127,7 @@ public class LectureController {
 
     @PostMapping("/add")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_STAFF')")
-    public String createLecture(@Valid @ModelAttribute LectureForm form, BindingResult bindingResult,
+    public String createLecture(@Valid @ModelAttribute("lectureForm") LectureForm form, BindingResult bindingResult,
             RedirectAttributes redirectAttributes, @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer courseSize, @RequestParam(defaultValue = "0") Integer roomPage,
             @RequestParam(defaultValue = "5") Integer roomSize, Model model) {

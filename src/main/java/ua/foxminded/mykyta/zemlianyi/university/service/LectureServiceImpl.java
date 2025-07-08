@@ -1,6 +1,7 @@
 package ua.foxminded.mykyta.zemlianyi.university.service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +16,7 @@ import ua.foxminded.mykyta.zemlianyi.university.dao.CourseDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.LectureDao;
 import ua.foxminded.mykyta.zemlianyi.university.dao.RoomDao;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Course;
+import ua.foxminded.mykyta.zemlianyi.university.dto.DatePicker;
 import ua.foxminded.mykyta.zemlianyi.university.dto.Lecture;
 import ua.foxminded.mykyta.zemlianyi.university.dto.LectureForm;
 import ua.foxminded.mykyta.zemlianyi.university.exceptions.LectureNotFoundException;
@@ -25,11 +27,14 @@ public class LectureServiceImpl implements LectureService {
     private LectureDao lectureDao;
     private CourseDao courseDao;
     private RoomDao roomDao;
+    private CourseService courseService;
 
-    public LectureServiceImpl(LectureDao lectureDao, CourseDao courseDao, RoomDao roomDao) {
+    public LectureServiceImpl(LectureDao lectureDao, CourseDao courseDao, RoomDao roomDao,
+            CourseService courseService) {
         this.lectureDao = lectureDao;
         this.courseDao = courseDao;
         this.roomDao = roomDao;
+        this.courseService = courseService;
     }
 
     @Override
@@ -62,6 +67,7 @@ public class LectureServiceImpl implements LectureService {
     public Lecture updateFromForm(LectureForm form) {
         Lecture lecture = mapFormToLecture(form);
         return updateLecture(lecture);
+
     }
 
     private Lecture updateLecture(Lecture lecture) {
@@ -114,7 +120,6 @@ public class LectureServiceImpl implements LectureService {
         ObjectChecker.checkIfExistsInDb(lecture, lectureDao);
         logger.info("Updating course - {}", lecture);
         lectureDao.deleteById(lecture.getId());
-
     }
 
     @Override
@@ -195,6 +200,17 @@ public class LectureServiceImpl implements LectureService {
     @Override
     public Lecture getByIdOrThrow(Long id) {
         return lectureDao.findById(id).orElseThrow(() -> new LectureNotFoundException(id));
+    }
+
+    @Override
+    public Page<Lecture> findForUserByEmailInTimeInterval(String email, String role, DatePicker datePicker,
+            Pageable pageable) {
+        ObjectChecker.checkInterval(datePicker.getStartDate().atStartOfDay(),
+                datePicker.getEndDate().atTime(LocalTime.MAX));
+
+        List<Course> courses = courseService.findForUserWithUsername(email, role);
+        return lectureDao.findByCourseInAndTimeStartBetween(courses, datePicker.getStartDate().atStartOfDay(),
+                datePicker.getEndDate().atTime(LocalTime.MAX), pageable);
     }
 
 }

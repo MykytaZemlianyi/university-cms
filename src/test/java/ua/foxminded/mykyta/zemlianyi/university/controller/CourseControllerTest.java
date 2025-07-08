@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -51,14 +52,16 @@ class CourseControllerTest {
     CourseService service;
 
     Course course = new Course();
+    Group group = new Group();
+    Teacher teacher = new Teacher();
 
     @BeforeEach
     void setUp() {
-        Teacher teacher = new Teacher();
+        teacher.setId(1L);
         teacher.setName("Marek");
         teacher.setSurname("Szepski");
 
-        Group group = new Group();
+        group.setId(1L);
         group.setName("AA-11");
 
         course.setId(1L);
@@ -229,7 +232,7 @@ class CourseControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("validRolesForGetCoursesForUser")
+    @MethodSource("studentAndTeacher")
     void getCoursesForUser_shouldReturnCoursesForUser_whenServiceReturnCourseList(String username, String role)
             throws Exception {
         Course course1 = new Course();
@@ -250,7 +253,7 @@ class CourseControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("validRolesForGetCoursesForUser")
+    @MethodSource("studentAndTeacher")
     void getCoursesForUser_shouldReturnEmptyCoursesForUser_whenServiceReturnEmptyList(String username, String role)
             throws Exception {
         List<Course> courses = new ArrayList<>();
@@ -262,7 +265,7 @@ class CourseControllerTest {
     }
 
     @ParameterizedTest
-    @MethodSource("invalidRolesForGetCoursesForUser")
+    @MethodSource("adminAndStaff")
     void getCoursesForUser_shouldThrowException_whenInvalidRole(String username, String role) throws Exception {
         when(service.findForUserWithUsername(username, role)).thenThrow(new IllegalArgumentException("Invalid role"));
 
@@ -271,12 +274,44 @@ class CourseControllerTest {
                 .andExpect(flash().attribute("errorMessage", "Error: Invalid role"));
     }
 
-    private static Stream<Arguments> validRolesForGetCoursesForUser() {
+    private static Stream<Arguments> studentAndTeacher() {
         return Stream.of(Arguments.of("student@gmail.com", "STUDENT"), Arguments.of("teacher@gmail.com", "TEACHER"));
     }
 
-    private static Stream<Arguments> invalidRolesForGetCoursesForUser() {
-        return Stream.of(Arguments.of("student@gmail.com", "STUDENT"), Arguments.of("teacher@gmail.com", "TEACHER"));
+    private static Stream<Arguments> adminAndStaff() {
+        return Stream.of(Arguments.of("admin@gmail.com", "ADMIN"), Arguments.of("staff@gmail.com", "STAFF"));
+    }
+
+    @ParameterizedTest
+    @MethodSource("adminAndStaff")
+    void courseSelectCheckboxList_ShouldReturnFragmentWithModel(String username, String role) throws Exception {
+
+        Page<Course> page = new PageImpl<>(List.of(course), PageRequest.of(0, 5), 1);
+        when(service.findAll(PageRequest.of(0, 5))).thenReturn(page);
+
+        mockMvc.perform(post("/courses/courseSelectCheckboxList").with(csrf()).with(user(username).roles(role))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("id", group.getId().toString())
+                .param("name", group.getName()).param("selectedCourseIds", "1").param("currentPage", "0")
+                .param("size", "5")).andExpect(status().isOk())
+                .andExpect(view().name("fragments/course_fragments :: courseSelectCheckboxList"))
+                .andExpect(model().attribute("coursePage", page)).andExpect(model().attribute("currentPage", 0))
+                .andExpect(model().attribute("totalPages", 1))
+                .andExpect(model().attribute("selectedCourseIds", Set.of(1L)))
+                .andExpect(model().attribute("group", group));
+    }
+
+    @ParameterizedTest
+    @MethodSource("adminAndStaff")
+    void getCourseRadioList_ShouldReturnFragmentWithModel(String username, String role) throws Exception {
+
+        Page<Course> page = new PageImpl<>(List.of(course), PageRequest.of(0, 5), 1);
+        when(service.findAll(PageRequest.of(0, 5))).thenReturn(page);
+
+        mockMvc.perform(post("/courses/courseSelectRadioList").with(csrf()).with(user(username).roles(role))
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED).param("id", group.getId().toString())
+                .param("name", group.getName()).param("currentPage", "0").param("size", "5")).andExpect(status().isOk())
+                .andExpect(view().name("fragments/course_fragments :: courseSelectRadioList"))
+                .andExpect(model().attribute("coursePage", page));
     }
 
 }

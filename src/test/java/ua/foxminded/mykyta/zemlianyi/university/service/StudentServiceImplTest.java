@@ -115,51 +115,7 @@ class StudentServiceImplTest {
         verify(studentDao).save(student);
     }
 
-    @Test
-    void changePassword_shouldThrowIllegalArgumentException_whenStudentIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            studentService.changePassword(null);
-        });
-    }
-
-    @Test
-    void changePassword_shouldThrowIllegalArgumentException_whenStudentIsInvalid() {
-        Student invalidStudent = new Student();
-        assertThrows(IllegalArgumentException.class, () -> {
-            studentService.changePassword(invalidStudent);
-        });
-    }
-
-    @Test
-    void changePassword_shouldThrowIllegalArgumentException_whenStudentIsNotSavedInDb() {
-        doReturn(Optional.empty()).when(studentDao).findById(student.getId());
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            studentService.changePassword(student);
-        });
-    }
-
-    @Test
-    void changePassword_shouldChangePassword_whenStudentIsValidAndExistsInDb() {
-        doReturn(Optional.of(student)).when(studentDao).findById(student.getId());
-
-        student.setId(student.getId());
-        student.setPassword("987654321");
-
-        ArgumentCaptor<Student> captor = ArgumentCaptor.forClass(Student.class);
-
-        studentService.changePassword(student);
-
-        verify(studentDao).save(captor.capture());
-
-        Student savedStudent = captor.getValue();
-        assertEquals(student.getId(), savedStudent.getId());
-        assertEquals(student.getName(), savedStudent.getName());
-        assertEquals(student.getSurname(), savedStudent.getSurname());
-        assertEquals(student.getEmail(), savedStudent.getEmail());
-
-        assertEquals(student.getPassword(), savedStudent.getPassword());
-    }
+   
 
     @Test
     void delete_shouldThrowIllegalArgumentException_when_studentIsNull() {

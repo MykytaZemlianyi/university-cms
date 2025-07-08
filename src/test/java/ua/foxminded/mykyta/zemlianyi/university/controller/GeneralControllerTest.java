@@ -14,14 +14,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class StartPageControllerTest {
+class GeneralControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    void index_shouldReturnIndexView() throws Exception {
-        mockMvc.perform(get("/")).andExpect(status().isOk()).andExpect(view().name("index"));
+    void index_shouldReturnWelcomeView() throws Exception {
+        mockMvc.perform(get("/")).andExpect(status().isOk()).andExpect(view().name("welcome"));
     }
 
     @Test
@@ -31,7 +31,7 @@ class StartPageControllerTest {
 
     @Test
     void welcomePage_shouldReturnWelcomeView_whenUserAutorized() throws Exception {
-        mockMvc.perform(get("/welcome").with(user("admin@gmail.com").roles("ADMIN"))).andExpect(status().isOk())
+        mockMvc.perform(get("/").with(user("admin@gmail.com").roles("ADMIN"))).andExpect(status().isOk())
                 .andExpect(view().name("welcome"));
     }
 
@@ -40,5 +40,4 @@ class StartPageControllerTest {
         mockMvc.perform(get("/welcome")).andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("http://localhost/login"));
     }
-
 }

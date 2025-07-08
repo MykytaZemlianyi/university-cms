@@ -68,13 +68,6 @@ public class Course implements Verifiable, Dto {
         this.teacher = teacher;
     }
 
-    public void clearTeacher() {
-        if (this.teacher != null) {
-            this.teacher.getCourses().remove(this);
-            this.teacher = null;
-        }
-    }
-
     public void setGroups(Set<Group> newGroups) {
         if (newGroups != null) {
 
@@ -102,19 +95,6 @@ public class Course implements Verifiable, Dto {
         }
     }
 
-    public void clearGroups() {
-        for (Group group : new HashSet<>(groups)) {
-            group.getCourses().remove(this);
-        }
-        this.groups = new HashSet<>();
-    }
-
-    public void clearRelations() {
-        clearGroups();
-        clearTeacher();
-        clearLectures();
-    }
-
     public Set<Lecture> getLectures() {
         return lectures;
     }
@@ -131,13 +111,6 @@ public class Course implements Verifiable, Dto {
     public void removeLecture(Lecture lecture) {
         this.lectures.remove(lecture);
         lecture.setCourse(null);
-    }
-
-    public void clearLectures() {
-        for (Lecture lecture : new HashSet<>(this.lectures)) {
-            lecture.setCourse(null);
-        }
-        this.lectures = new HashSet<>();
     }
 
     @Override

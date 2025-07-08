@@ -28,9 +28,8 @@
 
 			<div th:replace="~{fragments/group_fragments :: table(${groups})}"></div>
 
-			<a class="btn btn-outline-secondary btn-lg p-2" th:href="@{/groups}">
-				<i class=" bi bi-search me-2"></i> <span>View All Groups</span>
-			</a>
+			<div
+				th:insert="~{fragments/button_fragments :: show_full_table('/groups')}"></div>
 		</div>
 	</div>
 	<script

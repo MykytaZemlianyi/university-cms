@@ -2,6 +2,7 @@ package ua.foxminded.mykyta.zemlianyi.university.controller;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -76,9 +77,8 @@ public class GroupController {
             @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer coursePageSize, Model model) {
 
-        prepareGroupFormModel(model, PageRequest.of(studentPage, studentPageSize),
+        prepareGroupFormModel(model, new Group(), PageRequest.of(studentPage, studentPageSize),
                 PageRequest.of(coursePage, coursePageSize));
-        model.addAttribute("group", new Group());
 
         return "add-new-group";
     }
@@ -92,7 +92,7 @@ public class GroupController {
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
 
         if (bindingResult.hasErrors()) {
-            prepareGroupFormModel(model, PageRequest.of(studentPage, studentPageSize),
+            prepareGroupFormModel(model, group, PageRequest.of(studentPage, studentPageSize),
                     PageRequest.of(coursePage, coursePageSize));
             return "add-new-group";
         }
@@ -111,9 +111,8 @@ public class GroupController {
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
 
         Group group = groupService.getByIdOrThrow(id);
-        model.addAttribute("group", group);
 
-        prepareGroupFormModel(model, PageRequest.of(studentPage, studentPageSize),
+        prepareGroupFormModel(model, group, PageRequest.of(studentPage, studentPageSize),
                 PageRequest.of(coursePage, coursePageSize));
         return "edit-group";
     }
@@ -126,9 +125,9 @@ public class GroupController {
             @RequestParam(defaultValue = "5") Integer studentPageSize,
             @RequestParam(defaultValue = "0") Integer coursePage,
             @RequestParam(defaultValue = "5") Integer coursePageSize) {
-        addSelectedIdsToModel(model);
+
         if (bindingResult.hasErrors()) {
-            prepareGroupFormModel(model, PageRequest.of(studentPage, studentPageSize),
+            prepareGroupFormModel(model, updatedGroup, PageRequest.of(studentPage, studentPageSize),
                     PageRequest.of(coursePage, coursePageSize));
             return "edit-group";
         }
@@ -138,8 +137,7 @@ public class GroupController {
         return "redirect:/groups";
     }
 
-    private void prepareGroupFormModel(Model model, Pageable studentPageable, Pageable coursePageable) {
-        addSelectedIdsToModel(model);
+    private void prepareGroupFormModel(Model model, Group group, Pageable studentPageable, Pageable coursePageable) {
 
         Page<Student> studentPageObj = studentService.findAll(studentPageable);
         model.addAttribute("studentPage", studentPageObj);
@@ -147,11 +145,16 @@ public class GroupController {
         Page<Course> coursePageObj = courseService.findAll(coursePageable);
         model.addAttribute("coursePage", coursePageObj);
 
-    }
+        model.addAttribute("group", group);
 
-    private void addSelectedIdsToModel(Model model) {
-        model.addAttribute("selectedStudentIds", Collections.emptySet());
-        model.addAttribute("selectedCourseIds", Collections.emptySet());
+        List<Long> selectedStudentIds = Optional.ofNullable(group.getStudents().stream().map(Student::getId).toList())
+                .orElse(Collections.emptyList());
+        model.addAttribute("selectedStudentIds", selectedStudentIds);
+
+        List<Long> selectedCourseIds = Optional.ofNullable(group.getCourses().stream().map(Course::getId).toList())
+                .orElse(Collections.emptyList());
+        model.addAttribute("selectedCourseIds", selectedCourseIds);
+
     }
 
     @DeleteMapping("/delete/{id}")
